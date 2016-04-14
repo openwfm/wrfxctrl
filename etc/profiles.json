@@ -1,0 +1,20 @@
+{
+  "single_domain_60" : {
+    "identifier" : "single_domain_60",
+    "title" : "Single domain, 1km cell size, fast and simple",
+    "info" : "Only one domain, 60x60 grid cells of size 1km with 25m fire grid. Domain will be centered on ignition point.",
+    "template" : "profiles/simple_fire.json"
+  },
+  "two_domain_120_60" : {
+    "identifier" : "two_domain_120_60",
+    "title" : "Two domains, 3km/1km cell size, 25m fire grid.",
+    "info" : "A two-domain configuration with the top-level domain at 3km grid size and 100x100 grid cells.  The nested domain has 1km resolution and is 40x40 km with a 25m fire grid.",
+    "template" : "profiles/two_domain_fire.json"
+  },
+  "three_domain_900_300_40" : {
+    "identifier" : "three_domain_900_300_40",
+    "title" : "Three domains, 9km/3km/1km cell size, 25m fire grid.",
+    "info" : "A three-domain configuration with the top-level domain at 9km grid size and 100x100 grid cells.  The first nest has a 3km resolution and the second nest has a 1km resolution with a 25m fire grid.",
+    "template" : "profiles/three_domain_fire.json"
+  }  
+}

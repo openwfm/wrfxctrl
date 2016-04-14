@@ -1,0 +1,111 @@
+<!doctype html>
+<title>WRFx - start a fire simulation</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.6/semantic.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/transition.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/dropdown.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/modal.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/dimmer.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/form.min.css"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/dropdown.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/transition.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/modal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/dimmer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/form.min.js"></script>
+
+
+<div class="ui one column stackable center aligned page grid">
+  <div class="column twelve wide">
+    <h1>Initiate a fire simulation</h1>
+     
+    <br />
+    <br />
+     
+    <form class="ui form" method="POST">
+      
+    <h2>Step 1: Provide a short description</h2>
+    <div class="field">
+      <label>Description</label>
+      <input name="description" type="text" id="experiment-description" placeholder="Web initiated run ...">
+    </div>
+
+    <h2 class="ui header">Step 2: Ignition location</h2>
+     
+    <p>Select fire location by <b>clicking on the map</b> or filling out the boxes below</p>
+
+    <div id="map"></div>
+       
+    <div class="two fields">
+      <div class="field">
+        <label>Latitude</label>
+        <input name="ignition_latitude" id="ign-lat" type="text" placeholder="Latitude ...">
+      </div>
+
+      <div class="field">
+        <label>Longitude</label>
+        <input name="ignition_longitude" id="ign-lon" type="text" placeholder="Longitude ...">
+      </div>
+    </div>
+      
+    <h2>Step 3: Ignition time</h2>
+    <p>The ignition time in ESMF format, or YYYY-MM-DD_HH:MM:SS in the UTC timezone.  The 'now' button selects the current time.</p>
+      
+    <div class="field">
+      <label>Ignition time [UTC]</label>
+      <input name="ignition_time" id="ign-time" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
+    </div>
+
+      <div class="ui positive button" onclick="set_ignition_now();">Now</div>
+      
+      <h2>Step 4: Simulation profile</h2>
+      
+      <div class="ui two column divided grid fixed-height-grid">
+        
+        <div class="column">
+          <div class="field">
+            <div class="ui selection dropdown" id="profile-dropdown">
+              <input type="hidden" name="profile">
+               <i class="dropdown icon"></i>
+              <div class="default text">Select job profile ...</div> 
+              <div class="menu">
+                {% for profile in profiles %}
+                <div class="item"
+                    data-value="{{profile.identifier | safe}}"
+                    onmouseover="set_profile_text('{{profile.info | safe}}');">
+                        {{profile.title | safe}}
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        <div class="column">
+          <h3>Information box</h3>
+          <p id="profile-info-text">
+            Select a simulation profile from the dropdown box.  The simulation profile will specify parameters of your job not set in this form.
+          </p>
+        </div>
+        
+      </div>
+      
+      <br />
+      
+      <button class="ui massive negative button" type="submit">
+        <i class="fire icon"></i>Ignite
+      </button>
+      
+    </div>
+  </div>
+
+  <div>
+    <p id="acknowledgement">Copyright UC Denver Wildland Fire Group 2016</p>
+  </div>
+</div>
+
+<script src="{{url_for('static', filename='L.Control.MousePosition.js')}}"></script>
+<script src="{{url_for('static', filename='build.js')}}"></script>

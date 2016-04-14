@@ -1,0 +1,50 @@
+{
+  "grid_code": "two-domain-fire",
+  "grib_source": "NAM",
+  "wps_namelist_path": "etc/nlists/default.wps",
+  "wrf_namelist_path": "etc/nlists/default.input",
+  "fire_namelist_path": "etc/nlists/default.fire",
+  "emissions_namelist_path": "etc/nlists/default.fire_emissions",
+  "geogrid_path": "/share_home/mvejmelka/Packages/WPS-GEOG",
+  "num_nodes": 10,
+  "ppn": 16,
+  "wall_time_hrs": 3,
+  "qsys": "colibri",
+  "start_utc": "T-30",
+  "end_utc": "T+300",
+  "domains" : {
+    "1" : { 
+      "cell_size" : [6000, 6000],
+      "domain_size" : [101, 101],
+      "center_latlon" : [39.894264, -103.903222],
+      "truelats" : [39, 40.8],
+      "stand_lon" : -103.9,
+      "time_step" : 15,
+      "history_interval" : 30,
+      "geog_res" : "30s",
+      "subgrid_ratio" : [1, 1]
+    },
+    "2" : {
+      "parent_id" : 1,
+      "parent_cell_size_ratio" : 3,
+      "parent_time_step_ratio" : 3,
+      "geog_res" : ".3s",
+      "subgrid_ratio" : [40, 40],
+      "parent_start" : [30, 30],
+      "parent_end" : [71, 71],
+      "history_interval" : 15
+    }
+  },
+  "ignitions" : {
+     "2" : [ {
+      "start_delay_s" : 600,
+      "duration_s" : 240,
+      "latlon" : [39.894264, -103.903222]
+     } ]
+  },
+  "postproc" : {
+      "1" : [ "T2", "PSFC", "WINDSPD", "WINDVEC" ],
+      "2" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "FIRE_AREA", "FGRNHFX", "FLINEINT", "SMOKE_INT" ]
+  }
+}
+

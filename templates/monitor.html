@@ -1,0 +1,65 @@
+<!doctype html>
+<title>WRFx - simulation monitor</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.6/semantic.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/transition.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/dropdown.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/modal.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/dimmer.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/form.min.css"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/dropdown.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/transition.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/modal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/dimmer.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/form.min.js"></script>
+
+
+<div class="ui one column stackable center aligned page grid">
+  <div class="column twelve wide">
+    <h1>Monitoring the fire simulation</h1>
+
+        <table class="ui celled table">
+          <tbody>
+            <tr>
+              <td> <div class="ui label">Simulation started at</div> </td>
+              <td> {{ sim['started_at'] }} </td>
+            </tr>
+            <tr>
+              <td> <div class="ui label">Ignition coordinates</div> </td>
+              <td> {{ sim['ign_latitude'] }} {{ sim['ign_longitude' ]}} </td>
+            </tr>
+            <tr>
+              <td ><div class="ui label">Ignition time [ESMF, UTC]</div></td>
+              <td> {{ sim['ign_time_esmf'] }} </td>
+            </tr>
+            <tr>
+              <td><div class="ui label">Short description</div></td>
+              <td> {{ sim['description'] }} </td>
+            </tr>
+            <tr>
+              <td><div class="ui label">Time since start</div></td>
+              <td><p id="run-time"></p></td>
+            <tr>
+            <tr>
+              <td><div class="ui label">Phase</div></td>
+              <td><p id="phase"></p></td>
+            <tr>
+            <tr>
+              <td> <div class="ui label">System identifier</div> </td>
+              <td> <p id="sim-id">{{ sim['id'] }}</p> </td>
+            </tr>
+          </tbody>
+         </table>
+         
+         <h2>Log content</h2>
+         <p id="log"></p>
+         
+    <div>
+      <p id="acknowledgement">Copyright UC Denver Wildland Fire Group 2016</p>
+    </div>
+  </div>
+</div>
+
+<script src="{{url_for('static', filename='monitor.js')}}"></script>

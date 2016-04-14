@@ -18,7 +18,7 @@
 
 <div class="ui one column stackable center aligned page grid">
   <div class="column twelve wide">
-    <h1>Monitoring the fire simulation</h1>
+    <h1>Fire simulation monitoring</h1>
 
         <table class="ui celled table">
           <tbody>
@@ -43,20 +43,44 @@
               <td><p id="run-time"></p></td>
             <tr>
             <tr>
-              <td><div class="ui label">Phase</div></td>
-              <td><p id="phase"></p></td>
-            <tr>
-            <tr>
               <td> <div class="ui label">System identifier</div> </td>
               <td> <p id="sim-id">{{ sim['id'] }}</p> </td>
             </tr>
           </tbody>
          </table>
-         
-         <h2>Log content</h2>
-         <p id="log"></p>
-         
-    <div>
+
+         <table class="ui celled table">
+           <tbody>
+             <tr>
+               <td> <div class="ui label">GEOGRID</div> </td>
+               <td> <p id="geogrid">no info</p></td>
+             </tr>
+             <tr>
+               <td> <div class="ui label">Ingest</div> </td>
+               <td> <p id="ingest">no info</p> </td>
+             </tr>
+             <tr>
+               <td ><div class="ui label">UNGRIB</div></td>
+               <td> <p id="ungrib">no info</p> </td>
+             </tr>
+             <tr>
+               <td><div class="ui label">METGRID</div></td>
+               <td> <p id="metgrid">no info</p> </td>
+             </tr>
+             <tr>
+               <td><div class="ui label">REAL</div></td>
+               <td><p id="real">no info</p> </td>
+             <tr>
+             <tr>
+               <td> <div class="ui label">WRF</div> </td>
+               <td><p id="wrf">no info</p> </td>
+             </tr>
+             <tr>
+               <td> <div class="ui label">Output</div> </td>
+               <td><p id="output">no info</p> </td>
+             </tr>
+           </tbody>
+          </table>    <div>
       <p id="acknowledgement">Copyright UC Denver Wildland Fire Group 2016</p>
     </div>
   </div>

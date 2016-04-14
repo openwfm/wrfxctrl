@@ -10,7 +10,7 @@ $.getJSON("/sim_info/" + sim_id, function(data) {
   start_time = moment(sim_info['started_at'], "YYYY-MM-DD_HH:mm:ss");
   console.log(start_time);
   window.setTimeout(update_time_since_start, 1000);
-  window.setTimeout(parse_log, 5000); 
+  window.setTimeout(get_job_state, 5000);
 });
 
 function update_time_since_start()
@@ -19,35 +19,23 @@ function update_time_since_start()
   window.setTimeout(update_time_since_start, 1000);
 }
 
-function parse_log()
+function get_job_state()
 {
-  console.log("/retrieve_log/" + sim_id);
-  $.get("/retrieve_log/" + sim_id, function(txt) {
-    if(txt.indexOf('SHUTTLE operations completed') > -1) {
-      //window.location.replace('demo.openwfm.org/fdds');
-    } else if(txt.indexOf('Detected rsl.error.0000') > -1) {
-      $('#phase').text('WRF-SFIRE is running');
-    } else if(txt.indexOf('submitting WRF job') > -1) {
-      $('#phase').text('Parallel job is being submitted');
-    } else if(txt.indexOf('running REAL') > -1) {
-      $('#phase').text('Preprocessing: real');
-    } else if(txt.indexOf('running METGRID') > -1) {
-      $('#phase').text('Preprocessing: metgrid');
-    } else {
-      var geogrid_state = '';
-      if(txt.indexOf('GEOGRID complete') == -1) {
-        geogrid_state = ' geogrid ';
-      }
-      
-      var ungrib_state = 'GRIB2 downloading';
-      if(txt.indexOf('UNGRIB complete') == -1) {
-        ungrib_state = '';
-      } else if(txt.indexOf('running UNGRIB') == -1) {
-        ungrib_state = 'ungrib'
-      }
-      
-      $('#phase').text('Preprocessing:' + geogrid_state + ungrib_state);
-    }
+  $.getJSON("/get_state/" + sim_id, function(state) {
+    $('#geogrid').text(state['geogrid']);
+    $('#ingest').text(state['ingest']);
+    $('#ungrib').text(state['ungrib']);
+    $('#metgrid').text(state['metgrid']);
+    $('#real').text(state['real']);
+    $('#wrf').text(state['wrf']);
+    $('#output').text(state['output']);
   });
-  window.setTimeout(parse_log, 10000); 
+  window.setTimeout(get_job_state, 5000);
+}
+
+
+function retrieve_log()
+{
+  //$.get("/retrieve_log/" + sim_id, function(txt) {});
+  //window.setTimeout(parse_log, 10000);
 }

@@ -27,7 +27,7 @@
      
     <form class="ui form" method="POST">
       
-    <h2>Step 1: Provide a short description</h2>
+    <h2>Step 1: Short description</h2>
     <div class="field">
       <label>Description</label>
       <input name="description" type="text" id="experiment-description" placeholder="Web initiated run ...">
@@ -63,29 +63,26 @@
       
       <h2>Step 4: Simulation profile</h2>
       
-      <div class="ui two column divided grid fixed-height-grid">
+      <div class="ui two column grid fixed-height-grid">
         
         <div class="column">
           <div class="field">
-            <div class="ui selection dropdown" id="profile-dropdown">
-              <input type="hidden" name="profile">
-               <i class="dropdown icon"></i>
-              <div class="default text">Select job profile ...</div> 
-              <div class="menu">
-                {% for profile in profiles %}
-                <div class="item"
-                    data-value="{{profile.identifier | safe}}"
-                    onmouseover="set_profile_text('{{profile.info | safe}}');">
-                        {{profile.title | safe}}
-                </div>
-                {% endfor %}
-              </div>
+            <div class="ui fluid vertical pointing menu">
+              <input type="hidden" name="profile" id="profile">
+              {% for profile in profiles %}
+              <a class="item"
+                  data-value="{{profile.identifier | safe}}"
+                  onmouseover="set_profile_text('{{profile.info | safe}}');"
+                  onclick="$('#profile').val('{{profile.identifier}}');">
+                      {{profile.title | safe}}
+              </a>
+              {% endfor %}
             </div>
           </div>
         </div>
       
         <div class="column">
-          <h3>Information box</h3>
+          <h3>Profile description</h3>
           <p id="profile-info-text">
             Select a simulation profile from the dropdown box.  The simulation profile will specify parameters of your job not set in this form.
           </p>

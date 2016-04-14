@@ -3,6 +3,15 @@
 // initialize Semantic elements
 $('#profile-dropdown').dropdown({on: 'hover'});
 
+
+$('.ui.menu')
+    .on('click', '.item', function() {
+        $(this)
+          .addClass('active')
+          .siblings('.item')
+            .removeClass('active');
+    });
+
 // Fill in a 'unique description'
 $('#experiment-description').text('Web initiated forecast at ' + moment().format());
 

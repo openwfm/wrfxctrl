@@ -1,0 +1,43 @@
+<!doctype html>
+<title>WRFx - simulation overview</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.6/semantic.min.css"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
+<body>
+
+<h1>WRFx - simulation overview</h1>
+
+<br />
+
+<div class="ui one column stackable center aligned page grid">
+  <div class="column twelve wide">
+      <table class="ui celled table">
+        <thead>
+          <tr>
+            <th>Simulation identifier</th>
+            <th>Status</th>
+            <th>Started at</th>
+            <th>Description</th>
+            <th>Visualization</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sim_id,sim in simulations.iteritems() %}
+          <tr>
+            <td> <a href="/monitor/{{sim_id}}" target="_blank"> {{sim_id}} </a> </td>
+            <td> {{sim['state']['wrf'] | safe}} </td>
+            <td> {{sim['started_at']}} </td>
+            <td> {{sim['description']}} </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+     </table>
+    </div>
+    </div>
+
+<div>
+  <p id="acknowledgement">Copyright UC Denver Wildland Fire Group 2016</p>
+</div>
+
+</body>

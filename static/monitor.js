@@ -9,13 +9,18 @@ $.getJSON("/sim_info/" + sim_id, function(data) {
   console.log(sim_info['started_at']);
   start_time = moment(sim_info['started_at'], "YYYY-MM-DD_HH:mm:ss");
   console.log(start_time);
-  window.setTimeout(update_time_since_start, 1000);
-  window.setTimeout(get_job_state, 5000);
+  update_time_since_start();
+  if(start_time < moment().subtract(1, 'minutes')) {
+    get_job_state();
+  } else {
+    window.setTimeout(get_job_state, 5000);
+  }
 });
 
 function update_time_since_start()
 {
   $('#run-time').text(start_time.from(moment()));
+  $('#current-time').text(moment().format('ddd, MMMM Do YYYY, HH:mm:ss'));
   window.setTimeout(update_time_since_start, 1000);
 }
 
@@ -32,7 +37,7 @@ function get_job_state()
         $('#'+tag).empty();
         $('#'+tag).append(state_map[state[tag]]);
     }
- });
+  });
   window.setTimeout(get_job_state, 5000);
 }
 

@@ -28,17 +28,8 @@ var map = L.map('map', {
 
 L.control.mousePosition().addTo(map);
 
-function pad(num, size) {
-    var s = num+"";
-    while (s.length < size) s = "0" + s;
-    return s;
-}
-
 function set_ignition_now() {
-    var now = moment().utc();
-    var date = now.year() + '-' + pad(now.month(),2) + '-' + pad(now.day(),2);
-    var time = pad(now.hour(),2) + ':' + pad(now.minute(),2) + ':' + pad(now.second(),2);
-    $('#ign-time').val(date + '_' + time);
+    $('#ign-time').val(moment().utc().format('YYYY-MM-DD_HH:mm:ss'));
 }
 
 function set_profile_text(txt) {
@@ -46,7 +37,7 @@ function set_profile_text(txt) {
 }
 
 $.fn.form.settings.rules.valid_ignition_time = function(str) {
-  var ign_time = moment(str, "YYYY-MM-DD_HH:mm:ss");
+  var ign_time = moment.utc(str, "YYYY-MM-DD_HH:mm:ss");
   var now = moment().utc();
   if(!ign_time.isValid())
     return false;
@@ -68,7 +59,7 @@ $.fn.form.settings.rules.valid_longitude = function(e) {
 $.fn.form.settings.rules.valid_latitude = function(e) {
   var lat = parseFloat(e);
   console.log(lat);
-  if(isNaN(lat) || (lat < 36)|| (lat > 40)) return false;
+  if(isNaN(lat) || (lat < 36)|| (lat > 41)) return false;
   return true;
 }
 
@@ -78,7 +69,7 @@ $('.ui.form')
       ignition_latitude   : {
         rules: [ {
           type: 'valid_latitude',
-          prompt: 'The ignition latitude must be a number between 36 and 40.'} ]
+          prompt: 'The ignition latitude must be a number between 36 and 41.'} ]
       },
       ignition_longitude : {
         rules: [ { 

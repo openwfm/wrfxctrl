@@ -30,8 +30,8 @@
       "parent_time_step_ratio" : 3,
       "geog_res" : ".3s",
       "subgrid_ratio" : [40, 40],
-      "parent_start" : [30, 30],
-      "parent_end" : [71, 71],
+      "parent_start" : [40, 40],
+      "parent_end" : [61, 61],
       "history_interval" : 15
     }
   },

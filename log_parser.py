@@ -40,6 +40,6 @@ def get_job_state(path):
                 state['wrf'] = 'submit'
             elif 'Detected rsl.error.0000' in line:
                 state['wrf'] = 'running'
-            elif 'SHUTTLE operations completed':
+            elif 'SHUTTLE operations completed' in line:
                 state['output'] = 'available'
     return state

@@ -21,15 +21,18 @@ function update_time_since_start()
 
 function get_job_state()
 {
+  var state_map = { 'waiting' : '<div class="ui grey label">Waiting</div>',
+                'running' : '<div class="ui yellow label">Running</div>',
+                'complete' : '<div class="ui green label">Complete</div>',
+                'available' : '<div class="ui green label">Available</div>',
+                'submit' : '<div class="ui orange label">Submitted</div>' };
+
   $.getJSON("/get_state/" + sim_id, function(state) {
-    $('#geogrid').text(state['geogrid']);
-    $('#ingest').text(state['ingest']);
-    $('#ungrib').text(state['ungrib']);
-    $('#metgrid').text(state['metgrid']);
-    $('#real').text(state['real']);
-    $('#wrf').text(state['wrf']);
-    $('#output').text(state['output']);
-  });
+    for(var tag in state) {
+        $('#'+tag).empty();
+        $('#'+tag).append(state_map[state[tag]]);
+    }
+ });
   window.setTimeout(get_job_state, 5000);
 }
 

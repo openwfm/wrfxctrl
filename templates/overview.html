@@ -25,11 +25,16 @@
         <tbody>
           {% for sim_id,sim in simulations.iteritems() %}
           <tr>
-            <td> <a href="/monitor/{{sim_id}}" target="_blank"> {{sim_id}} </a> </td>
+            <td> <a href="/monitor/{{sim_id}}" target="_blank"> {{sim_id}} </a></td>
             <td> {{sim['state']['wrf'] | safe}} </td>
             <td> {{sim['started_at']}} </td>
             <td> {{sim['description']}} </td>
-            <td> no link </td>
+            <td> {% if sim['state']['output'] == 'available' %}
+                   <a href="{{sim['visualization_link']}}">visualization</a>
+                 {% else %}
+                   no visualization
+                 {% endif %}
+            </td>
           </tr>
           {% endfor %}
         </tbody>

@@ -20,7 +20,8 @@
 import json
 from datetime import datetime
 import pytz
-
+import glob
+ 
 
 class Dict(dict):
     """
@@ -48,6 +49,21 @@ def load_profiles():
     """
     profs = json.load(open('etc/profiles.json'))
     return {name:Dict(p) for name,p in profs.iteritems()}
+
+
+def load_simulations():
+    """
+    Load all simulations stored in the simulations/ directory.
+
+    :return: a dictionary of simulations
+    """
+    files = glob.glob('simulations/*.json') 
+    simulations = {}
+    for f in files:
+        sim_info = json.load(open(f))
+        sim_id = sim_info['id']
+        simulations[sim_id] = sim_info
+    return simulations
 
 
 def to_esmf(ts):

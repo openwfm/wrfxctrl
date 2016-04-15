@@ -20,7 +20,7 @@
 
 from cluster import Cluster
 from simulation import create_simulation, get_simulation_state
-from utils import Dict, to_esmf, to_utc, load_profiles
+from utils import Dict, to_esmf, to_utc, load_profiles, load_simulations
 from flask import Flask, render_template, request, redirect
 import json
 from datetime import datetime, timedelta
@@ -54,9 +54,11 @@ def build():
         # it's a POST so initiate a simulation
         sim_cfg = request.form.copy()
         sim_cfg['profile'] = profiles[sim_cfg['profile']]
+        sim_cfg['fc_hours'] = 3
         sim_info = create_simulation(sim_cfg, wrfxpy['wrfxpy_path'], cluster)
         sim_id = sim_info['id']
         simulations[sim_id] = sim_info
+        json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'))
         return redirect("/monitor/%s" % sim_id)
 
 
@@ -107,5 +109,6 @@ if __name__ == '__main__':
     profiles = load_profiles()
     cluster = Cluster(json.load(open('etc/cluster.json')))
     wrfxpy = json.load(open('etc/wrfxpy.json'))
+    simulations = load_simulations()
     app.run(debug=True)
 

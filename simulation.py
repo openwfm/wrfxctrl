@@ -48,6 +48,7 @@ def create_simulation(info, wrfxpy_path, cluster):
     ign_lat, ign_lon = float(info['ignition_latitude']), float(info['ignition_longitude'])
     ign_time_esmf = info['ignition_time']
     sim_descr = info['description']
+    fc_hours = info['fc_hours']
     sim_info = {
       'id' : sim_id,
       'started_at' : to_esmf(datetime.now()),
@@ -55,8 +56,10 @@ def create_simulation(info, wrfxpy_path, cluster):
       'ign_latitude' : ign_lat,
       'ign_longitude' : ign_lon,
       'ign_time_esmf' : ign_time_esmf,
+      'fc_hours' : fc_hours,
       'profile' : info['profile'],
-      'log_file' : log_path
+      'log_file' : log_path,
+      'state' : make_initial_state()
     }
 
     # build a new job template
@@ -67,11 +70,15 @@ def create_simulation(info, wrfxpy_path, cluster):
     cfg['ppn'] = cluster.ppn
     ign_time = to_utc(ign_time_esmf)
     sim_start = (ign_time - timedelta(minutes=30)).replace(minute=0, second=0)
-    sim_end = sim_start + timedelta(hours=3)
+    sim_end = sim_start + timedelta(hours=fc_hours)
     sim_info['start_utc'] = to_esmf(sim_start)
     sim_info['end_utc'] = to_esmf(sim_end)
     cfg['start_utc'] = to_esmf(sim_start)
     cfg['end_utc'] = to_esmf(sim_end)
+
+    # build the visualization link
+    wrfxpy_id = 'wfc-%s-%s-%02d' % (sim_id, to_esmf(sim_start), fc_hours)
+    sim_info['visualization_link'] = 'http://demo.openwfm.org/fdds/#/view1?sim_id=' + wrfxpy_id
 
     # place top-level domain
     cfg['domains']['1']['truelats'] = [ign_lat, ign_lat]
@@ -134,6 +141,20 @@ def parse_time(line):
     return datetime.strptime(line[:19], '%y-%m-%d %h:%M:%S')
 
 
+def make_initial_state():
+    """
+    Create an initial state dictionary.
+    """
+    return { 'geogrid' : 'waiting',
+             'ingest' : 'waiting',
+             'ungrib' : 'waiting',
+             'metgrid' : 'waiting',
+             'real' : 'waiting',
+             'wrf' : 'waiting',
+             'output': 'waiting' }
+
+
+
 def get_simulation_state(path):
     """
     Identify the state of the computation for each subcomponent
@@ -141,13 +162,7 @@ def get_simulation_state(path):
 
     :param path: the path to the log file
     """
-    state = { 'geogrid' : 'waiting',
-              'ingest' : 'waiting',
-              'ungrib' : 'waiting',
-              'metgrid' : 'waiting',
-              'real' : 'waiting',
-              'wrf' : 'waiting',
-              'output': 'waiting' }
+    state = make_initial_state()
 
     with open(path) as f:
         for line in f:

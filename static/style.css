@@ -17,7 +17,7 @@ body {
   bottom: 10px;
 }
 
-#submit-button {
+a .action-button {
   margin: 20px 20px 20px 20px;
 }
 

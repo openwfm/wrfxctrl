@@ -11,7 +11,7 @@
   "wall_time_hrs": 3,
   "qsys": "colibri",
   "start_utc": "T-30",
-  "end_utc": "T+600",
+  "end_utc": "T+300",
   "domains" : {
     "1" : { 
       "cell_size" : [9000, 9000],

@@ -63,7 +63,7 @@ def create_simulation(info, wrfxpy_path, cluster):
     cfg = json.load(open(profile['template']))
     cfg['grid_code'] = sim_id
     cfg['qsys'] = cluster.qsys
-    cfg['nodes'] = 6
+    cfg['num_nodes'] = 6
     cfg['ppn'] = cluster.ppn
     ign_time = to_utc(ign_time_esmf)
     sim_start = (ign_time - timedelta(minutes=30)).replace(minute=0, second=0)
@@ -153,6 +153,8 @@ def get_simulation_state(path):
         for line in f:
             if 'subprocess.CalledProcessError' in line:
                 parse_error(state, line)
+            if 'WRF completion detected' in line:
+                state['wrf'] = 'complete'
             if 'running GEOGRID' in line:
                 state['geogrid'] = 'running'
             elif 'GEOGRID complete' in line:

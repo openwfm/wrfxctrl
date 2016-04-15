@@ -30,20 +30,34 @@ function get_job_state()
                 'running' : '<div class="ui yellow label">Running</div>',
                 'complete' : '<div class="ui green label">Complete</div>',
                 'available' : '<div class="ui green label">Available</div>',
+                'failed' : '<div class="ui red label">Failed</div>',
                 'submit' : '<div class="ui orange label">Submitted</div>' };
 
-  $.getJSON("/get_state/" + sim_id, function(state) {
-    for(var tag in state) {
+    $.getJSON("/get_state/" + sim_id, function(state) {
+      for(var tag in state) {
         $('#'+tag).empty();
         $('#'+tag).append(state_map[state[tag]]);
     }
+
+    // stop querying the state repeatedly after the job is complete
+    if(state['wrf'] != 'complete' && !job_failed(state)) {
+      window.setTimeout(get_job_state, 5000);
+    }
+
   });
-  window.setTimeout(get_job_state, 5000);
+}
+
+function job_failed(state) {
+  return 'failed' in $.map(state, function(value, key) { return value })
 }
 
 
-function retrieve_log()
+function retrieve_and_show_log()
 {
-  //$.get("/retrieve_log/" + sim_id, function(txt) {});
-  //window.setTimeout(parse_log, 10000);
+  $.get("/retrieve_log/" + sim_id, function(txt) {
+    $('#log').text(txt);
+    $('#log').attr('rows', 40);
+    $('html, body, .content').animate({scrollTop: $(document).height()}, 1500);
+  });
 }
+

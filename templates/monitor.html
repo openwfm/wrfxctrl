@@ -17,6 +17,10 @@
               <td> <div class="ui label">Current time</div> </td>
               <td><p id="current-time"></p></td>
             </tr>
+             <tr>
+              <td> <div class="ui label">Simulation state</div> </td>
+              <td><p>{{ sim['state']['wrf'] }}</p></td>
+            </tr>
             <tr>
               <td> <div class="ui label">Simulation started </div> </td>
               <td><p id="run-time"></p></td>
@@ -45,6 +49,15 @@
               <td> <div class="ui label">System identifier</div> </td>
               <td> <p id="sim-id">{{ sim['id'] }}</p> </td>
             </tr>
+            <tr>
+              <td> <div class="ui label">Visualization</div> </td>
+              <td> {% if sim['state']['output'] == 'available' %}
+                   <a href="{{sim['visualization_link']}}" target="_blank">visualization available</a>
+                 {% else %}
+                   no visualization
+                 {% endif %}
+              </td>
+             </tr>
           </tbody>
          </table>
 
@@ -81,9 +94,22 @@
                <td id="output"> </td>
              </tr>
            </tbody>
-          </table>    
+          </table>
+
+         <div class="ui four column grid">
+            <div class="column">
+                <h2>Event log</h2>
+            </div>
+            <div class="column">
+                <div class="ui blue button" style="margin-bottom: 20px;" onclick="retrieve_and_show_log();">Retrieve log</div>
+            </div>
+        </div>
+
+         <textarea id="log" rows="10" style="width: 100%; margin-bottom: 40px;"></textarea>
+         <div id="log-end"></div>
+
     <div>
-      <p id="acknowledgement">Copyright UC Denver Wildland Fire Group 2016</p>
+      <p><a href="http://www.openwfm.org" target="_blank">UC Denver Wildland Fire Group 2016</a></p>
     </div>
   </div>
 </div>

@@ -9,6 +9,8 @@
   <div class="column twelve wide">
     <h1>Fire simulation monitoring</h1>
 
+        <h2>Information</h2>
+
         <table class="ui celled table">
           <tbody>
              <tr>
@@ -21,7 +23,7 @@
             </tr>
             <tr>
               <td> <div class="ui label">Ignition coordinates</div> </td>
-              <td> {{ sim['ign_latitude'] }} {{ sim['ign_longitude' ]}} </td>
+              <td> {{ sim['ign_latitude'] }}, {{ sim['ign_longitude' ]}} </td>
             </tr>
             <tr>
               <td ><div class="ui label">Ignition time</div></td>
@@ -46,6 +48,8 @@
           </tbody>
          </table>
 
+         <h2>Detailed status</h2>
+        
          <table class="ui celled table">
            <tbody>
              <tr>

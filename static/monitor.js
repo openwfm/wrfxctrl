@@ -26,7 +26,7 @@ function update_time_since_start()
 
 function get_job_state()
 {
-  var state_map = { 'waiting' : '<div class="ui grey label">Waiting</div>',
+  var state_map = { 'waiting' : '<div class="ui grey loading label">Waiting <div style="margin-left:5px;" class="ui active small inline loader"></div></div>',
                 'running' : '<div class="ui yellow label">Running</div>',
                 'complete' : '<div class="ui green label">Complete</div>',
                 'available' : '<div class="ui green label">Available</div>',

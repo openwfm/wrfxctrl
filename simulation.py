@@ -26,6 +26,7 @@ import os.path as osp
 import stat
 from subprocess import Popen
 
+
 def create_simulation(info, wrfxpy_path, cluster):
     """
     Build a simulation JSON configuration based on profiles and execute
@@ -46,9 +47,10 @@ def create_simulation(info, wrfxpy_path, cluster):
 
     # store simulation configuration
     ign_lat, ign_lon = float(info['ignition_latitude']), float(info['ignition_longitude'])
-    ign_time_esmf = info['ignition_time']
+    # example of ignition time: Apr 10, 1975 9:45 PM
+    ign_time_esmf = to_esmf(datetime.strptime(info['ignition_time'], '%b %d, %Y %I:%M %p'))
     sim_descr = info['description']
-    fc_hours = info['fc_hours']
+    fc_hours = int(info['fc_hours'])
     sim_info = {
       'id' : sim_id,
       'started_at' : to_esmf(datetime.now()),

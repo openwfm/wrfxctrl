@@ -7,8 +7,10 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/dimmer.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/form.min.css"/>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
+<link rel="stylesheet" href="{{ url_for('static', filename='jquery.datetimepicker.css') }}"/>
 <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
 <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+<script src="{{ url_for('static', filename='jquery.datetimepicker.js') }}"></script>
 <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/dropdown.min.js"></script>
@@ -51,16 +53,33 @@
       </div>
     </div>
       
-    <h2>Step 3: Ignition time</h2>
-    <p>The ignition time in ESMF format, or YYYY-MM-DD_HH:MM:SS in the UTC timezone.  The 'now' button selects the current time.</p>
+    <h2>Step 3: Ignition time and forecast length</h2>
+    <p>The simulation will start at least 30 mins before the ignition time.  The maximum forecast length is 24 hrs.</p>
       
-    <div class="field">
-      <label>Ignition time [UTC]</label>
-      <input name="ignition_time" id="ign-time" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
+    <div class="ui two column grid fixed-height-grid">
+        <div class="column">
+            <div class="field">
+              <label>Ignition time [UTC]</label>
+              <div class="ui input left icon">
+                <i class="calendar icon"></i>
+                <input name="ignition_time" id="ign-time" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
+              </div>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="field">
+                <label>Forecast length [hours]</label>
+                <select name="fc_hours" class="ui dropdown" id="fc-hours">
+                    <option value="3">3</option>
+                    <option value="6">6</option>
+                    <option value="9">9</option>
+                    <option value="12">12</option>
+                </select>
+           </div>
+        </div>
     </div>
 
-      <div class="ui positive button" onclick="set_ignition_now();">Now</div>
-      
       <h2>Step 4: Simulation profile</h2>
       
       <div class="ui two column grid fixed-height-grid">
@@ -106,3 +125,4 @@
 
 <script src="{{url_for('static', filename='L.Control.MousePosition.js')}}"></script>
 <script src="{{url_for('static', filename='build.js')}}"></script>
+

@@ -37,23 +37,19 @@ var map = L.map('map', {
 
 L.control.mousePosition().addTo(map);
 
-function set_ignition_now() {
-    $('#ign-time').val(moment().utc().format('YYYY-MM-DD_HH:mm:ss'));
-}
-
 function set_profile_text(txt) {
   $('#profile-info-text').text(txt);
 }
 
 $.fn.form.settings.rules.valid_ignition_time = function(str) {
-  var ign_time = moment.utc(str, "YYYY-MM-DD_HH:mm:ss");
+  var ign_time = moment.utc(str, 'MMM D,YYYY h:mm a');
   var now = moment().utc();
   if(!ign_time.isValid())
     return false;
   if(ign_time > now) {
     return false;
   }
-  if(ign_time.year < 1979) {
+  if(ign_time.year() < 1979) {
     return false;
   }
   return true;
@@ -101,5 +97,9 @@ $('.ui.form')
       }
     },
     inline: true
-  })
-;
+  });
+
+
+$('#ign-time').datetimepicker({ value: moment(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
+$('#fc-hours').dropdown();
+

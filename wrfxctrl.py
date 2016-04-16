@@ -21,7 +21,7 @@
 from cluster import Cluster
 from simulation import create_simulation, get_simulation_state
 from utils import Dict, to_esmf, to_utc, load_profiles, load_simulations
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, make_response
 import json
 from datetime import datetime, timedelta
 import pytz
@@ -29,6 +29,7 @@ import os
 import stat
 import os.path as osp
 from subprocess import Popen
+from functools import wraps, update_wrapper
 
 
 # global objects tracking state
@@ -39,8 +40,23 @@ profiles = None
 
 app = Flask(__name__)
 
+# lifted from: http://arusahni.net/blog/2014/03/flask-nocache.html
+def nocache(view):
+    @wraps(view)
+    def no_cache(*args, **kwargs):
+        response = make_response(view(*args, **kwargs))
+        response.headers['Last-Modified'] = datetime.now()
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '-1'
+        return response
+        
+    return update_wrapper(no_cache, view)
+
+
 @app.route("/")
 @app.route("/welcome")
+@nocache
 def welcome():
     return render_template('welcome.html', cluster=cluster)
 
@@ -54,7 +70,6 @@ def build():
         # it's a POST so initiate a simulation
         sim_cfg = request.form.copy()
         sim_cfg['profile'] = profiles[sim_cfg['profile']]
-        sim_cfg['fc_hours'] = 3
         sim_info = create_simulation(sim_cfg, wrfxpy['wrfxpy_path'], cluster)
         sim_id = sim_info['id']
         simulations[sim_id] = sim_info
@@ -63,17 +78,18 @@ def build():
 
 
 @app.route("/monitor/<sim_id>")
+@nocache
 def monitor(sim_id=None):
     return render_template('monitor.html', sim = simulations.get(sim_id, None))
 
 
 @app.route("/overview")
+@nocache
 def overview():
     return render_template('overview.html', simulations = simulations)
 
 
 # JSON access to state
-
 @app.route("/retrieve_log/<sim_id>")
 def retrieve_log(sim_id=None):
     sim_info = simulations.get(sim_id, None)
@@ -97,8 +113,19 @@ def get_state(sim_id=None):
     else:
         sim_state = get_simulation_state(sim_info['log_file'])
         sim_info['state'] = sim_state
+        json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'))
         return json.dumps(sim_state)
 
+@app.route("/remove_sim/<sim_id>")
+def remove_sim(sim_id=None):
+    if sim_id is not None:
+        if sim_id in simulations:
+            del simulations[sim_id]
+            os.remove('simulations/' + sim_id + '.json')
+            return "OK"
+        else:
+            return "NotFound"
+    
 
 @app.route("/all_sims")
 def get_all_sims():

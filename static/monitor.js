@@ -28,7 +28,8 @@ function get_job_state()
 {
   var state_map = { 'waiting' : '<div class="ui grey loading label">Waiting <div style="margin-left:5px;" class="ui active small inline loader"></div></div>',
                 'running' : '<div class="ui yellow label">Running</div>',
-                'complete' : '<div class="ui green label">Complete</div>',
+                'downloading' : '<div class="ui yellow label">Downloading</div>',
+                'complete' : '<div class="ui green label">Success</div>',
                 'available' : '<div class="ui green label">Available</div>',
                 'failed' : '<div class="ui red label">Failed</div>',
                 'submit' : '<div class="ui orange label">Submitted</div>' };

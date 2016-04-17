@@ -100,6 +100,6 @@ $('.ui.form')
   });
 
 
-$('#ign-time').datetimepicker({ value: moment(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
+$('#ign-time').datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
 $('#fc-hours').dropdown();
 

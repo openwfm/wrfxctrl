@@ -21,7 +21,8 @@ import json
 from datetime import datetime
 import pytz
 import glob
- 
+import logging 
+import os
 
 class Dict(dict):
     """
@@ -60,9 +61,13 @@ def load_simulations():
     files = glob.glob('simulations/*.json') 
     simulations = {}
     for f in files:
-        sim_info = json.load(open(f))
-        sim_id = sim_info['id']
-        simulations[sim_id] = sim_info
+        try:
+            sim_info = json.load(open(f))
+            sim_id = sim_info['id']
+            simulations[sim_id] = sim_info
+        except ValueError:
+            logging.error('LOADSIM failed to reload simulation %s' % f)
+            os.rename(f, f + '.error') 
     return simulations
 
 

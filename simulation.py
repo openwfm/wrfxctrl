@@ -118,7 +118,7 @@ def create_simulation(info, wrfxpy_path, cluster):
     return sim_info
 
 
-def parse_error(line, state):
+def parse_error(state, line):
     """
     Find the tool that created the error in line and update state.
 

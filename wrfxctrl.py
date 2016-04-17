@@ -73,7 +73,7 @@ def build():
         sim_info = create_simulation(sim_cfg, wrfxpy['wrfxpy_path'], cluster)
         sim_id = sim_info['id']
         simulations[sim_id] = sim_info
-        json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'))
+        json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'), indent=4, separators=(',', ': '))
         return redirect("/monitor/%s" % sim_id)
 
 
@@ -86,6 +86,15 @@ def monitor(sim_id=None):
 @app.route("/overview")
 @nocache
 def overview():
+    deadline = to_esmf(datetime.now() - timedelta(seconds=5))
+    # only update stale & running simulations in overview
+    for sim_id,sim in simulations.iteritems():
+        if sim['state']['wrf'] != 'complete':
+            last_upd = sim.get('last_updated', '2000-01-01_00:00:00')
+            if last_upd < deadline:
+                sim['state'] = get_simulation_state(sim['log_file'])
+                sim['last_updated'] = to_esmf(datetime.now())
+                json.dump(sim, open('simulations/' + sim_id + '.json', 'w'), indent=4, separators=(',', ': '))
     return render_template('overview.html', simulations = simulations)
 
 
@@ -102,7 +111,7 @@ def retrieve_log(sim_id=None):
 @app.route("/sim_info/<sim_id>")
 def retrieve_sim_info(sim_id=None):
     sim_info = simulations.get(sim_id, {}).copy()
-    return json.dumps(sim_info)
+    return json.dumps(sim_info, indent=4, separators=(',', ': '))
 
 
 @app.route("/get_state/<sim_id>")
@@ -111,9 +120,13 @@ def get_state(sim_id=None):
     if sim_info is None:
         return "{}"
     else:
-        sim_state = get_simulation_state(sim_info['log_file'])
-        sim_info['state'] = sim_state
-        json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'))
+        sim_state = None
+        # always update during get_state()
+        if sim_info['state']['wrf'] != 'completed':
+            sim_state = get_simulation_state(sim_info['log_file'])
+            sim_info['state'] = sim_state
+            sim_info['last_updated'] = to_esmf(datetime.now())
+            json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'))
         return json.dumps(sim_state)
 
 @app.route("/remove_sim/<sim_id>")
@@ -129,7 +142,7 @@ def remove_sim(sim_id=None):
 
 @app.route("/all_sims")
 def get_all_sims():
-    return json.dumps(simulations)
+    return json.dumps(simulations, indent=4, separators=(',', ': '))
 
 
 if __name__ == '__main__':

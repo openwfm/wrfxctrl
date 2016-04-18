@@ -2,8 +2,9 @@
 <title>WRFx - simulation overview</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.6/semantic.min.css"/>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
-<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+<script src="{{ url_for('static', filename='jquery.tablesort.min.js') }}"></script>
 <body>
 
 <h1>List of fire simulations</h1>
@@ -12,12 +13,12 @@
 
 <div class="ui one column stackable center aligned page grid">
   <div class="column sixteen wide">
-      <table class="ui celled table">
+      <table class="ui celled sortable table" id="sim-table">
         <thead>
           <tr>
             <th>Simulation identifier</th>
             <th>Status</th>
-            <th>Started at</th>
+            <th id="sim-started-at">Started at</th>
             <th>Description</th>
             <th>Visualization</th>
           </tr>
@@ -44,6 +45,13 @@
     </div>
    </div>
 </div>
+
+<script type="text/javascript">
+$(document).ready( function() {
+    var sdata = $('table').tablesort().data('tablesort');
+    sdata.sort($('#sim-started-at'), 'desc');
+});
+</script>
 
 
 </body>

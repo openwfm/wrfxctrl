@@ -1,21 +1,24 @@
 <!doctype html>
 <title>WRFx - simulation overview</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.6/semantic.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/checkbox.min.css"/>
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js"></script>
 <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/checkbox.min.js"></script>
 <script src="{{ url_for('static', filename='jquery.tablesort.min.js') }}"></script>
 <body>
 
-<h1>List of fire simulations</h1>
 
-<br />
 
 <div class="ui one column stackable center aligned page grid">
   <div class="column sixteen wide">
+    <h1>List of fire simulations</h1>
+      <br />
       <table class="ui celled sortable table" id="sim-table">
         <thead>
           <tr>
+            <th class="no-sort"><div class="ui checkbox"><input type="checkbox" name="_all" id="cb-all"><label></label></div> </th>
             <th>Simulation identifier</th>
             <th>Status</th>
             <th id="sim-started-at">Started at</th>
@@ -26,12 +29,13 @@
         <tbody>
           {% for sim_id,sim in simulations.iteritems() %}
           <tr>
+            <td> <div class="ui checkbox"> <input type="checkbox" class="jobcb" name="{{sim_id}}"><label></label></div> </td>
             <td> <a href="/monitor/{{sim_id}}" target="_blank"> {{sim_id}} </a></td>
             <td> {{sim['state']['wrf'] | safe}} </td>
-            <td> {{sim['started_at']}} </td>
+            <td> {{sim['started_at']}}  </td>
             <td> {{sim['description']}} </td>
             <td> {% if sim['state']['output'] == 'available' %}
-                   <a href="{{sim['visualization_link']}}">visualization</a>
+                   <a href="{{sim['visualization_link']}}" target="_blank">visualization</a>
                  {% else %}
                    no visualization
                  {% endif %}
@@ -40,9 +44,9 @@
           {% endfor %}
         </tbody>
      </table>
-    <div>
-      <p><a href="http://www.openwfm.org" target="_blank">UC Denver Wildland Fire Group 2016</a></p>
-    </div>
+     <div class="ui left floated red disabled button">Remove</div>
+     <a href="/submit" class="ui right floated red button"><i class="fire icon"></i>Start a new fire</a>
+      <p id="acknowledgement"><a href="http://www.openwfm.org" target="_blank">UC Denver Wildland Fire Group 2016</a></p>
    </div>
 </div>
 
@@ -50,6 +54,17 @@
 $(document).ready( function() {
     var sdata = $('table').tablesort().data('tablesort');
     sdata.sort($('#sim-started-at'), 'desc');
+
+    $('#cb-all').checkbox({
+        onChecked: function() {
+            $('.ui.checkbox').not($(this)).checkbox('check');
+            $('.ui.button').removeClass('disabled');
+        },
+        onUnchecked: function() {
+            $('.ui.checkbox').not($(this)).checkbox('uncheck');
+            $('.ui.button').addClass('disabled');
+        }
+    });
 });
 </script>
 

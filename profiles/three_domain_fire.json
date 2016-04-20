@@ -6,7 +6,7 @@
   "fire_namelist_path": "etc/nlists/default.fire",
   "emissions_namelist_path": "etc/nlists/default.fire_emissions",
   "wps_geog_path": "/share_home/mvejmelka/Packages/WPS-GEOG",
-  "num_nodes": 12,
+  "num_nodes": 6,
   "ppn": 16,
   "wall_time_hrs": 3,
   "qsys": "colibri",
@@ -53,8 +53,8 @@
      } ]
   },
   "postproc" : {
-      "1" : [ "T2", "PSFC", "WINDSPD", "WINDVEC" ],
-      "2" : [ "T2", "PSFC", "WINDSPD", "WINDVEC" ],
+      "1" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "SMOKE_INT" ],
+      "2" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "SMOKE_INT" ],
       "3" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "FIRE_AREA", "FGRNHFX", "FLINEINT", "SMOKE_INT" ]
   }
 }

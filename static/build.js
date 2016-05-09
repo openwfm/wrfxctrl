@@ -57,14 +57,14 @@ $.fn.form.settings.rules.valid_ignition_time = function(str) {
 
 $.fn.form.settings.rules.valid_longitude = function(e) {
   var lng = parseFloat(e);
-  if(isNaN(lng) || lng < -109 || lng > -102) return false;
+  if(isNaN(lng) || lng < -128 || lng > -65) return false;
   return true;
 }
 
 $.fn.form.settings.rules.valid_latitude = function(e) {
   var lat = parseFloat(e);
   console.log(lat);
-  if(isNaN(lat) || (lat < 36)|| (lat > 41)) return false;
+  if(isNaN(lat) || (lat < 22)|| (lat > 51)) return false;
   return true;
 }
 

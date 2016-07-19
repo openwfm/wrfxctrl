@@ -1,4 +1,5 @@
 <!doctype html>
+<head>
 <title>WRFx - start a fire simulation</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.6/semantic.min.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/transition.min.css"/>
@@ -18,7 +19,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/modal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/dimmer.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/components/form.min.js"></script>
+<script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=3rdoGP1zhCE27Q69RXFiR0A3foqbvoZd"></script>
+</head>
 
+<body onload="initialize_map();">
 
 <div class="ui one column stackable center aligned page grid">
   <div class="column twelve wide">
@@ -127,4 +131,6 @@
 
 <script src="{{url_for('static', filename='L.Control.MousePosition.js')}}"></script>
 <script src="{{url_for('static', filename='build.js')}}"></script>
+
+</body>
 

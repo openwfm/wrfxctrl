@@ -1,5 +1,33 @@
 "use strict";
 
+// declare variables in global scope
+var map = null;
+var base_layer_dict = null;
+
+// map initialization code
+function initialize_map() {
+
+    base_layer_dict = {
+      'MapQuest': MQ.mapLayer(),
+      'MQ Satellite': L.tileLayer('http://{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
+                                  attribution: 'Data and imagery by MapQuest',
+                                  subdomains: ['otile1', 'otile2', 'otile3', 'otile4']}),
+      'OSM': L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'})
+    };
+
+    // initialize map
+    map = L.map('map', {
+      center: [39, -106],
+      zoom: 7,
+      layers: [base_layer_dict['MapQuest']],
+      zoomControl: false
+    });
+
+    // add lon/lat display to bottom left corner of map
+    L.control.mousePosition().addTo(map);
+}
+
 // initialize Semantic elements
 $('#profile-dropdown').dropdown({on: 'hover'});
 
@@ -15,27 +43,6 @@ $('.ui.menu')
 // Fill in a 'unique description'
 $('#experiment-description').text('Web initiated forecast at ' + moment().format());
 
-//  initialize base layers
-var base_layer_dict = {
-  'MapQuest': L.tileLayer('http://{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.png', {
-                          attribution: 'Data and imagery by MapQuest',
-                          subdomains: ['otile1', 'otile2', 'otile3', 'otile4']}),
-  'MQ Satellite': L.tileLayer('http://{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
-                              attribution: 'Data and imagery by MapQuest',
-                              subdomains: ['otile1', 'otile2', 'otile3', 'otile4']}),
-  'OSM': L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'})
-};
-
-// initialize map
-var map = L.map('map', {
-  center: [39, -106],
-  zoom: 7,
-  layers: [base_layer_dict['MapQuest']],
-  zoomControl: false
-});
-
-L.control.mousePosition().addTo(map);
 
 function set_profile_text(txt) {
   $('#profile-info-text').text(txt);

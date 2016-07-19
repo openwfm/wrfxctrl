@@ -41,3 +41,8 @@ div .fixed-height-grid {
   color: #333;
   font: 11px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
+
+.mq-logo-control {
+  display: none;
+}
+

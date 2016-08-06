@@ -38,6 +38,13 @@ cluster = None
 simulations = {}
 profiles = None
 
+#conf params
+conf = json.load(open('etc/conf.json'))
+root = conf['root']
+host = conf['host']
+debug = conf['debug'] in ['T' 'True' 't' 'true']
+
+
 app = Flask(__name__)
 
 # lifted from: http://arusahni.net/blog/2014/03/flask-nocache.html
@@ -54,7 +61,7 @@ def nocache(view):
     return update_wrapper(no_cache, view)
 
 
-@app.route("/")
+@app.route(root)
 @app.route("/welcome")
 @nocache
 def welcome():
@@ -150,5 +157,5 @@ if __name__ == '__main__':
     cluster = Cluster(json.load(open('etc/cluster.json')))
     wrfxpy = json.load(open('etc/wrfxpy.json'))
     simulations = load_simulations()
-    app.run(debug=True)
+    app.run(host,debug=debug)
 

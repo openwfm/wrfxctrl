@@ -43,6 +43,7 @@ conf = json.load(open('etc/conf.json'))
 root = conf['root']
 host = conf['host']
 debug = conf['debug'] in ['T' 'True' 't' 'true']
+port=conf['port']
 
 
 app = Flask(__name__)
@@ -157,5 +158,5 @@ if __name__ == '__main__':
     cluster = Cluster(json.load(open('etc/cluster.json')))
     wrfxpy = json.load(open('etc/wrfxpy.json'))
     simulations = load_simulations()
-    app.run(host,debug=debug)
+    app.run(host=host,port=port,debug=debug)
 

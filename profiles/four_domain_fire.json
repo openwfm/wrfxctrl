@@ -1,0 +1,72 @@
+{
+  "grid_code": "four-domain-fire",
+  "grib_source": "NAM",
+  "wps_namelist_path": "etc/nlists/default.wps",
+  "wrf_namelist_path": "etc/nlists/default.input",
+  "fire_namelist_path": "etc/nlists/default.fire",
+  "emissions_namelist_path": "etc/nlists/default.fire_emissions",
+  "wps_geog_path": "/share_home/mvejmelka/Packages/WPS-GEOG",
+  "num_nodes": 10,
+  "ppn": 16,
+  "wall_time_hrs": 3,
+  "qsys": "colibri",
+  "start_utc": "T-30",
+  "end_utc": "T+300",
+  "domains" : {
+    "1" : { 
+      "cell_size" : [9000, 9000],
+      "domain_size" : [63, 63],
+      "center_latlon" : [39.894264, -103.903222],
+      "truelats" : [39, 40.8],
+      "stand_lon" : -103.9,
+      "time_step" : 45,
+      "history_interval" : 120,
+      "geog_res" : "30s",
+      "subgrid_ratio" : [0, 0]
+    },
+    "2" : {
+      "parent_id" : 1,
+      "parent_cell_size_ratio" : 3,
+      "parent_time_step_ratio" : 3,
+      "geog_res" : "30s",
+      "subgrid_ratio" : [0, 0],
+      "parent_start" : [21, 21],
+      "parent_end" : [42, 42],
+      "history_interval" : 60
+    },
+    "3" : {
+      "parent_id" : 2,
+      "parent_cell_size_ratio" : 3,
+      "parent_time_step_ratio" : 3,
+      "geog_res" : ".3s",
+      "subgrid_ratio" : [0, 0],
+      "parent_start" : [21, 21],
+      "parent_end" : [42, 42],
+      "history_interval" : 60
+    },
+     "4" : {
+      "parent_id" : 3,
+      "parent_cell_size_ratio" : 2,
+      "parent_time_step_ratio" : 2,
+      "geog_res" : ".3s",
+      "subgrid_ratio" : [20, 20],
+      "parent_start" : [20, 20],
+      "parent_end" : [43, 43],
+      "history_interval" : 30
+    }
+  },
+  "ignitions" : {
+     "4" : [ {
+      "time_utc" : "T+10",
+      "duration_s" : 240,
+      "latlon" : [39.894264, -103.903222]
+     } ]
+  },
+  "postproc" : {
+      "1" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "SMOKE_INT" ],
+      "2" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "SMOKE_INT" ],
+      "3" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "SMOKE_INT" ],
+      "4" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "FIRE_AREA", "FGRNHFX", "FLINEINT", "SMOKE_INT" ]
+  }
+}
+

@@ -6,7 +6,7 @@
   "fire_namelist_path": "etc/nlists/default.fire",
   "emissions_namelist_path": "etc/nlists/default.fire_emissions",
   "wps_geog_path": "/share_home/mvejmelka/Packages/WPS-GEOG",
-  "num_nodes": 6,
+  "num_nodes": 10,
   "ppn": 16,
   "wall_time_hrs": 3,
   "qsys": "colibri",

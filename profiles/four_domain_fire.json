@@ -15,7 +15,7 @@
   "domains" : {
     "1" : { 
       "cell_size" : [9000, 9000],
-      "domain_size" : [64, 64],
+      "domain_size" : [67, 67],
       "center_latlon" : [39.894264, -103.903222],
       "truelats" : [39, 40.8],
       "stand_lon" : -103.9,
@@ -30,8 +30,8 @@
       "parent_time_step_ratio" : 3,
       "geog_res" : "30s",
       "subgrid_ratio" : [0, 0],
-      "parent_start" : [21, 21],
-      "parent_end" : [42, 42],
+      "parent_start" : [23, 23],
+      "parent_end" : [44, 44],
       "history_interval" : 60
     },
     "3" : {
@@ -40,8 +40,8 @@
       "parent_time_step_ratio" : 3,
       "geog_res" : ".3s",
       "subgrid_ratio" : [0, 0],
-      "parent_start" : [21, 21],
-      "parent_end" : [42, 42],
+      "parent_start" : [23, 23],
+      "parent_end" : [44, 44],
       "history_interval" : 60
     },
      "4" : {
@@ -50,8 +50,8 @@
       "parent_time_step_ratio" : 4,
       "geog_res" : ".3s",
       "subgrid_ratio" : [15, 15],
-      "parent_start" : [21, 21],
-      "parent_end" : [42, 42],
+      "parent_start" : [23, 23],
+      "parent_end" : [44, 44],
       "history_interval" : 15
     }
   },

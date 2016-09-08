@@ -15,7 +15,7 @@
   "domains" : {
     "1" : { 
       "cell_size" : [9000, 9000],
-      "domain_size" : [63, 63],
+      "domain_size" : [64, 64],
       "center_latlon" : [39.894264, -103.903222],
       "truelats" : [39, 40.8],
       "stand_lon" : -103.9,
@@ -46,13 +46,13 @@
     },
      "4" : {
       "parent_id" : 3,
-      "parent_cell_size_ratio" : 2,
-      "parent_time_step_ratio" : 2,
+      "parent_cell_size_ratio" : 3,
+      "parent_time_step_ratio" : 4,
       "geog_res" : ".3s",
-      "subgrid_ratio" : [20, 20],
-      "parent_start" : [20, 20],
-      "parent_end" : [43, 43],
-      "history_interval" : 30
+      "subgrid_ratio" : [15, 15],
+      "parent_start" : [21, 21],
+      "parent_end" : [42, 42],
+      "history_interval" : 15
     }
   },
   "ignitions" : {

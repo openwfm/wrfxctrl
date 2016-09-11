@@ -44,7 +44,7 @@ root = conf['root']
 host = conf['host']
 debug = conf['debug'] in ['T' 'True' 't' 'true']
 port=conf['port']
-
+urls = {'submit': root+'/submit', 'welcome': root+'/start', 'overview': root+'/overview'}
 
 app = Flask(__name__)
 
@@ -62,18 +62,18 @@ def nocache(view):
     return update_wrapper(no_cache, view)
 
 
-@app.route(root)
-@app.route("/welcome")
+#@app.route(root)
+@app.route(urls['welcome'])
 @nocache
 def welcome():
-    return render_template('welcome.html', cluster=cluster)
+    return render_template('welcome.html', cluster=cluster, urls=urls)
 
 
-@app.route("/submit", methods=['GET', 'POST'])
+@app.route(urls['submit'], methods=['GET', 'POST'])
 def build():
     if request.method == 'GET':
         # it's a get so let's build a fire simulation
-        return render_template('build.html', profiles=profiles.values())
+        return render_template('build.html', profiles=profiles.values(), urls=urls)
     elif request.method == 'POST':
         # it's a POST so initiate a simulation
         sim_cfg = request.form.copy()
@@ -88,10 +88,10 @@ def build():
 @app.route("/monitor/<sim_id>")
 @nocache
 def monitor(sim_id=None):
-    return render_template('monitor.html', sim = simulations.get(sim_id, None))
+    return render_template('monitor.html', sim = simulations.get(sim_id, None), urls=urls)
 
 
-@app.route("/overview")
+@app.route(urls['overview'])
 @nocache
 def overview():
     deadline = to_esmf(datetime.now() - timedelta(seconds=5))
@@ -103,7 +103,7 @@ def overview():
                 sim['state'] = get_simulation_state(sim['log_file'])
                 sim['last_updated'] = to_esmf(datetime.now())
                 json.dump(sim, open('simulations/' + sim_id + '.json', 'w'), indent=4, separators=(',', ': '))
-    return render_template('overview.html', simulations = simulations)
+    return render_template('overview.html', simulations = simulations, urls=urls)
 
 
 # JSON access to state

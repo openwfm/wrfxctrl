@@ -1,6 +1,6 @@
 {
   "grid_code": "four-domain-fire",
-  "grib_source": "NAM",
+  "grib_source": "auto",
   "wps_namelist_path": "etc/nlists/default.wps",
   "wrf_namelist_path": "etc/nlists/default.input",
   "fire_namelist_path": "etc/nlists/default.fire",

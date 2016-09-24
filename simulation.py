@@ -26,6 +26,12 @@ import os.path as osp
 import stat
 from subprocess import Popen
 
+def select_grib_source(start_time):
+    now = datetime.utcnow().replace(tzinfo=pytz.UTC)
+    if now - start_time < timedelta(days=30):
+        return 'NAM'
+    else:
+        return 'NARR'
 
 def create_simulation(info, wrfxpy_path, cluster):
     """
@@ -77,6 +83,11 @@ def create_simulation(info, wrfxpy_path, cluster):
     sim_info['end_utc'] = to_esmf(sim_end)
     cfg['start_utc'] = to_esmf(sim_start)
     cfg['end_utc'] = to_esmf(sim_end)
+    if not cfg.has_key('grib_source') or cfg['grib_source'] == 'auto':
+        cfg['grib_source'] = select_grib_source(sim_start)
+        print 'GRIB source not specified, selected %s from sim start time' % cfg['grib_source']
+    else:
+        print 'Using GRIB source %s from profile %s' % (cfg['grib_source'], profile)
 
     # build the visualization link
     wrfxpy_id = 'wfc-%s-%s-%02d' % (sim_id, to_esmf(sim_start), fc_hours)

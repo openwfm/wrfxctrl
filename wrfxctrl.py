@@ -77,8 +77,8 @@ def build():
         return render_template('build.html', profiles=profiles.values(), urls=urls)
     elif request.method == 'POST':
         # it's a POST so initiate a simulation
-        sim_cfg = request.form.copy()
-        print 'sim_cfg return by build page:'
+        sim_cfg = request.form.copy()  # dictionary values set in the html  <select name="KEY" class="ui dropdown" id="KEY">
+        print 'values returned by build page:'
         print  json.dumps(sim_cfg, indent=4, separators=(',', ': '))
         sim_cfg['profile'] = profiles[sim_cfg['profile']]
         sim_info = create_simulation(sim_cfg, wrfxpy['wrfxpy_path'], cluster)

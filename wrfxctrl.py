@@ -78,6 +78,8 @@ def build():
     elif request.method == 'POST':
         # it's a POST so initiate a simulation
         sim_cfg = request.form.copy()
+        print 'sim_cfg return by build page:'
+        print  json.dumps(sim_cfg, indent=4, separators=(',', ': '))
         sim_cfg['profile'] = profiles[sim_cfg['profile']]
         sim_info = create_simulation(sim_cfg, wrfxpy['wrfxpy_path'], cluster)
         sim_id = sim_info['id']

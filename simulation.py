@@ -99,6 +99,9 @@ def create_simulation(info, wrfxpy_path, cluster):
 
     json.dump(cfg, open(json_path, 'w'))
 
+    print json_path
+    print json.dumps(cfg, indent=4, separators=(',', ': '))
+
     # drop a shell script that will run the file
     run_script = 'jobs/' + sim_id + '.sh'
     with open(run_script, 'w') as f:

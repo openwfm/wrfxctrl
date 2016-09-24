@@ -45,6 +45,7 @@ host = conf['host']
 debug = conf['debug'] in ['T' 'True' 't' 'true']
 port=conf['port']
 urls = {'submit': root+'/submit', 'welcome': root+'/start', 'overview': root+'/overview'}
+print ( ' * Listening at %s' % urls['welcome'] )
 
 app = Flask(__name__)
 

@@ -81,7 +81,7 @@ def build():
         print 'values returned by build page:'
         print  json.dumps(sim_cfg, indent=4, separators=(',', ': '))
         sim_cfg['profile'] = profiles[sim_cfg['profile']]
-        sim_info = create_simulation(sim_cfg, wrfxpy['wrfxpy_path'], cluster)
+        sim_info = create_simulation(sim_cfg, conf['wrfxpy_path'], conf['jobs_path'], conf['logs_path'],cluster)
         sim_id = sim_info['id']
         simulations[sim_id] = sim_info
         json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'), indent=4, separators=(',', ': '))

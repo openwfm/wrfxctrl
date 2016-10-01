@@ -33,13 +33,15 @@ def select_grib_source(start_time):
     else:
         return 'NARR'
 
-def create_simulation(info, wrfxpy_path, cluster):
+def create_simulation(info, wrfxpy_path, jobs_path, logs_path, cluster):
     """
     Build a simulation JSON configuration based on profiles and execute
     the simulation using wrfxpy.
     
     :param info: the simulation info gathered from the build page
-    :param profiles: the job profiles available to the user
+    :param wrfxpy_path: the path to wrfxpy directory
+    :param jobs_path: the path to jobs directory
+    :param logs_path: the path to logs directory
     :param cluster: a cluster object that conveys information about the computing environment
     :return: the simulation info object
     """
@@ -47,8 +49,9 @@ def create_simulation(info, wrfxpy_path, cluster):
     sim_id = 'from-web-%04d-%02d-%02d_%02d-%02d-%02d' % (now.year, now.month, now.day, now.hour, now.minute, now.second)
 
     # get paths, profiles
-    log_path = 'logs/%s.log' % sim_id
-    json_path = 'jobs/%s.json' % sim_id
+    log_path = logs_path + '/' + sim_id + '.log'
+    json_path = jobs_path + '/' + sim_id + '.json'
+    run_script = jobs_path + '/' + sim_id + '.sh'
     profile = info['profile']
 
     # store simulation configuration
@@ -114,7 +117,6 @@ def create_simulation(info, wrfxpy_path, cluster):
     print json.dumps(cfg, indent=4, separators=(',', ': '))
 
     # drop a shell script that will run the file
-    run_script = 'jobs/' + sim_id + '.sh'
     with open(run_script, 'w') as f:
         f.write('#!/usr/bin/env bash\n')
         f.write('export PYTHONPATH=src\n')

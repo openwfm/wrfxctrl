@@ -33,7 +33,18 @@ def select_grib_source(start_time):
     else:
         return 'NARR'
 
-def create_simulation(info, wrfxpy_path, jobs_path, logs_path, cluster):
+def simulations_paths(sim_id, conf):
+    """
+    Get paths to simulation files.
+     
+    :param sim_id: the simulation id
+    :param conf: connfiguration
+    """
+    return {'log_path' : conf['logs_path'] + '/' + sim_id + '.log' ,
+            'json_path' : conf['jobs_path'] + '/' + sim_id + '.json',
+            'run_script' : conf['jobs_path'] + '/' + sim_id + '.sh'}
+
+def create_simulation(info, conf, cluster):
     """
     Build a simulation JSON configuration based on profiles and execute
     the simulation using wrfxpy.
@@ -48,13 +59,14 @@ def create_simulation(info, wrfxpy_path, jobs_path, logs_path, cluster):
     now = datetime.utcnow()
     sim_id = 'from-web-%04d-%02d-%02d_%02d-%02d-%02d' % (now.year, now.month, now.day, now.hour, now.minute, now.second)
 
-    # get paths, profiles
-    log_path = logs_path + '/' + sim_id + '.log'
-    json_path = jobs_path + '/' + sim_id + '.json'
-    run_script = jobs_path + '/' + sim_id + '.sh'
-    profile = info['profile']
+    # get paths of all files created
+    path= simulations_paths(sim_id,conf)
+    log_path = path['log_path']
+    json_path = path['json_path']
+    run_script = path['run_script']
 
     # store simulation configuration
+    profile = info['profile']
     ign_lat, ign_lon = float(info['ignition_latitude']), float(info['ignition_longitude'])
     # example of ignition time: Apr 10, 1975 9:45 PM
     ign_time_esmf = to_esmf(datetime.strptime(info['ignition_time'], '%b %d, %Y %I:%M %p'))
@@ -120,7 +132,7 @@ def create_simulation(info, wrfxpy_path, jobs_path, logs_path, cluster):
     with open(run_script, 'w') as f:
         f.write('#!/usr/bin/env bash\n')
         f.write('export PYTHONPATH=src\n')
-        f.write('cd ' + wrfxpy_path + '\n')
+        f.write('cd ' + conf['wrfxpy_path'] + '\n')
         f.write('LOG=' + osp.abspath(log_path) + '\n')
         f.write('./forecast.sh ' + osp.abspath(json_path) + ' &> $LOG \n')
 
@@ -129,7 +141,7 @@ def create_simulation(info, wrfxpy_path, jobs_path, logs_path, cluster):
     os.chmod(run_script, st.st_mode | stat.S_IEXEC)
 
     # execute the fire forecast and reroute into the log file provided
-    proc = Popen('./' + run_script, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
+    proc = Popen(run_script, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
 
     return sim_info
 

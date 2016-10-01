@@ -33,7 +33,6 @@ from functools import wraps, update_wrapper
 
 
 # global objects tracking state
-wrfxpy = None
 cluster = None
 simulations = {}
 profiles = None
@@ -81,7 +80,7 @@ def build():
         print 'values returned by build page:'
         print  json.dumps(sim_cfg, indent=4, separators=(',', ': '))
         sim_cfg['profile'] = profiles[sim_cfg['profile']]
-        sim_info = create_simulation(sim_cfg, conf['wrfxpy_path'], conf['jobs_path'], conf['logs_path'],cluster)
+        sim_info = create_simulation(sim_cfg, conf,cluster)
         sim_id = sim_info['id']
         simulations[sim_id] = sim_info
         json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'), indent=4, separators=(',', ': '))
@@ -159,7 +158,6 @@ def get_all_sims():
 if __name__ == '__main__':
     profiles = load_profiles()
     cluster = Cluster(json.load(open('etc/cluster.json')))
-    wrfxpy = json.load(open('etc/wrfxpy.json'))
     simulations = load_simulations()
     app.run(host=host,port=port,debug=debug)
 

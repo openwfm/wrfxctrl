@@ -22,5 +22,11 @@
     "title" : "Four domains, 9km/3km/1km/0.33km cell size, 22m fire grid.",
     "info" : "A four-domain configuration with the top-level domain at 9km grid size and 64x64 grid points.  The first nest has a 3km resolution the second nest has 1km resolution, the third nest has 333m resolution with a 22m fire grid.",
     "template" : "profiles/four_domain_fire.json"
-  }   
+  }, 
+  "four_domain_large" : { 
+    "identifier" : "four_domain_large",
+    "title" : "Four domains, 9km/3km/1km/0.33km cell size, 30m fire grid.",
+    "info" : "A large four-domain configuration with the top-level domain at 9km grid size 192x192 grid points.  The first nest has a 3km resolution the second nest has 1km resolution, the third nest has 333m resolution with a 30m fire grid, 64x64 km",
+    "template" : "profiles/four_domain_large.json"
+  }
 }

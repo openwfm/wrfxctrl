@@ -17,7 +17,7 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 #
 
-from utils import to_esmf, to_utc
+from utils import to_esmf, to_utc, rm
 from datetime import datetime, timedelta
 import pytz
 import json
@@ -44,15 +44,25 @@ def simulations_paths(sim_id, conf):
             'json_path' : conf['jobs_path'] + '/' + sim_id + '.json',
             'run_script' : conf['jobs_path'] + '/' + sim_id + '.sh'}
 
+def remove_simulation(sim_id,conf):
+    """
+    Remove all files for given simulation.
+     
+    :param sim_id: the simulation id
+    :param conf: connfiguration
+    """
+    p = simulation_paths(sim_id,conf)
+    rm(p['log_path'])
+    rm(p['jobs_path'])
+    rm(p['run_script'])
+
 def create_simulation(info, conf, cluster):
     """
     Build a simulation JSON configuration based on profiles and execute
     the simulation using wrfxpy.
     
     :param info: the simulation info gathered from the build page
-    :param wrfxpy_path: the path to wrfxpy directory
-    :param jobs_path: the path to jobs directory
-    :param logs_path: the path to logs directory
+    :param conf: configuration
     :param cluster: a cluster object that conveys information about the computing environment
     :return: the simulation info object
     """
@@ -188,13 +198,17 @@ def make_initial_state():
 def get_simulation_state(path):
     """
     Identify the state of the computation for each subcomponent
-    from the output log.
+    from the output log. If the log does not exist, return default state.
 
     :param path: the path to the log file
     """
     state = make_initial_state()
 
-    with open(path) as f:
+    # for some reason the "with open(path) as f" started just quietly exiting
+    # when the file does not exist...
+
+    try:
+        f = open(path)
         for line in f:
             if 'subprocess.CalledProcessError' in line:
                 parse_error(state, line)
@@ -225,5 +239,8 @@ def get_simulation_state(path):
                 state['wrf'] = 'running'
             elif 'SHUTTLE operations completed' in line:
                 state['output'] = 'available'
+        f.close()
+    except:
+        print "Cannot open file %s" % path
     return state
 

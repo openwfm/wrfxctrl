@@ -52,13 +52,16 @@ def load_profiles():
     return {name:Dict(p) for name,p in profs.iteritems()}
 
 
-def load_simulations():
+def load_simulations(sims_path):
     """
     Load all simulations stored in the simulations/ directory.
 
+    :params sims_path: path to jsons with simulation states 
     :return: a dictionary of simulations
     """
-    files = glob.glob('simulations/*.json') 
+
+    print 'Loading simulation states from %s' % sims_path 
+    files = glob.glob(sims_path + '/*.json') 
     simulations = {}
     for f in files:
         try:
@@ -92,3 +95,17 @@ def to_utc(esmf):
     hour, min, sec = int(esmf[11:13]), int(esmf[14:16]), int(esmf[17:19])
     return datetime(year, mon, day, hour, min, sec, tzinfo=pytz.utc)
 
+def rm(path):
+    """
+    Try to remove a file.
+
+    :param path: file path
+    :return: 'OK', otherwise error
+    """
+    try:
+        os.remove(path)
+        return 0 
+    except OSError as err:
+        logging.error('Cannot delete file %s' % path)
+        logging.error(err.strerror)
+        return err

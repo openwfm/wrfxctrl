@@ -19,7 +19,7 @@
 
 
 from cluster import Cluster
-from simulation import create_simulation, get_simulation_state
+from simulation import create_simulation, get_simulation_state, remove_simulation
 from utils import Dict, to_esmf, to_utc, load_profiles, load_simulations
 from flask import Flask, render_template, request, redirect, make_response
 import json
@@ -44,7 +44,8 @@ host = conf['host']
 debug = conf['debug'] in ['T' 'True' 't' 'true']
 port=conf['port']
 urls = {'submit': root+'/submit', 'welcome': root+'/start', 'overview': root+'/overview'}
-print ( ' * Listening at %s' % urls['welcome'] )
+print ('Welcome page is %s' % urls['welcome'] )
+sims_path = conf['sims_path']
 
 app = Flask(__name__)
 
@@ -83,7 +84,7 @@ def build():
         sim_info = create_simulation(sim_cfg, conf,cluster)
         sim_id = sim_info['id']
         simulations[sim_id] = sim_info
-        json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'), indent=4, separators=(',', ': '))
+        json.dump(sim_info, open(sims_path + sim_id + '.json', 'w'), indent=4, separators=(',', ': '))
         return redirect("/monitor/%s" % sim_id)
 
 
@@ -98,13 +99,14 @@ def monitor(sim_id=None):
 def overview():
     deadline = to_esmf(datetime.now() - timedelta(seconds=5))
     # only update stale & running simulations in overview
+    
     for sim_id,sim in simulations.iteritems():
         if sim['state']['wrf'] != 'complete':
             last_upd = sim.get('last_updated', '2000-01-01_00:00:00')
             if last_upd < deadline:
                 sim['state'] = get_simulation_state(sim['log_file'])
                 sim['last_updated'] = to_esmf(datetime.now())
-                json.dump(sim, open('simulations/' + sim_id + '.json', 'w'), indent=4, separators=(',', ': '))
+                json.dump(sim, open(sims_path + '/' + sim_id + '.json', 'w'), indent=4, separators=(',', ': '))
     return render_template('overview.html', simulations = simulations, urls=urls)
 
 
@@ -136,28 +138,32 @@ def get_state(sim_id=None):
             sim_state = get_simulation_state(sim_info['log_file'])
             sim_info['state'] = sim_state
             sim_info['last_updated'] = to_esmf(datetime.now())
-            json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'))
+            json.dump(sim_info, open(sims_path + '/' + sim_id + '.json', 'w'))
         return json.dumps(sim_state)
 
 @app.route("/remove_sim/<sim_id>")
 def remove_sim(sim_id=None):
     if sim_id is not None:
+        remove_simulation(sim_id,conf)
         if sim_id in simulations:
             del simulations[sim_id]
-            os.remove('simulations/' + sim_id + '.json')
-            return "OK"
+            if rm(sims_path + '/' + sim_id + '.json'):
+                return "Deleting file failed"
+            else:
+                return "OK"
         else:
             return "NotFound"
     
 
 @app.route("/all_sims")
 def get_all_sims():
+    print json.dumps(simulations, indent=4, separators=(',', ': '))
     return json.dumps(simulations, indent=4, separators=(',', ': '))
 
 
 if __name__ == '__main__':
     profiles = load_profiles()
     cluster = Cluster(json.load(open('etc/cluster.json')))
-    simulations = load_simulations()
+    simulations = load_simulations(sims_path)
     app.run(host=host,port=port,debug=debug)
 

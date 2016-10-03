@@ -30,6 +30,7 @@ import stat
 import os.path as osp
 from subprocess import Popen
 from functools import wraps, update_wrapper
+import sys
 
 
 # global objects tracking state
@@ -165,5 +166,6 @@ if __name__ == '__main__':
     profiles = load_profiles()
     cluster = Cluster(json.load(open('etc/cluster.json')))
     simulations = load_simulations(sims_path)
+    sys.stdout.flush()
     app.run(host=host,port=port,debug=debug)
 

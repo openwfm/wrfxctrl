@@ -116,6 +116,7 @@ def create_simulation(info, conf, cluster):
 
     # build the visualization link
     wrfxpy_id = 'wfc-%s-%s-%02d' % (sim_id, to_esmf(sim_start), fc_hours)
+    sim_info['wrfxpy_id']=wrfxpy_id
     sim_info['visualization_link'] = 'http://demo.openwfm.org/fdds/#/view1?sim_id=' + wrfxpy_id
 
     # place top-level domain

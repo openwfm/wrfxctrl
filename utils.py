@@ -66,6 +66,11 @@ def load_simulations(sims_path):
     for f in files:
         try:
             sim_info = json.load(open(f))
+            if 'wrfxpy_id' not in sim_info:
+                # older files do not have wrfxpy_id, redo from the visualization link
+                link=sim_info['visualization_link']
+                sim_info['wrfxpy_id']=link[link.find('wfc-'):]
+                print('Added missing wrfpy_id %s' + sim_info['wrfxpy_id'])
             sim_id = sim_info['id']
             simulations[sim_id] = sim_info
         except ValueError:

@@ -24,7 +24,7 @@ import json
 import os
 import os.path as osp
 import stat
-from subprocess import Popen
+from subprocess import Popen, call
 
 def select_grib_source(start_time):
     now = datetime.utcnow().replace(tzinfo=pytz.UTC)
@@ -33,7 +33,7 @@ def select_grib_source(start_time):
     else:
         return 'NARR'
 
-def simulations_paths(sim_id, conf):
+def simulation_paths(sim_id, conf):
     """
     Get paths to simulation files.
      
@@ -44,13 +44,18 @@ def simulations_paths(sim_id, conf):
             'json_path' : conf['jobs_path'] + '/' + sim_id + '.json',
             'run_script' : conf['jobs_path'] + '/' + sim_id + '.sh'}
 
-def remove_simulation(sim_id,conf):
+def remove_simulation_files(sim_info,conf):
     """
     Remove all files for given simulation.
      
-    :param sim_id: the simulation id
-    :param conf: connfiguration
+    :param sim_info: the simulation json 
+    :param conf: configuration
     """
+    cmd = osp.abspath(osp.join(conf['wrfxpy_path'],'delete_simulation.sh'))
+    arg = sim_info['wrfxpy_id']
+    print cmd, arg
+    call([cmd, arg])
+    sim_id = sim_info['id']
     p = simulation_paths(sim_id,conf)
     rm(p['log_path'])
     rm(p['jobs_path'])
@@ -70,7 +75,7 @@ def create_simulation(info, conf, cluster):
     sim_id = 'from-web-%04d-%02d-%02d_%02d-%02d-%02d' % (now.year, now.month, now.day, now.hour, now.minute, now.second)
 
     # get paths of all files created
-    path= simulations_paths(sim_id,conf)
+    path= simulation_paths(sim_id,conf)
     log_path = path['log_path']
     json_path = path['json_path']
     run_script = path['run_script']
@@ -116,6 +121,7 @@ def create_simulation(info, conf, cluster):
 
     # build the visualization link
     wrfxpy_id = 'wfc-%s-%s-%02d' % (sim_id, to_esmf(sim_start), fc_hours)
+    proc = Popen(run_script, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
     sim_info['wrfxpy_id']=wrfxpy_id
     sim_info['visualization_link'] = 'http://demo.openwfm.org/fdds/#/view1?sim_id=' + wrfxpy_id
 
@@ -244,4 +250,3 @@ def get_simulation_state(path):
     except:
         print "Cannot open file %s" % path
     return state
-

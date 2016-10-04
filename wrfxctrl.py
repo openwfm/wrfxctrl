@@ -38,15 +38,17 @@ cluster = None
 simulations = {}
 profiles = None
 
-#conf params
+#conf params and state
 conf = json.load(open('etc/conf.json'))
+sims_path = conf['sims_path']
+simulations = load_simulations(sims_path)
+
 root = conf['root']
 host = conf['host']
 debug = conf['debug'] in ['T' 'True' 't' 'true']
 port=conf['port']
 urls = {'submit': root+'/submit', 'welcome': root+'/start', 'overview': root+'/overview'}
 print ('Welcome page is %s' % urls['welcome'] )
-sims_path = conf['sims_path']
 
 app = Flask(__name__)
 
@@ -145,16 +147,8 @@ def get_state(sim_id=None):
 @app.route("/remove_sim/<sim_id>")
 def remove_sim(sim_id=None):
     if sim_id is not None:
-        remove_simulation(sim_id,conf)
-        if sim_id in simulations:
-            del simulations[sim_id]
-            if rm(sims_path + '/' + sim_id + '.json'):
-                return "Deleting file failed"
-            else:
-                return "OK"
-        else:
-            return "NotFound"
-    
+        remove_simulation_files(simulations(sim_id,conf))
+        del simulations[sim_id]
 
 @app.route("/all_sims")
 def get_all_sims():
@@ -165,7 +159,6 @@ def get_all_sims():
 if __name__ == '__main__':
     profiles = load_profiles()
     cluster = Cluster(json.load(open('etc/cluster.json')))
-    simulations = load_simulations(sims_path)
     sys.stdout.flush()
     app.run(host=host,port=port,debug=debug)
 

@@ -70,7 +70,7 @@ def load_simulations(sims_path):
                 # older files do not have wrfxpy_id, redo from the visualization link
                 link=sim_info['visualization_link']
                 sim_info['wrfxpy_id']=link[link.find('wfc-'):]
-                print('Added missing wrfpy_id %s' + sim_info['wrfxpy_id'])
+                print('Added missing wrfpy_id ' + sim_info['wrfxpy_id'])
             sim_id = sim_info['id']
             simulations[sim_id] = sim_info
         except ValueError:
@@ -111,6 +111,5 @@ def rm(path):
         os.remove(path)
         return 0 
     except OSError as err:
-        logging.error('Cannot delete file %s' % path)
-        logging.error(err.strerror)
+        print('Cannot delete file %s' % path)
         return err

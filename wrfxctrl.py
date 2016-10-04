@@ -19,8 +19,8 @@
 
 
 from cluster import Cluster
-from simulation import create_simulation, get_simulation_state, remove_simulation
-from utils import Dict, to_esmf, to_utc, load_profiles, load_simulations
+from simulation import create_simulation, get_simulation_state, remove_simulation, load_simulations
+from utils import Dict, to_esmf, to_utc, load_profiles
 from flask import Flask, render_template, request, redirect, make_response
 import json
 from datetime import datetime, timedelta

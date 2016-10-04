@@ -1,5 +1,4 @@
-from simulation import remove_simulation_files
-from utils import  load_simulations
+from simulation import remove_simulation_files, load_simulations
 import json
 import sys
 

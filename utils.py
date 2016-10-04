@@ -20,7 +20,6 @@
 import json
 from datetime import datetime
 import pytz
-import glob
 import logging 
 import os
 
@@ -51,34 +50,6 @@ def load_profiles():
     profs = json.load(open('etc/profiles.json'))
     return {name:Dict(p) for name,p in profs.iteritems()}
 
-
-def load_simulations(sims_path):
-    """
-    Load all simulations stored in the simulations/ directory.
-
-    :params sims_path: path to jsons with simulation states 
-    :return: a dictionary of simulations
-    """
-
-    print 'Loading simulation states from %s' % sims_path 
-    files = glob.glob(sims_path + '/*.json') 
-    simulations = {}
-    for f in files:
-        try:
-            sim_info = json.load(open(f))
-            if 'wrfxpy_id' not in sim_info:
-                # older files do not have wrfxpy_id, redo from the visualization link
-                link=sim_info['visualization_link']
-                sim_info['wrfxpy_id']=link[link.find('wfc-'):]
-                print('Added missing wrfpy_id ' + sim_info['wrfxpy_id'])
-            sim_id = sim_info['id']
-            simulations[sim_id] = sim_info
-        except ValueError:
-            logging.error('LOADSIM failed to reload simulation %s' % f)
-            os.rename(f, f + '.error') 
-    return simulations
-
-
 def to_esmf(ts):
     """
     Convert a UTC datetime into a ESMF string.
@@ -107,6 +78,7 @@ def rm(path):
     :param path: file path
     :return: 'OK', otherwise error
     """
+    print 'Deleting %s' % path
     try:
         os.remove(path)
         return 0 

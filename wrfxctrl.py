@@ -150,13 +150,7 @@ def get_state(sim_id=None):
             sim_state = get_simulation_state(sim_info['log_file'])
             sim_info['state'] = sim_state
             sim_info['last_updated'] = to_esmf(datetime.now())
-            f = sims_path + '/' + sim_id + '.json'
-            if osp.isfile(f):
-                json.dump(sim, open(f,'w'), indent=4, separators=(',', ': '))
-            else:
-                print('File %s no longer exists, deleting simulation' % f)
-                del simulations[sim_id]
-                return{}
+            json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'))
         return json.dumps(sim_state)
 
 @app.route("/remove_sim/<sim_id>")

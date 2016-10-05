@@ -41,10 +41,11 @@ def simulation_paths(sim_id, conf):
     Get paths to simulation files.
      
     :param sim_id: the simulation id
-    :param conf: connfiguration
+    :param conf: configuration
     """
     return {'log_path' : conf['logs_path'] + '/' + sim_id + '.log' ,
             'json_path' : conf['jobs_path'] + '/' + sim_id + '.json',
+            'state_path' : conf['sims_path'] + '/' + sim_id + '.json',
             'run_script' : conf['jobs_path'] + '/' + sim_id + '.sh'}
 
 def delete_simulation(sim_info,conf):
@@ -60,10 +61,7 @@ def delete_simulation(sim_info,conf):
     logging.debug('Calling ' + ' '.join(exe))
     os.system(' '.join(exe))
     sim_id = sim_info['id']
-    p = simulation_paths(sim_id,conf)
-    rm(p['log_path'])
-    rm(p['jobs_path'])
-    rm(p['run_script'])
+    rm(simulation_paths(sim_id,conf).values())
 
 def load_simulations(sims_path):
     """
@@ -84,7 +82,7 @@ def load_simulations(sims_path):
                 # older files do not have wrfxpy_id, redo from the visualization link
                 link=sim_info['visualization_link']
                 sim_info['wrfxpy_id']=link[link.find('wfc-'):]
-                logging.info('Added missing wrfpy_id ' + sim_info['wrfxpy_id'])
+                logging.debug('Added missing wrfpy_id ' + sim_info['wrfxpy_id'])
             sim_id = sim_info['id']
             simulations[sim_id] = sim_info
             logging.debug('load_simulations: loaded simulation id %s' % sim_id)

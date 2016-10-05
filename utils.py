@@ -71,17 +71,17 @@ def to_utc(esmf):
     hour, min, sec = int(esmf[11:13]), int(esmf[14:16]), int(esmf[17:19])
     return datetime(year, mon, day, hour, min, sec, tzinfo=pytz.utc)
 
-def rm(path):
+def rm(paths):
     """
     Try to remove a file.
 
-    :param path: file path
+    :param path: list of file paths
     :return: 'OK', otherwise error
     """
-    print 'Deleting %s' % path
-    try:
-        os.remove(path)
-        return 0 
-    except OSError as err:
-        print('Cannot delete file %s' % path)
-        return err
+    for f in paths:
+        logging.debug('Deleting %s' % f)
+        try:
+            os.remove(f)
+            logging.info('Deleted %s' % f)
+        except OSError as err:
+            logging.error('Cannot delete %s: %s' % (f,err.strerror))

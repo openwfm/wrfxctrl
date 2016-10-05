@@ -100,16 +100,25 @@ def monitor(sim_id=None):
 @app.route(urls['overview'])
 @nocache
 def overview():
+    # reload, cleanup might delete jsons while webserver is running 
+    simulations = load_simulations(sims_path)
     deadline = to_esmf(datetime.now() - timedelta(seconds=5))
     # only update stale & running simulations in overview
-    
-    for sim_id,sim in simulations.iteritems():
+    kk = simulations.keys()   
+    for sim_id in kk:
+        sim = simulations[sim_id]
         if sim['state']['wrf'] != 'complete':
             last_upd = sim.get('last_updated', '2000-01-01_00:00:00')
             if last_upd < deadline:
                 sim['state'] = get_simulation_state(sim['log_file'])
                 sim['last_updated'] = to_esmf(datetime.now())
-                json.dump(sim, open(sims_path + '/' + sim_id + '.json', 'w'), indent=4, separators=(',', ': '))
+                f = sims_path + '/' + sim_id + '.json'
+                if osp.isfile(f):
+                    json.dump(sim, open(f,'w'), indent=4, separators=(',', ': '))
+                    simulations[sim_id]=sim
+                else:
+                    print('File %s no longer exists, deleting simulation' % f)
+                    del simulations[sim_id]
     return render_template('overview.html', simulations = simulations, urls=urls)
 
 
@@ -141,7 +150,13 @@ def get_state(sim_id=None):
             sim_state = get_simulation_state(sim_info['log_file'])
             sim_info['state'] = sim_state
             sim_info['last_updated'] = to_esmf(datetime.now())
-            json.dump(sim_info, open(sims_path + '/' + sim_id + '.json', 'w'))
+            f = sims_path + '/' + sim_id + '.json'
+            if osp.isfile(f):
+                json.dump(sim, open(f,'w'), indent=4, separators=(',', ': '))
+            else:
+                print('File %s no longer exists, deleting simulation' % f)
+                del simulations[sim_id]
+                return{}
         return json.dumps(sim_state)
 
 @app.route("/remove_sim/<sim_id>")

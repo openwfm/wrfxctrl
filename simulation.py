@@ -26,6 +26,8 @@ import os.path as osp
 import stat
 from subprocess import Popen, call
 import glob
+import logging
+import pprint
 
 def select_grib_source(start_time):
     now = datetime.utcnow().replace(tzinfo=pytz.UTC)
@@ -45,17 +47,18 @@ def simulation_paths(sim_id, conf):
             'json_path' : conf['jobs_path'] + '/' + sim_id + '.json',
             'run_script' : conf['jobs_path'] + '/' + sim_id + '.sh'}
 
-def remove_simulation_files(sim_info,conf):
+def delete_simulation(sim_info,conf):
     """
     Remove all files for given simulation.
      
     :param sim_info: the simulation json 
     :param conf: configuration
     """
-    cmd = osp.abspath(osp.join(conf['wrfxpy_path'],'delete_simulation.sh'))
-    arg = sim_info['wrfxpy_id']
-    print cmd, arg
-    call([cmd, arg])
+    cmd = osp.abspath(osp.join(conf['wrfxpy_path'],'cleanup.sh'))
+    wrfxpy_id = sim_info['wrfxpy_id']
+    exe = [cmd, 'delete', wrfxpy_id]
+    logging.debug('Calling ' + ' '.join(exe))
+    os.system(' '.join(exe))
     sim_id = sim_info['id']
     p = simulation_paths(sim_id,conf)
     rm(p['log_path'])
@@ -75,16 +78,18 @@ def load_simulations(sims_path):
     simulations = {}
     for f in files:
         try:
+            logging.debug('load_simulations: loading file %s' % f)
             sim_info = json.load(open(f))
             if 'wrfxpy_id' not in sim_info:
                 # older files do not have wrfxpy_id, redo from the visualization link
                 link=sim_info['visualization_link']
                 sim_info['wrfxpy_id']=link[link.find('wfc-'):]
-                print('Added missing wrfpy_id ' + sim_info['wrfxpy_id'])
+                logging.info('Added missing wrfpy_id ' + sim_info['wrfxpy_id'])
             sim_id = sim_info['id']
             simulations[sim_id] = sim_info
+            logging.debug('load_simulations: loaded simulation id %s' % sim_id)
         except ValueError:
-            logging.error('LOADSIM failed to reload simulation %s' % f)
+            logging.error('load_simulations: failed to reload simulation %s' % f)
             os.rename(f, f + '.error') 
     return simulations
 

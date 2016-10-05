@@ -19,7 +19,7 @@
 
 
 from cluster import Cluster
-from simulation import create_simulation, get_simulation_state, remove_simulation, load_simulations
+from simulation import create_simulation, get_simulation_state, delete_simulation, load_simulations
 from utils import Dict, to_esmf, to_utc, load_profiles
 from flask import Flask, render_template, request, redirect, make_response
 import json
@@ -147,7 +147,7 @@ def get_state(sim_id=None):
 @app.route("/remove_sim/<sim_id>")
 def remove_sim(sim_id=None):
     if sim_id is not None:
-        remove_simulation_files(simulations(sim_id,conf))
+        delete_simulation(simulations(sim_id,conf))
         del simulations[sim_id]
 
 @app.route("/all_sims")

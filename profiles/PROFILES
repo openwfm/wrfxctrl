@@ -1,2 +1,2 @@
 This directory stores various pre-configured fire simulation profiles.
-
+They must be declared in /etc/profiles.json in order to work in the system.

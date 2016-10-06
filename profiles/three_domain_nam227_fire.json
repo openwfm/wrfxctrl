@@ -1,6 +1,6 @@
 {
-  "grid_code": "three-domain-fire",
-  "grib_source": "auto",
+  "grid_code": "three-domain-nam227-fire",
+  "grib_source": "NAM227",
   "wps_namelist_path": "etc/nlists/default.wps",
   "wrf_namelist_path": "etc/nlists/default.input",
   "fire_namelist_path": "etc/nlists/default.fire",
@@ -22,15 +22,15 @@
       "time_step" : 30,
       "history_interval" : 120,
       "geog_res" : "30s",
-      "subgrid_ratio" : [1, 1]
+      "subgrid_ratio" : [0, 0]
     },
     "2" : {
       "parent_id" : 1,
       "parent_cell_size_ratio" : 3,
       "parent_time_step_ratio" : 3,
       "geog_res" : ".3s",
-      "subgrid_ratio" : [1, 1],
-      "parent_start" : [30, 30],
+      "subgrid_ratio" : [0, 0],
+      "parent_start" : [31, 31],
       "parent_end" : [71, 71],
       "history_interval" : 60
     },
@@ -39,9 +39,9 @@
       "parent_cell_size_ratio" : 3,
       "parent_time_step_ratio" : 3,
       "geog_res" : ".3s",
-      "subgrid_ratio" : [40, 40],
-      "parent_start" : [45, 45],
-      "parent_end" : [76, 76],
+      "subgrid_ratio" : [20, 20],
+      "parent_start" : [41, 41],
+      "parent_end" : [81, 81],
       "history_interval" : 15
     }
   },

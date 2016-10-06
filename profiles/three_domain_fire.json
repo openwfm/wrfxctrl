@@ -22,14 +22,14 @@
       "time_step" : 45,
       "history_interval" : 120,
       "geog_res" : "30s",
-      "subgrid_ratio" : [1, 1]
+      "subgrid_ratio" : [0, 0]
     },
     "2" : {
       "parent_id" : 1,
       "parent_cell_size_ratio" : 3,
       "parent_time_step_ratio" : 3,
       "geog_res" : "30s",
-      "subgrid_ratio" : [1, 1],
+      "subgrid_ratio" : [0, 0],
       "parent_start" : [30, 30],
       "parent_end" : [71, 71],
       "history_interval" : 60

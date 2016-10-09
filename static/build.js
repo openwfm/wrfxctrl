@@ -53,9 +53,9 @@ $.fn.form.settings.rules.valid_ignition_time = function(str) {
   var now = moment().utc();
   if(!ign_time.isValid())
     return false;
-  if(ign_time > now) {
-    return false;
-  }
+//  if(ign_time > now) {
+//    return false;
+//  }
   if(ign_time.year() < 1979) {
     return false;
   }

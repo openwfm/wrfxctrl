@@ -100,6 +100,7 @@ def monitor(sim_id=None):
 @app.route(urls['overview'])
 @nocache
 def overview():
+  if request.method == 'GET':
     # reload, cleanup might delete jsons while webserver is running 
     simulations = load_simulations(sims_path)
     deadline = to_esmf(datetime.now() - timedelta(seconds=5))
@@ -120,6 +121,10 @@ def overview():
                     print('File %s no longer exists, deleting simulation' % f)
                     del simulations[sim_id]
     return render_template('overview.html', simulations = simulations, urls=urls)
+  elif request.method == 'POST':
+        sim_cfg = request.form.copy()  # dictionary values set in the html  <select name="KEY" class="ui dropdown" id="KEY">
+        print 'values returned by build page:'
+        print  json.dumps(sim_cfg, indent=4, separators=(',', ': '))
 
 
 # JSON access to state

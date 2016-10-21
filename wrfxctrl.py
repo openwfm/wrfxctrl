@@ -48,7 +48,7 @@ host = conf['host']
 debug = conf['debug'] in ['T' 'True' 't' 'true']
 port=conf['port']
 urls = {'submit': root+'/submit', 'welcome': root+'/start', 'overview': root+'/overview'}
-print ('Welcome page is %s' % urls['welcome'] )
+print ('Welcome page is http://%s:%s%s' % (host, port, urls['welcome']) )
 
 app = Flask(__name__)
 

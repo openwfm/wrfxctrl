@@ -87,7 +87,8 @@ def build():
         sim_info = create_simulation(sim_cfg, conf,cluster)
         sim_id = sim_info['id']
         simulations[sim_id] = sim_info
-        json.dump(sim_info, open(sims_path + sim_id + '.json', 'w'), indent=4, separators=(',', ': '))
+        print 'sim_info:'
+        print json.dumps(sim_info, indent=4, separators=(',', ': '))
         return redirect("/monitor/%s" % sim_id)
 
 

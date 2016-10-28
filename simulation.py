@@ -159,7 +159,7 @@ def create_simulation(info, conf, cluster):
     wrfxpy_id = 'wfc-%s-%s-%02d' % (sim_id, to_esmf(sim_start), fc_hours)
     proc = Popen(run_script, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
     sim_info['wrfxpy_id']=wrfxpy_id
-    sim_info['visualization_link'] = 'http://demo.openwfm.org/fdds/#/view1?sim_id=' + wrfxpy_id
+    sim_info['visualization_link'] = conf['wrfxweb_url'] + '/#/view1?sim_id=' + wrfxpy_id
 
     # place top-level domain
     cfg['domains']['1']['truelats'] = [ign_lat, ign_lat]

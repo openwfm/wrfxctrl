@@ -1,4 +1,4 @@
-from simulation import delete_simulation, load_simulations
+from simulation import delete_simulation, delete_simulation_files, load_simulations
 import json
 import sys
 import logging
@@ -20,6 +20,7 @@ if sys.argv[1] == 'delete':
         delete_simulation(sim_info,conf)
     except KeyError:
         logging.error('Simulation %s not found.' % sim_id)
+        delete_simulation_files(sim_id,conf) # rm any stray files
 elif sys.argv[1] == 'list':
     print('%-30s desc' % 'id') 
     print('-' * 40)

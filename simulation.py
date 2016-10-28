@@ -50,8 +50,7 @@ def simulation_paths(sim_id, conf):
 
 def delete_simulation(sim_info,conf):
     """
-    Remove all files for given simulation.
-     
+    Delete simulation from wrfxpy and all files.
     :param sim_info: the simulation json 
     :param conf: configuration
     """
@@ -60,7 +59,14 @@ def delete_simulation(sim_info,conf):
     exe = [cmd, 'delete', wrfxpy_id]
     logging.debug('Calling ' + ' '.join(exe))
     os.system(' '.join(exe))
-    sim_id = sim_info['id']
+    delete_simulation_files(sim_info['id'],conf)
+
+def delete_simulation_files(sim_id,conf):
+    """
+    Remove all files for given simulation.
+    :param sim_id: the simulation id
+    :param conf: configuration
+    """
     rm(simulation_paths(sim_id,conf).values())
 
 def load_simulations(sims_path):

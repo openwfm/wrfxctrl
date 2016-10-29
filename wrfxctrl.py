@@ -126,7 +126,10 @@ def overview():
         sim_cfg = request.form.copy()  # dictionary values set in the html  <select name="KEY" class="ui dropdown" id="KEY">
         print 'values returned by build page:'
         print  json.dumps(sim_cfg, indent=4, separators=(',', ': '))
-
+	sim_ckboxData= request.form.getlist('simulations')   # UNTESTED - VH
+	for sim_id in sim_ckboxData.keys()   # Delete simulation(s) clicked in checkbox.
+		del simulations[sim_id]      # UNTESTED - VH
+		cleanup simulations[sim_id]  # UNTESTED - VH
 
 # JSON access to state
 @app.route("/retrieve_log/<sim_id>")

@@ -127,7 +127,7 @@ def overview():
         print 'values returned by build page:'
         print  json.dumps(sim_cfg, indent=4, separators=(',', ': '))
 	sim_ckboxData= request.form.getlist('simulations')   # UNTESTED - VH
-	for sim_id in sim_ckboxData:         # Delete simulation(s) clicked in checkbox.
+	for sim_id in sim_ckboxData:  # Only the simulation(s) checked in checkbox.
 		print ('Box Checked sim_id= %s' % (sim_id)) 
 		#del simulations[sim_id]      # UNTESTED - VH
 		#cleanup simulations[sim_id]  # UNTESTED - VH

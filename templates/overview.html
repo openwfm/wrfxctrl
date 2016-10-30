@@ -13,12 +13,13 @@
 
 <div class="ui one column stackable center aligned page grid">
   <div class="column sixteen wide">
+    <form class="ui form" method="POST">
     <h1>List of fire simulations</h1>
       <br />
       <table class="ui celled sortable table" id="sim-table">
         <thead>
           <tr>
-            <th class="no-sort"><div class="ui checkbox"><input type="checkbox" name="_all" id="cb-all"><label></label></div> </th>
+            <th class="no-sort"><div class="ui checkbox"><input type="checkbox" name="_all" id="cb-all" onClick="EnableRemove(this)"><label></label></div> </th>
             <th>Simulation identifier</th>
             <th>Status</th>
             <th id="sim-started-at">Started at</th>
@@ -44,7 +45,7 @@
           {% endfor %}
         </tbody>
      </table>
-     <div class="ui left floated red button disabled" type="submit" name="RemoveButton">Remove</div>
+     <div class="ui left floated red button disabled" type="submit" id="RemoveButton">Remove</div>
      <a href="{{ urls['welcome'] }}" class="ui right floated blue button">Home</a>
      <a href="{{ urls['submit'] }}" class="ui right floated red button"><i class="fire icon"></i>Start a new fire</a>
       <p id="acknowledgement"><a href="http://www.openwfm.org" target="_blank">University of Colorado Denver, Wildland Fire Group 2016</a></p>
@@ -55,19 +56,17 @@
 $(document).ready( function() {
     var sdata = $('table').tablesort().data('tablesort');
     sdata.sort($('#sim-started-at'), 'desc');
-
-    $('#_all').checkbox({
-        onChecked: function() {
-            $('.ui.checkbox').not($(this)).checkbox('check');
-            $('#RemoveButton').removeClass('disabled');
-        },
-        onUnchecked: function() {
-            $('.ui.checkbox').not($(this)).checkbox('uncheck');
-            $('#Remove.Button').addClass('disabled');
-        }
-    });
 });
-</script>
 
+EnableRemove = function(boxval) 
+{
+        if (boxval.checked == true)
+        {       $("#RemoveButton").removeClass('disabled');
+        }
+        else
+        {       $("#RemoveButton").addClass('disabled');
+        }
+}       
+</script>
 
 </body>

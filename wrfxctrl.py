@@ -98,7 +98,7 @@ def monitor(sim_id=None):
     return render_template('monitor.html', sim = simulations.get(sim_id, None), urls=urls)
 
 
-@app.route(urls['overview'])
+@app.route(urls['overview'], methods=['GET', 'POST'])
 @nocache
 def overview():
   if request.method == 'GET':
@@ -127,9 +127,10 @@ def overview():
         print 'values returned by build page:'
         print  json.dumps(sim_cfg, indent=4, separators=(',', ': '))
 	sim_ckboxData= request.form.getlist('simulations')   # UNTESTED - VH
-	for sim_id in sim_ckboxData.keys()   # Delete simulation(s) clicked in checkbox.
-		del simulations[sim_id]      # UNTESTED - VH
-		cleanup simulations[sim_id]  # UNTESTED - VH
+	for sim_id in sim_ckboxData:         # Delete simulation(s) clicked in checkbox.
+		print ('Box Checked sim_id= %s' % (sim_id)) 
+		#del simulations[sim_id]      # UNTESTED - VH
+		#cleanup simulations[sim_id]  # UNTESTED - VH
 
 # JSON access to state
 @app.route("/retrieve_log/<sim_id>")

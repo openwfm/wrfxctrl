@@ -44,7 +44,7 @@
           {% endfor %}
         </tbody>
      </table>
-     <div class="ui left floated red button">Remove</div>
+     <div class="ui left floated red button disabled" type="submit" name="RemoveButton">Remove</div>
      <a href="{{ urls['welcome'] }}" class="ui right floated blue button">Home</a>
      <a href="{{ urls['submit'] }}" class="ui right floated red button"><i class="fire icon"></i>Start a new fire</a>
       <p id="acknowledgement"><a href="http://www.openwfm.org" target="_blank">University of Colorado Denver, Wildland Fire Group 2016</a></p>
@@ -56,14 +56,14 @@ $(document).ready( function() {
     var sdata = $('table').tablesort().data('tablesort');
     sdata.sort($('#sim-started-at'), 'desc');
 
-    $('#cb-all').checkbox({
+    $('#_all').checkbox({
         onChecked: function() {
             $('.ui.checkbox').not($(this)).checkbox('check');
-            $('.ui.button').removeClass('disabled');
+            $('#RemoveButton').removeClass('disabled');
         },
         onUnchecked: function() {
             $('.ui.checkbox').not($(this)).checkbox('uncheck');
-            $('.ui.button').addClass('disabled');
+            $('#Remove.Button').addClass('disabled');
         }
     });
 });

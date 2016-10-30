@@ -176,7 +176,7 @@ def create_simulation(info, conf, cluster):
     cfg['postproc']['shuttle'] = 'incremental'
     cfg['postproc']['description'] = sim_descr
 
-    json.dump(cfg, open(json_path, 'w'))
+    json.dump(cfg, open(json_path, 'w'),indent=1, separators=(',',':'))
 
     print json_path
     print json.dumps(cfg, indent=4, separators=(',', ': '))

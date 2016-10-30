@@ -156,7 +156,7 @@ def get_state(sim_id=None):
             sim_state = get_simulation_state(sim_info['log_file'])
             sim_info['state'] = sim_state
             sim_info['last_updated'] = to_esmf(datetime.now())
-            json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'))
+            json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'),indent=1, separators=(',',':'))
         return json.dumps(sim_state)
 
 @app.route("/remove_sim/<sim_id>")

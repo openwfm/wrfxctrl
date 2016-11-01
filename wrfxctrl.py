@@ -31,7 +31,7 @@ import os.path as osp
 from subprocess import Popen
 from functools import wraps, update_wrapper
 import sys
-
+from cleanup import cleanup_delete
 
 # global objects tracking state
 cluster = None
@@ -128,8 +128,7 @@ def overview():
      print (sims_checked)
      for sim_id in sims_checked:  # Only the simulation(s) checked in checkbox.
         print ('Sim box checked: %s' % (sim_id)) 
-        # del sim_id      # UNTESTED - VH
-        # cleanup sim_id  # UNTESTED - VH
+        cleanup_delete(sim_id)
      simulations = load_simulations(sims_path)
      return render_template('overview.html', simulations = simulations, urls=urls)
 

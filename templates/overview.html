@@ -30,7 +30,8 @@
         <tbody>
           {% for sim_id,sim in simulations.iteritems() %}
           <tr>
-            <td> <div class="ui checkbox"> <input type="checkbox" class="jobcb" name="{{sim_id}}"><label></label></div> </td>
+<!--            <td> <div class="ui checkbox"> <input type="checkbox" class="jobcb" name="{{sim_id}}"><label></label></div> </td> -->
+            <td> <div class="ui checkbox"> <input type="checkbox" class="jobcb" name="sim_chk" value="{{sim_id}}"><label></label></div> </td>
             <td> <a href="/monitor/{{sim_id}}" target="_blank"> {{sim_id}} </a></td>
             <td> {{sim['state']['wrf'] | safe}} </td>
             <td> {{sim['started_at']}}  </td>
@@ -45,7 +46,9 @@
           {% endfor %}
         </tbody>
      </table>
-     <div class="ui left floated red button disabled" type="submit" id="RemoveButton">Remove</div>
+<!--     <div class="ui left floated red button disabled" type="submit" id="RemoveButton">Remove</div>
+-->
+     <input class="ui left floated red button disabled" type="submit" id="RemoveButton" value="Remove" />
      <a href="{{ urls['welcome'] }}" class="ui right floated blue button">Home</a>
      <a href="{{ urls['submit'] }}" class="ui right floated red button"><i class="fire icon"></i>Start a new fire</a>
       <p id="acknowledgement"><a href="http://www.openwfm.org" target="_blank">University of Colorado Denver, Wildland Fire Group 2016</a></p>

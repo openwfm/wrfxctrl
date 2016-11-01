@@ -130,6 +130,8 @@ def overview():
         print ('Sim box checked: %s' % (sim_id)) 
         # del sim_id      # UNTESTED - VH
         # cleanup sim_id  # UNTESTED - VH
+     simulations = load_simulations(sims_path)
+     return render_template('overview.html', simulations = simulations, urls=urls)
 
 # JSON access to state
 @app.route("/retrieve_log/<sim_id>")

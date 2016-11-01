@@ -123,16 +123,13 @@ def overview():
                     del simulations[sim_id]
     return render_template('overview.html', simulations = simulations, urls=urls)
   elif request.method == 'POST':
-     # sim_cfg = request.form.copy()  # dictionary values set in the html <select name="KEY" class="ui dropdown" id="KEY">
-     # print 'values returned by build page:'
-     # print  json.dumps(sim_cfg, indent=4, separators=(',', ': '))
-     print 'Remove button pressed. Values returned by overview page:'
+     print 'Values returned by overview page:'
      sims_checked= request.form.getlist('sim_chk')
      print (sims_checked)
-     #for sim_id in sims_checked:  # Only the simulation(s) checked in checkbox.
-        #print ('Box checked: sim_id= %s' % (sim_id)) 
-        #del simulations[sim_id]      # UNTESTED - VH
-        #cleanup simulations[sim_id]  # UNTESTED - VH
+     for sim_id in sims_checked:  # Only the simulation(s) checked in checkbox.
+        print ('Sim box checked: %s' % (sim_id)) 
+        # del sim_id      # UNTESTED - VH
+        # cleanup sim_id  # UNTESTED - VH
 
 # JSON access to state
 @app.route("/retrieve_log/<sim_id>")

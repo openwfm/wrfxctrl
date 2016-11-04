@@ -19,7 +19,7 @@
       <table class="ui celled sortable table" id="sim-table">
         <thead>
           <tr>
-            <th class="no-sort"><div class="ui checkbox"><input type="checkbox" name="_all" id="cb-all" onClick="EnableRemove(this)"><label></label></div> </th>
+            <th class="no-sort"><div class="ui checkbox"><input type="checkbox" name="_all" id="cb_all" onClick="cb_all_func(this)"><label>Check all</label></div> </th>
             <th>Simulation identifier</th>
             <th>Status</th>
             <th id="sim-started-at">Started at</th>
@@ -31,7 +31,7 @@
           {% for sim_id,sim in simulations.iteritems() %}
           <tr>
 <!--            <td> <div class="ui checkbox"> <input type="checkbox" class="jobcb" name="{{sim_id}}"><label></label></div> </td> -->
-            <td> <div class="ui checkbox"> <input type="checkbox" class="jobcb" name="sim_chk" value="{{sim_id}}"><label></label></div> </td>
+            <td> <div class="ui checkbox"> <input type="checkbox" class="jobcb" name="sim_chk" value="{{sim_id}}" onClick="cb_func(this)"><label></label></div> </td>
             <td> <a href="/monitor/{{sim_id}}" target="_blank"> {{sim_id}} </a></td>
             <td> {{sim['state']['wrf'] | safe}} </td>
             <td> {{sim['started_at']}}  </td>
@@ -61,13 +61,24 @@ $(document).ready( function() {
     sdata.sort($('#sim-started-at'), 'desc');
 });
 
-EnableRemove = function(boxval) 
+cb_all_func = function(boxval) 
+{
+    if (boxval.checked == true) {
+        $("#RemoveButton").removeClass('disabled');
+    }
+    else {
+        $("#RemoveButton").addClass('disabled');
+    }
+    $("input:checkbox").prop('checked', $(this).prop("checked"));
+}       
+
+cb_func = function(boxval) 
 {
         if (boxval.checked == true)
         {       $("#RemoveButton").removeClass('disabled');
         }
         else
-        {       $("#RemoveButton").addClass('disabled');
+        {       $("#cb_all")[0].checked = false;;
         }
 }       
 </script>

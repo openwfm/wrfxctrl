@@ -1,0 +1,30 @@
+{
+    "profile": {
+        "info": "Only one domain, 60x60 grid cells of size 1km with 25m fire grid. Domain will be centered on ignition point.",
+        "identifier": "single_domain_60",
+        "template": "profiles/simple_fire.json",
+        "title": "Single domain, 1km cell size, fast and simple"
+    },
+    "wrfxpy_id": "wfc-from-web-2016-11-04_06-51-00-2016-11-04_06:00:00-03",
+    "started_at": "2016-11-04_00:51:00",
+    "last_updated": "2016-11-10_18:45:58",
+    "ign_time_esmf": "2016-11-04_06:50:00",
+    "fc_hours": 3,
+    "start_utc": "2016-11-04_06:00:00",
+    "visualization_link": "http://demo.openwfm.org/vh/#/view1?sim_id=wfc-from-web-2016-11-04_06-51-00-2016-11-04_06:00:00-03",
+    "ign_latitude": 40.4508,
+    "ign_longitude": -105.3014,
+    "state": {
+        "real": "waiting",
+        "wrf": "waiting",
+        "ungrib": "complete",
+        "ingest": "complete",
+        "geogrid": "running",
+        "output": "waiting",
+        "metgrid": "waiting"
+    },
+    "log_file": "/bigdisk/vinceherr/wrfxctrl/logs/from-web-2016-11-04_06-51-00.log",
+    "id": "from-web-2016-11-04_06-51-00",
+    "end_utc": "2016-11-04_09:00:00",
+    "description": "Nov04A"
+}

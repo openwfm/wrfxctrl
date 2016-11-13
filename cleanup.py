@@ -11,7 +11,7 @@ def cleanup_delete(sim_id):
     try:
         logging.info('Deleting simulation %s' % sim_id)
         sim_info = simulations[sim_id]
-        cancel_simulation(sim_info,conf)
+        delete_simulation(sim_info,conf)
     except KeyError:
         logging.error('Simulation %s not found.' % sim_id)
         delete_simulation_files(sim_id,conf) # rm any stray files
@@ -21,7 +21,7 @@ def cleanup_cancel(sim_id):
     try:
         logging.info('Canceling simulation %s' % sim_id)
         sim_info = simulations[sim_id]
-        delete_simulation(sim_info,conf)
+        cancel_simulation(sim_info,conf)
     except KeyError:
         logging.error('Simulation %s not found.' % sim_id)
         delete_simulation_files(sim_id,conf) # rm any stray files

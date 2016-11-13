@@ -49,7 +49,8 @@
      </table>
 <!--     <div class="ui left floated red button disabled" type="submit" id="RemoveButton">Remove</div>
 -->
-     <input class="ui left floated red button" type="submit" id="RemoveButton" value="Remove" />
+     <input class="ui left floated red button" type="submit" id="RemoveButton" name="RemoveB" value="Remove" />
+     <input class="ui left floated red button" type="submit" id="CancelButton" name="CancelB" value="Cancel" />
      <a href="{{ urls['welcome'] }}" class="ui right floated blue button">Home</a>
      <a href="{{ urls['submit'] }}" class="ui right floated red button"><i class="fire icon"></i>Start a new fire</a>
       <p id="acknowledgement"><a href="http://www.openwfm.org" target="_blank">University of Colorado Denver, Wildland Fire Group 2016</a></p>
@@ -66,10 +67,12 @@ cb_all_func = function(boxval)
 {
     if (boxval.checked == true) {
         $("#RemoveButton").removeClass('disabled');
+        $("#CancelButton").removeClass('disabled');
         $('#overview input[type=checkbox]').checkBox('changeCheckStatus', true);
     }
     else {
- //       $("#RemoveButton").addClass('disabled');
+//        $("#RemoveButton").addClass('disabled');
+//        $("#CancelButton").addClass('disabled');
         $('#overview input[type=checkbox]').checkBox('changeCheckStatus', false);
     }
     $("input:checkbox").prop('checked', $(this).prop("checked"));
@@ -79,6 +82,7 @@ cb_func = function(boxval)
 {
         if (boxval.checked == true)
         {       $("#RemoveButton").removeClass('disabled');
+                $("#CancelButton").removeClass('disabled');
         }
 //        else
 //        {       $("#cb_all")[0].checked = false;

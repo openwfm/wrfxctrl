@@ -19,7 +19,7 @@
 
 
 from cluster import Cluster
-from simulation import create_simulation, get_simulation_state, delete_simulation, load_simulations
+from simulation import create_simulation, get_simulation_state, cancel_simulation, delete_simulation, load_simulations
 from utils import Dict, to_esmf, to_utc, load_profiles
 from flask import Flask, render_template, request, redirect, make_response
 import json
@@ -31,7 +31,7 @@ import os.path as osp
 from subprocess import Popen
 from functools import wraps, update_wrapper
 import sys
-from cleanup import cleanup_delete
+from cleanup import cleanup_delete, cleanup_cancel
 
 # global objects tracking state
 cluster = None
@@ -101,36 +101,43 @@ def monitor(sim_id=None):
 @app.route(urls['overview'], methods=['GET', 'POST'])
 @nocache
 def overview():
-  if request.method == 'GET':
-    # reload, cleanup might delete jsons while webserver is running 
-    simulations = load_simulations(sims_path)
-    deadline = to_esmf(datetime.now() - timedelta(seconds=5))
-    # only update stale & running simulations in overview
-    kk = simulations.keys()   
-    for sim_id in kk:
-        sim = simulations[sim_id]
-        if sim['state']['wrf'] != 'complete':
-            last_upd = sim.get('last_updated', '2000-01-01_00:00:00')
-            if last_upd < deadline:
-                sim['state'] = get_simulation_state(sim['log_file'])
-                sim['last_updated'] = to_esmf(datetime.now())
-                f = sims_path + '/' + sim_id + '.json'
-                if osp.isfile(f):
-                    json.dump(sim, open(f,'w'), indent=4, separators=(',', ': '))
-                    simulations[sim_id]=sim
+    if request.method == 'GET':
+        # reload, cleanup might delete jsons while webserver is running 
+        simulations = load_simulations(sims_path)
+        deadline = to_esmf(datetime.now() - timedelta(seconds=5))
+        # only update stale & running simulations in overview
+        kk = simulations.keys()   
+        for sim_id in kk:
+            sim = simulations[sim_id]
+            if sim['state']['wrf'] != 'complete':
+                last_upd = sim.get('last_updated', '2000-01-01_00:00:00')
+                if last_upd < deadline:
+                    sim['state'] = get_simulation_state(sim['log_file'])
+                    sim['last_updated'] = to_esmf(datetime.now())
+                    f = sims_path + '/' + sim_id + '.json'
+                    if osp.isfile(f):
+                        json.dump(sim, open(f,'w'), indent=4, separators=(',', ': '))
+                        simulations[sim_id]=sim
+                    else:
+                        print('File %s no longer exists, deleting simulation' % f)
+                        del simulations[sim_id]
+        return render_template('overview.html', simulations = simulations, urls=urls)
+    elif request.method == 'POST':
+        print 'Values returned by overview page:'
+        sims_checked= request.form.getlist('sim_chk')
+        print (sims_checked)
+        for sim_id in sims_checked:  # Only the simulation(s) checked in checkbox.
+            if 'RemoveB' in request.form:
+                print ('Remove Sim: box checked= %s' % (sim_id)) 
+                cleanup_delete(sim_id)
+            else:
+                if 'CancelB' in request.form:
+                    print ('Cancel Sim: box checked= %s' % (sim_id))
+                    cleanup_cancel(sim_id)
                 else:
-                    print('File %s no longer exists, deleting simulation' % f)
-                    del simulations[sim_id]
-    return render_template('overview.html', simulations = simulations, urls=urls)
-  elif request.method == 'POST':
-     print 'Values returned by overview page:'
-     sims_checked= request.form.getlist('sim_chk')
-     print (sims_checked)
-     for sim_id in sims_checked:  # Only the simulation(s) checked in checkbox.
-        print ('Sim box checked: %s' % (sim_id)) 
-        cleanup_delete(sim_id)
-     simulations = load_simulations(sims_path)
-     return render_template('overview.html', simulations = simulations, urls=urls)
+                    print ('Error-No button push detected: box checked= %s' % (sim_id))
+        simulations = load_simulations(sims_path)
+        return render_template('overview.html', simulations = simulations, urls=urls)
 
 # JSON access to state
 @app.route("/retrieve_log/<sim_id>")
@@ -167,6 +174,12 @@ def get_state(sim_id=None):
 def remove_sim(sim_id=None):
     if sim_id is not None:
         delete_simulation(simulations(sim_id,conf))
+        del simulations[sim_id]
+
+@app.route("/cancel_sim/<sim_id>")
+def cancel_sim(sim_id=None):
+    if sim_id is not None:
+        cancel_simulation(simulations(sim_id,conf))
         del simulations[sim_id]
 
 @app.route("/all_sims")

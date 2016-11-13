@@ -47,6 +47,19 @@ def simulation_paths(sim_id, conf):
             'json_path' : conf['jobs_path'] + '/' + sim_id + '.json',
             'state_path' : conf['sims_path'] + '/' + sim_id + '.json',
             'run_script' : conf['jobs_path'] + '/' + sim_id + '.sh'}
+def cancel_simulation(sim_info,conf):
+    """
+    Cancel simulation job, then Delete simulation from wrfxpy and all files.
+    :param sim_info: the simulation json 
+    :param conf: configuration
+    """
+    cmd = osp.abspath(osp.join(conf['wrfxpy_path'],'cleanup.sh'))
+    wrfxpy_id = sim_info['wrfxpy_id']
+    exe = [cmd, 'cancel', wrfxpy_id]
+    logging.debug('Calling ' + ' '.join(exe))
+    os.system(' '.join(exe))
+    delete_simulation(sim_info,conf)
+
 
 def delete_simulation(sim_info,conf):
     """

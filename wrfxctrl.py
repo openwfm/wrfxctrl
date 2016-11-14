@@ -180,7 +180,6 @@ def remove_sim(sim_id=None):
 def cancel_sim(sim_id=None):
     if sim_id is not None:
         cancel_simulation(simulations(sim_id,conf))
-        del simulations[sim_id]
 
 @app.route("/all_sims")
 def get_all_sims():

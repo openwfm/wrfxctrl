@@ -49,7 +49,7 @@ def simulation_paths(sim_id, conf):
             'run_script' : conf['jobs_path'] + '/' + sim_id + '.sh'}
 def cancel_simulation(sim_info,conf):
     """
-    Cancel simulation job, then Delete simulation from wrfxpy and all files.
+    Cancel simulation job. Do not delete files.
     :param sim_info: the simulation json 
     :param conf: configuration
     """
@@ -58,8 +58,28 @@ def cancel_simulation(sim_info,conf):
     exe = [cmd, 'cancel', wrfxpy_id]
     logging.debug('Calling ' + ' '.join(exe))
     os.system(' '.join(exe))
-    delete_simulation(sim_info,conf)
 
+def cleanup_sim_output(sim_info,conf):
+    """    Cleanup simulation output.
+    :param sim_info: the simulation json 
+    :param conf: configuration
+    """
+    cmd = osp.abspath(osp.join(conf['wrfxpy_path'],'cleanup.sh'))
+    wrfxpy_id = sim_info['wrfxpy_id']
+    exe = [cmd, 'output', wrfxpy_id]
+    logging.debug('Calling ' + ' '.join(exe))
+    os.system(' '.join(exe))
+
+def cleanup_sim_workspace(sim_info,conf):
+    """    Cleanup simulation workspace.
+    :param sim_info: the simulation json 
+    :param conf: configuration
+    """
+    cmd = osp.abspath(osp.join(conf['wrfxpy_path'],'cleanup.sh'))
+    wrfxpy_id = sim_info['wrfxpy_id']
+    exe = [cmd, 'workspace', wrfxpy_id]
+    logging.debug('Calling ' + ' '.join(exe))
+    os.system(' '.join(exe))
 
 def delete_simulation(sim_info,conf):
     """

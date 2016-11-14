@@ -1,4 +1,4 @@
-from simulation import cancel_simulation, delete_simulation, delete_simulation_files, load_simulations
+from simulation import cancel_simulation, delete_simulation, delete_simulation_files, load_simulations, cleanup_sim_output, cleanup_sim_workspace
 import json
 import sys
 import logging
@@ -24,7 +24,24 @@ def cleanup_cancel(sim_id):
         cancel_simulation(sim_info,conf)
     except KeyError:
         logging.error('Simulation %s not found.' % sim_id)
-        delete_simulation_files(sim_id,conf) # rm any stray files
+
+def cleanup_output(sim_id):
+    simulations = load_simulations(sims_path)
+    try:
+        logging.info('Cleanup output for %s' % sim_id)
+        sim_info = simulations[sim_id]
+        cleanup_sim_output(sim_info,conf)
+    except KeyError:
+        logging.error('Simulation %s not found.' % sim_id)
+
+def cleanup_workspace(sim_id):
+    simulations = load_simulations(sims_path)
+    try:
+        logging.info('Cleanup workspace for %s' % sim_id)
+        sim_info = simulations[sim_id]
+        cleanup_sim_workspace(sim_info,conf)
+    except KeyError:
+        logging.error('Simulation %s not found.' % sim_id)
 
 def cleanup_list():
     simulations = load_simulations(sims_path)
@@ -47,6 +64,12 @@ if __name__ == '__main__':
     elif sys.argv[1] == 'cancel':
         sim_id=sys.argv[2]
         cleanup_cancel(sim_id)
+    elif sys.argv[1] == 'output':
+        sim_id=sys.argv[2]
+        cleanup_output(sim_id)
+    elif sys.argv[1] == 'workspace':
+        sim_id=sys.argv[2]
+        cleanup_workspace(sim_id)
     elif sys.argv[1] == 'list':
         cleanup_list()
     else:

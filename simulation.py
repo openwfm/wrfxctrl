@@ -54,8 +54,8 @@ def cancel_simulation(sim_info,conf):
     :param conf: configuration
     """
     cmd = osp.abspath(osp.join(conf['wrfxpy_path'],'cleanup.sh'))
-    wrfxpy_id = sim_info['wrfxpy_id']
-    exe = [cmd, 'cancel', wrfxpy_id]
+    job_id = sim_info['job_id']
+    exe = [cmd, 'cancel', job_id]
     logging.debug('Calling ' + ' '.join(exe))
     os.system(' '.join(exe))
 
@@ -65,8 +65,8 @@ def cleanup_sim_output(sim_info,conf):
     :param conf: configuration
     """
     cmd = osp.abspath(osp.join(conf['wrfxpy_path'],'cleanup.sh'))
-    wrfxpy_id = sim_info['wrfxpy_id']
-    exe = [cmd, 'output', wrfxpy_id]
+    job_id = sim_info['job_id']
+    exe = [cmd, 'output', job_id]
     logging.debug('Calling ' + ' '.join(exe))
     os.system(' '.join(exe))
 
@@ -76,8 +76,8 @@ def cleanup_sim_workspace(sim_info,conf):
     :param conf: configuration
     """
     cmd = osp.abspath(osp.join(conf['wrfxpy_path'],'cleanup.sh'))
-    wrfxpy_id = sim_info['wrfxpy_id']
-    exe = [cmd, 'workspace', wrfxpy_id]
+    job_id = sim_info['job_id']
+    exe = [cmd, 'workspace', job_id]
     logging.debug('Calling ' + ' '.join(exe))
     os.system(' '.join(exe))
 
@@ -88,8 +88,8 @@ def delete_simulation(sim_info,conf):
     :param conf: configuration
     """
     cmd = osp.abspath(osp.join(conf['wrfxpy_path'],'cleanup.sh'))
-    wrfxpy_id = sim_info['wrfxpy_id']
-    exe = [cmd, 'delete', wrfxpy_id]
+    job_id = sim_info['job_id']
+    exe = [cmd, 'delete', job_id]
     logging.debug('Calling ' + ' '.join(exe))
     os.system(' '.join(exe))
     delete_simulation_files(sim_info['id'],conf)
@@ -117,11 +117,11 @@ def load_simulations(sims_path):
         logging.info('load_simulations: loading file %s' % f)
         try:
             sim_info = json.load(open(f))
-            if 'wrfxpy_id' not in sim_info:
-                # older files do not have wrfxpy_id, redo from the visualization link
+            if 'job_id' not in sim_info:
+                # older files do not have job_id, redo from the visualization link
                 link=sim_info['visualization_link']
-                sim_info['wrfxpy_id']=link[link.find('wfc-'):]
-                logging.debug('Added missing wrfpy_id ' + sim_info['wrfxpy_id'])
+                sim_info['job_id']=link[link.find('wfc-'):]
+                logging.debug('Added missing job_id ' + sim_info['job_id'])
             sim_id = sim_info['id']
             simulations[sim_id] = sim_info
             logging.info('load_simulations: loaded simulation id %s' % sim_id)
@@ -189,9 +189,10 @@ def create_simulation(info, conf, cluster):
         print 'Using GRIB source %s from profile %s' % (cfg['grib_source'], profile)
 
     # build wrfpy_id and the visualization link
-    wrfxpy_id = 'wfc-%s-%s-%02d' % (sim_id, to_esmf(sim_start), fc_hours)
-    sim_info['wrfxpy_id']=wrfxpy_id
-    sim_info['visualization_link'] = conf['wrfxweb_url'] + '/#/view1?sim_id=' + wrfxpy_id
+    job_id = 'wfc-%s-%s-%02d' % (sim_id, to_esmf(sim_start), fc_hours)
+    sim_info['job_id']=job_id
+    sim_info['visualization_link'] = conf['wrfxweb_url'] + '/#/view1?sim_id=' + job_id
+    cfg['job_id']=job_id
 
     # place top-level domain
     cfg['domains']['1']['truelats'] = [ign_lat, ign_lat]

@@ -24,7 +24,7 @@ import json
 import os
 import os.path as osp
 import stat
-from subprocess import Popen, call
+from subprocess import Popen, call, check_output
 import glob
 import logging
 import pprint
@@ -47,6 +47,7 @@ def simulation_paths(sim_id, conf):
             'json_path' : conf['jobs_path'] + '/' + sim_id + '.json',
             'state_path' : conf['sims_path'] + '/' + sim_id + '.json',
             'run_script' : conf['jobs_path'] + '/' + sim_id + '.sh'}
+
 def cancel_simulation(sim_info,conf):
     """
     Cancel simulation job. Do not delete files.
@@ -57,7 +58,14 @@ def cancel_simulation(sim_info,conf):
     job_id = sim_info['job_id']
     exe = [cmd, 'cancel', job_id]
     logging.debug('Calling ' + ' '.join(exe))
-    os.system(' '.join(exe))
+    out = check_output(exe)
+    logging.info(out)
+
+    paths = simulation_paths(sim_info['id'],conf)
+    log_path = paths['log_path']
+    with open(log_path, "a") as f:
+        f.write(out)
+        f.write("Cancelled")
 
 def cleanup_sim_output(sim_info,conf):
     """    Cleanup simulation output.
@@ -211,8 +219,8 @@ def create_simulation(info, conf, cluster):
 
     json.dump(cfg, open(json_path, 'w'),indent=1, separators=(',',':'))
 
-    print json_path
-    print json.dumps(cfg, indent=4, separators=(',', ': '))
+    #print json_path
+    #print json.dumps(cfg, indent=4, separators=(',', ': '))
 
     # drop a shell script that will run the file
     with open(run_script, 'w') as f:
@@ -315,6 +323,8 @@ def get_simulation_state(path):
                 state['wrf'] = 'running'
             elif 'SHUTTLE operations completed' in line:
                 state['output'] = 'available'
+            if 'Cancelled' in line:
+                state['wrf'] = 'cancelled'
         f.close()
     except:
         print "Cannot open file %s" % path

@@ -81,14 +81,14 @@ def build():
     elif request.method == 'POST':
         # it's a POST so initiate a simulation
         sim_cfg = request.form.copy()  # dictionary values set in the html  <select name="KEY" class="ui dropdown" id="KEY">
-        print 'values returned by build page:'
-        print  json.dumps(sim_cfg, indent=4, separators=(',', ': '))
+        # print 'values returned by build page:'
+        # print  json.dumps(sim_cfg, indent=4, separators=(',', ': '))
         sim_cfg['profile'] = profiles[sim_cfg['profile']]
         sim_info = create_simulation(sim_cfg, conf,cluster)
         sim_id = sim_info['id']
         simulations[sim_id] = sim_info
-        print 'sim_info:'
-        print json.dumps(sim_info, indent=4, separators=(',', ': '))
+        # print 'sim_info:'
+        # print json.dumps(sim_info, indent=4, separators=(',', ': '))
         return redirect("/monitor/%s" % sim_id)
 
 

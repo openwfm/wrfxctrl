@@ -110,12 +110,12 @@ def load_simulations(sims_path):
     :return: a dictionary of simulations
     """
 
-    print 'Loading simulation states from %s' % sims_path 
+    logging.info('Loading simulation states from %s' % sims_path)
     files = glob.glob(sims_path + '/*.json') 
     simulations = {}
     for f in files:
+        logging.info('load_simulations: loading file %s' % f)
         try:
-            logging.debug('load_simulations: loading file %s' % f)
             sim_info = json.load(open(f))
             if 'wrfxpy_id' not in sim_info:
                 # older files do not have wrfxpy_id, redo from the visualization link
@@ -124,7 +124,7 @@ def load_simulations(sims_path):
                 logging.debug('Added missing wrfpy_id ' + sim_info['wrfxpy_id'])
             sim_id = sim_info['id']
             simulations[sim_id] = sim_info
-            logging.debug('load_simulations: loaded simulation id %s' % sim_id)
+            logging.info('load_simulations: loaded simulation id %s' % sim_id)
         except ValueError:
             logging.error('load_simulations: failed to reload simulation %s' % f)
             os.rename(f, f + '.error') 
@@ -188,7 +188,7 @@ def create_simulation(info, conf, cluster):
     else:
         print 'Using GRIB source %s from profile %s' % (cfg['grib_source'], profile)
 
-    # build the visualization link
+    # build wrfpy_id and the visualization link
     wrfxpy_id = 'wfc-%s-%s-%02d' % (sim_id, to_esmf(sim_start), fc_hours)
     proc = Popen(run_script, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
     sim_info['wrfxpy_id']=wrfxpy_id

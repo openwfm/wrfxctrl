@@ -2,8 +2,9 @@ from simulation import cancel_simulation, delete_simulation, delete_simulation_f
 import json
 import sys
 import logging
+from utils import load_sys_cfg
 
-conf = json.load(open('etc/conf.json'))
+conf = load_sys_cfg()
 sims_path = conf['sims_path']
 
 def cleanup_delete(sim_id):

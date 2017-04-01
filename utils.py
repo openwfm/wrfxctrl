@@ -22,6 +22,7 @@ from datetime import datetime
 import pytz
 import logging 
 import os
+import os.path as osp
 
 class Dict(dict):
     """
@@ -85,3 +86,21 @@ def rm(paths):
             logging.info('Deleted %s' % f)
         except OSError as err:
             logging.error('Cannot delete %s: %s' % (f,err.strerror))
+
+
+def load_sys_cfg():
+    # load the system configuration
+    sys_cfg = None
+    try:
+        sys_cfg = Dict(json.load(open('etc/conf.json')))
+    except IOError:
+        logging.critical('Cannot find system configuration, have you created etc/conf.json?')
+        sys.exit(2)
+    # set defaults
+    sys = sys_cfg.sys_install_path = sys_cfg.get('sys_install_path',os.getcwd())
+    sys_cfg.jobs_path = sys_cfg.get('jobs_path',osp.join(sys,'jobs'))
+    sys_cfg.logs_path = sys_cfg.get('logs_path',osp.join(sys,'logs'))
+    sys_cfg.sims_path = sys_cfg.get('sims_path',osp.join(sys,'simulations'))
+
+    return sys_cfg
+

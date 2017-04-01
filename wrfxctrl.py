@@ -20,7 +20,7 @@
 
 from cluster import Cluster
 from simulation import create_simulation, get_simulation_state, cancel_simulation, delete_simulation, load_simulations
-from utils import Dict, to_esmf, to_utc, load_profiles
+from utils import Dict, to_esmf, to_utc, load_profiles, load_sys_cfg
 from flask import Flask, render_template, request, redirect, make_response
 import json
 from datetime import datetime, timedelta
@@ -39,7 +39,7 @@ simulations = {}
 profiles = None
 
 #conf params and state
-conf = json.load(open('etc/conf.json'))
+conf = load_sys_cfg()
 sims_path = conf['sims_path']
 simulations = load_simulations(sims_path)
 

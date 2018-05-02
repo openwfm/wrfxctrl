@@ -180,7 +180,7 @@ def create_simulation(info, conf, cluster):
     # build a new job template
     cfg = json.load(open(profile['template']))
     cfg['grid_code'] = sim_id
-    cfg['qsys'] = cluster.qsys
+    # cfg['qsys'] = cluster.qsys
     cfg['num_nodes'] = 6
     cfg['ppn'] = cluster.ppn
     ign_time = to_utc(ign_time_esmf)
@@ -225,6 +225,7 @@ def create_simulation(info, conf, cluster):
     # drop a shell script that will run the file
     with open(run_script, 'w') as f:
         f.write('#!/usr/bin/env bash\n')
+        f.write('/usr/bin/env\n')
         f.write('export PYTHONPATH=src\n')
         f.write('cd ' + conf['wrfxpy_path'] + '\n')
         f.write('LOG=' + osp.abspath(log_path) + '\n')
@@ -236,6 +237,7 @@ def create_simulation(info, conf, cluster):
 
     # execute the fire forecast and reroute into the log file provided
     proc = Popen(run_script, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
+    
 
     return sim_info
 

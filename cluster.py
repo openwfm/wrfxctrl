@@ -9,6 +9,6 @@ class Cluster(object):
         self.hostname = socket.gethostname()
         self.nodes = cfg['nodes']
         self.ppn = cfg['ppn']
-        self.qsys = cfg['qsys']
+        # self.qsys = cfg['qsys']
         # FIXME
         self.free_nodes = self.nodes

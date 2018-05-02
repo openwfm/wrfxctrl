@@ -5,8 +5,6 @@
   "wrf_namelist_path": "etc/nlists/default.input",
   "fire_namelist_path": "etc/nlists/default.fire",
   "emissions_namelist_path": "etc/nlists/default.fire_emissions",
-  "geogrid_path": "/share_home/mvejmelka/Packages/WPS-GEOG",
-  "qsys": "colibri",
   "num_nodes": 6,
   "ppn": 16,
   "wall_time_hrs": 3,

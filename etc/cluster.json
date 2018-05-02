@@ -1,5 +1,5 @@
 {
-  "nodes" : 24,
-  "ppn" : 16,
-  "qsys" : "colibri"
+  "nodes" : 3,
+  "ppn" : 28,
+  "qsys" : "kingspeak"
 }

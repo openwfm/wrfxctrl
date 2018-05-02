@@ -5,11 +5,9 @@
   "wrf_namelist_path": "etc/nlists/default.input",
   "fire_namelist_path": "etc/nlists/default.fire",
   "emissions_namelist_path": "etc/nlists/default.fire_emissions",
-  "wps_geog_path": "/share_home/mvejmelka/Packages/WPS-GEOG",
   "num_nodes": 12,
   "ppn": 16,
   "wall_time_hrs": 3,
-  "qsys": "colibri",
   "start_utc": "T-30",
   "end_utc": "T+300",
   "domains" : {

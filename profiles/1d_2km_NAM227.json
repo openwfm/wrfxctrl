@@ -1,13 +1,13 @@
 {
-  "grid_code": "single-domain-fire",
-  "grib_source": "auto",
+  "grid_code": "1d-2km-NAM227",
+  "grib_source": "NAM227",
   "wps_namelist_path": "etc/nlists/default.wps",
   "wrf_namelist_path": "etc/nlists/default.input",
   "fire_namelist_path": "etc/nlists/default.fire",
   "emissions_namelist_path": "etc/nlists/default.fire_emissions",
-  "num_nodes": 6,
-  "ppn": 16,
-  "wall_time_hrs": 3,
+  "num_nodes": 3,
+  "ppn": 28,
+  "wall_time_hrs": 12,
   "start_utc": "T-30",
   "end_utc": "T+600",
   "domains" : {
@@ -17,7 +17,7 @@
       "center_latlon" : [39.894264, -103.903222],
       "truelats" : [39, 40.8],
       "stand_lon" : -103.9,
-      "time_step" : 5,
+      "time_step" : 10,
       "history_interval" : 15,
       "geog_res" : "0.3s",
       "subgrid_ratio" : [50, 50]
@@ -31,8 +31,8 @@
      } ]
   },
   "postproc" : {
-      "1" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "FIRE_AREA", "FGRNHFX", "FLINEINT", "SMOKE_INT" ],
+      "1" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "FIRE_AREA", "FGRNHFX", "SMOKE_INT" ],
       "shuttle" : "incremental",
-      "description" : "Single domain test fire"
+      "description" : "Single domain NAM227 2km"
   }
 }

@@ -1,37 +1,32 @@
 {
-  "single_domain_60" : {
-    "identifier" : "single_domain_60",
-    "title" : "Single domain, 1km cell size, fast and simple",
-    "info" : "Only one domain, 60x60 grid cells of size 1km with 25m fire grid. Domain will be centered on ignition point.",
-    "template" : "profiles/simple_fire.json"
+  "1d-2km-NAM218" : {
+    "identifier" : "1d-2km-NAM218",
+    "title" : "Single domain, 2km cell size, 25m fire grid, NAM218 12km forcing",
+    "info" : "One domain, 120x120km, 2km resolution with 25m fire grid.",
+    "template" : "profiles/1d_2km_NAM218.json"
   },
-  "two_domain_120_60" : {
-    "identifier" : "two_domain_120_60",
-    "title" : "Two domains, 3km/1km cell size, 25m fire grid.",
-    "info" : "A two-domain configuration with the top-level domain at 3km grid size and 100x100 grid points. The nested domain has 1km resolution and is 40x40 km with a 25m fire grid.",
-    "template" : "profiles/two_domain_fire.json"
+  "1d-2km-NAM227" : {
+    "identifier" : "1d-2km-NAM227",
+    "title" : "Single domain, 2km cell size, 25m fire grid, NAM227 5km forcing",
+    "info" : "One domain, 120x120km, 2km resolution with 25m fire grid.",
+    "template" : "profiles/1d_2km_NAM227.json"
   },
-  "three_domain_900_300_40" : {
-    "identifier" : "three_domain_900_300_40",
-    "title" : "Three domains, 9km/3km/1km cell size, 25m fire grid.",
-    "info" : "A three-domain configuration with the top-level domain at 9km grid size and 100x100 grid points. The first nest has a 3km resolution and the second nest has a 1km resolution with a 25m fire grid.",
-    "template" : "profiles/three_domain_fire.json"
+  "2d-1km-NAM218" : {
+    "identifier" : "2d-1km-NAM218",
+    "title" : "Two domains, 3km/1km resolution with 25m fire grid, NAM218 12km forcing",
+    "info" : "A two-domain configuration with 60x60km fire domain at 1km resolution and a 25m fire grid.",
+    "template" : "profiles/2d_1km_NAM218.json"
   },  
-  "four_domain_9_3_1_03_22" : { 
-    "identifier" : "four_domain_9_3_1_03_22",
-    "title" : "Four domains, 9km/3km/1km/0.33km cell size, 22m fire grid.",
-    "info" : "A four-domain configuration with the top-level domain at 9km grid size and 64x64 grid points.  The first nest has a 3km resolution the second nest has 1km resolution, the third nest has 333m resolution with a 22m fire grid.",
-    "template" : "profiles/four_domain_fire.json"
+  "2d-333m-HRRR" : { 
+    "identifier" : "2d-333m-HRRR",
+    "title" : "Two domains, 1km/0.33km cell size, 33m fire grid. HRRR 3km forcing",
+    "info" : "A two-domain configuration with 20x20km fire domain at 333m resolution and a 33m fire grid.",
+    "template" : "profiles/2d_333m_HRRR.json"
   }, 
-  "four_domain_large" : { 
-    "identifier" : "four_domain_large",
-    "title" : "Four domains, 9km/3km/1km/0.33km cell size, 30m fire grid.",
-    "info" : "A large four-domain configuration with the top-level domain at 9km grid size 192x192 grid points.  The first nest has a 3km resolution the second nest has 1km resolution, the third nest has 333m resolution with a 30m fire grid, 64x64 km",
-    "template" : "profiles/four_domain_large.json"
-  },
-  "three_domain_500_166_28" : { 
-    "identifier" : "three_domain_500_166_28",
-    "title" : "Three domains for NAM227, 5km/1.6km/0.55km cell size, 28m fire grid.",
-    "info" : "A three-domain configuration with the top-level domain at 5km grid size and 100x100 grid points. The first nest has a 1.66km resolution and the second nest has a 555m resolution with a 28m fire grid.",    "template" : "profiles/three_domain_nam227_fire.json"
+  "3d-555m_NAM227" : { 
+    "identifier" : "3d-555m_NAM227",
+    "title" : "Three domains, 5km/1.6km/0.55km cell size, 28m fire grid., NAM227 5km forcing",
+    "info" : "A three-domain configuration with 66x66km fire domain at 555m resolution and a 28m fire grid.", 
+    "template" : "profiles/3d_555m_NAM227.json"
   }    
 }

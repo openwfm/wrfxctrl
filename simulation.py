@@ -159,6 +159,7 @@ def create_simulation(info, conf, cluster):
 
     # store simulation configuration
     profile = info['profile']
+    print ('profile = %s' % json.dumps(profile,indent=1, separators=(',',':')))
     ign_lat, ign_lon = float(info['ignition_latitude']), float(info['ignition_longitude'])
     # example of ignition time: Apr 10, 1975 9:45 PM
     ign_time_esmf = to_esmf(datetime.strptime(info['ignition_time'], '%b %d, %Y %I:%M %p'))
@@ -178,7 +179,13 @@ def create_simulation(info, conf, cluster):
     }
 
     # build a new job template
-    cfg = json.load(open(profile['template']))
+    template = osp.abspath(profile['template'])
+    cfg = json.load(open(template))
+    print ('Job template %s:' % template)
+    print json.dumps(cfg, indent=4, separators=(',', ': '))
+    
+    cfg['template'] = template
+    cfg['profile'] = profile
     cfg['grid_code'] = sim_id
     # cfg['qsys'] = cluster.qsys
     cfg['num_nodes'] = 6
@@ -194,7 +201,7 @@ def create_simulation(info, conf, cluster):
         cfg['grib_source'] = select_grib_source(sim_start)
         print 'GRIB source not specified, selected %s from sim start time' % cfg['grib_source']
     else:
-        print 'Using GRIB source %s from profile %s' % (cfg['grib_source'], profile)
+        print 'Using GRIB source %s from %s' % (cfg['grib_source'], profile['template'])
 
     # build wrfpy_id and the visualization link
     job_id = 'wfc-%s-%s-%02d' % (sim_id, to_esmf(sim_start), fc_hours)
@@ -219,13 +226,13 @@ def create_simulation(info, conf, cluster):
 
     json.dump(cfg, open(json_path, 'w'),indent=1, separators=(',',':'))
 
-    #print json_path
-    #print json.dumps(cfg, indent=4, separators=(',', ': '))
+    print ('Job configuration %s:' % json_path)
+    print json.dumps(cfg, indent=4, separators=(',', ': '))
 
     # drop a shell script that will run the file
     with open(run_script, 'w') as f:
         f.write('#!/usr/bin/env bash\n')
-        f.write('/usr/bin/env\n')
+        #f.write('/usr/bin/env\n')
         f.write('export PYTHONPATH=src\n')
         f.write('cd ' + conf['wrfxpy_path'] + '\n')
         f.write('LOG=' + osp.abspath(log_path) + '\n')
@@ -236,7 +243,9 @@ def create_simulation(info, conf, cluster):
     os.chmod(run_script, st.st_mode | stat.S_IEXEC)
 
     # execute the fire forecast and reroute into the log file provided
+    print('Running %s' % run_script)
     proc = Popen(run_script, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
+    print('Ready')
     
 
     return sim_info

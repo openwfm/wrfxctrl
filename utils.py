@@ -49,7 +49,7 @@ def load_profiles():
     :return: a dict keyed by profile id containing Dicts with profile info
     """
     profs = json.load(open('etc/profiles.json'))
-    return {name:Dict(p) for name,p in profs.iteritems()}
+    return {name:Dict(p) for name,p in profs.items()}
 
 def to_esmf(ts):
     """

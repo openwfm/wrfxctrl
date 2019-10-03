@@ -51,9 +51,9 @@
      } ]
   },
   "postproc" : {
-      "1" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "SMOKE_INT" ],
-      "2" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "SMOKE_INT" ],
-      "3" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "FIRE_AREA", "FGRNHFX", "SMOKE_INT" ]
+      "1" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "SMOKE_INT", "PLUME_HEIGHT", "PLUME_CENTER"  ],
+      "2" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "SMOKE_INT", "PLUME_HEIGHT", "PLUME_CENTER"  ],
+      "3" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "FIRE_AREA", "FGRNHFX", "SMOKE_INT","PLUME_HEIGHT", "PLUME_CENTER" ]
   }
 }
 

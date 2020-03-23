@@ -11,6 +11,12 @@
     "info" : "One domain, 70x70km, 1km resolution with 33m fire grid.",
     "template" : "profiles/1d_1km_NAM227.json"
   },
+  "1d-1km-NAM218S" : {
+    "identifier" : "1d-1km-NAM218S",
+    "title" : "Single domain, 1km cell size, 33m fire grid, NAM218 12km forcing, short simulation",
+    "info" : "One domain, 70x70km, 1km resolution with 33m fire grid, and short simulation using 2 nodes and 2 wallclock hours.",
+    "template" : "profiles/1d_1km_NAM218S.json"
+  },
    "2d-1666m-NAM227" : {
     "identifier" : "2d-1666m-NAM227",
     "title" : "Two domains, 1.6km cell size, 83m fire grid, NAM227 5km forcing",

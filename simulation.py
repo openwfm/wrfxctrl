@@ -187,8 +187,6 @@ def create_simulation(info, conf, cluster):
     cfg['template'] = template
     cfg['profile'] = profile
     cfg['grid_code'] = sim_id
-    # cfg['qsys'] = cluster.qsys
-    cfg['num_nodes'] = 6
     cfg['ppn'] = cluster.ppn
     ign_time = to_utc(ign_time_esmf)
     sim_start = (ign_time - timedelta(minutes=30)).replace(minute=0, second=0)
@@ -319,6 +317,7 @@ def get_simulation_state(path):
                 state['ingest'] = 'complete'
                 state['ungrib'] = 'running'
             elif 'UNGRIB complete' in line:
+                state['ingest'] = 'complete'
                 state['ungrib'] = 'complete'
             elif 'running METGRID' in line:
                 state['metgrid'] = 'running'

@@ -46,15 +46,15 @@ def cleanup_workspace(sim_id):
 
 def cleanup_list():
     simulations = load_simulations(sims_path)
-    print('%-30s desc' % 'id') 
-    print('-' * 40)
+    print(('%-30s desc' % 'id')) 
+    print(('-' * 40))
     for k in sorted(simulations):
-        print('%-30s %s' % (k, simulations[k]['description']))
+        print(('%-30s %s' % (k, simulations[k]['description'])))
 
 if __name__ == '__main__':
 
     if len(sys.argv) < 2:
-        print('usage: %s [list|delete <name>' % sys.argv[0])
+        print(('usage: %s [list|delete <name>' % sys.argv[0]))
         sys.exit(1)
 
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

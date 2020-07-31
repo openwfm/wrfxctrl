@@ -65,9 +65,9 @@ def cancel_simulation(sim_info,conf):
 
     paths = simulation_paths(sim_info['id'],conf)
     log_path = paths['log_path']
-    with open(log_path, "a") as f:
+    with open(log_path, 'wb') as f:
         f.write(out)
-        f.write("Cancelled")
+        f.write(b'Cancelled')
 
 def cleanup_sim_output(sim_info,conf):
     """    Cleanup simulation output.
@@ -189,6 +189,7 @@ def create_simulation(info, conf, cluster):
     cfg['template'] = template
     cfg['profile'] = profile
     cfg['grid_code'] = sim_id
+    cfg['num_nodes'] = cluster.nodes
     cfg['ppn'] = cluster.ppn
     ign_time = to_utc(ign_time_esmf)
     sim_start = (ign_time - timedelta(minutes=30)).replace(minute=0, second=0)
@@ -260,7 +261,7 @@ def parse_error(state, line):
     """
     tools = ['geogrid', 'ungrib', 'metgrid', 'real', 'wrf']
     for t in tools:
-        if t in line:
+        if t in line.lower():
             state[t] = 'failed'
             return
 
@@ -305,6 +306,8 @@ def get_simulation_state(path):
     try:
         f = open(path)
         for line in f:
+            if 'ERROR' in line:
+                parse_error(state,line)
             if 'subprocess.CalledProcessError' in line:
                 parse_error(state, line)
             if 'WRF completion detected' in line:
@@ -338,6 +341,12 @@ def get_simulation_state(path):
             if 'Cancelled' in line:
                 state['wrf'] = 'cancelled'
         f.close()
+        if state['geogrid'] == 'failed' or \
+           state['ungrib'] == 'failed':
+            state['metgrid'] = 'failed'
+            state['real'] = 'failed'
+            state['wrf'] = 'failed'
+            state['output'] = 'failed'
     except:
         print("Cannot open file %s" % path)
     return state

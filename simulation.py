@@ -259,9 +259,9 @@ def parse_error(state, line):
     :param line: the line that created the error
     :param state: the state dictionary containing state of each tool
     """
-    tools = ['geogrid', 'ungrib', 'metgrid', 'real', 'wrf']
+    tools = ['geogrid', 'ingest', 'ungrib', 'metgrid', 'real', 'wrf', 'output']
     for t in tools:
-        if t in line.lower():
+        if t in line.lower() or state[t] in ['waiting','running']:
             state[t] = 'failed'
             return
 

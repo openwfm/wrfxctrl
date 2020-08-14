@@ -45,10 +45,10 @@ conf = load_sys_cfg()
 sims_path = conf['sims_path']
 simulations = load_simulations(sims_path)
 
-root = conf['root']
+root = osp.join('/',conf['root'])
 host = conf['host']
 debug = conf['debug'] in ['T' 'True' 't' 'true']
-port=conf['port']
+port = conf['port']
 urls = {'submit': osp.normpath(root+'/submit'), 'welcome': osp.normpath(root+'/start'), 'overview': osp.normpath(root+'/overview')}
 print('Welcome page is http://%s:%s%s' % (host, port, urls['welcome']) )
 

@@ -11,17 +11,35 @@
     "info" : "One domain, 70x70km, 1km resolution with 33m fire grid.",
     "template" : "profiles/1d_1km_NAM227.json"
   },
+  "1d-2km-NAM218" : {
+    "identifier" : "1d-2km-NAM218",
+    "title" : "Single domain, 2km cell size, 25m fire grid, NAM218 12km forcing",
+    "info" : "One domain, 120x120km, 2km resolution with 25m fire grid.",
+    "template" : "profiles/1d_2km_NAM218.json"
+  },
+  "1d-2km-NAM227" : {
+    "identifier" : "1d-2km-NAM227",
+    "title" : "Single domain, 2km cell size, 25m fire grid, NAM227 5km forcing",
+    "info" : "One domain, 120x120km, 2km resolution with 25m fire grid.",
+    "template" : "profiles/1d_2km_NAM227.json"
+  },
   "1d-1km-NAM218S" : {
     "identifier" : "1d-1km-NAM218S",
     "title" : "Single domain, 1km cell size, 33m fire grid, NAM218 12km forcing, short simulation",
     "info" : "One domain, 70x70km, 1km resolution with 33m fire grid, and short simulation using 2 nodes and 2 wallclock hours.",
     "template" : "profiles/1d_1km_NAM218S.json"
   },
-   "2d-1666m-NAM227" : {
-    "identifier" : "2d-1666m-NAM227",
+   "2d-1667m-NAM227" : {
+    "identifier" : "2d-1667m-NAM227",
     "title" : "Two domains, 1.6km cell size, 83m fire grid, NAM227 5km forcing",
     "info" : "Two large domains, 420x420km, 5km resolution, 210kmx163km  1.66km with 83m fire grid.",
     "template" : "profiles/2d_1667m_NAM227.json"
+  },
+  "2d-1km-NAM218" : {
+    "identifier" : "2d-1km-NAM218",
+    "title" : "Two domains, 3km/1km resolution with 25m fire grid, NAM218 12km forcing",
+    "info" : "A two-domain configuration with 60x60km fire domain at 1km resolution and a 25m fire grid.",
+    "template" : "profiles/2d_1km_NAM218.json"
   },
   "2d-333m-HRRR" : { 
     "identifier" : "2d-333m-HRRR",
@@ -70,6 +88,12 @@
     "title" : "Three domains, 5km/1.6km/0.55km cell size, 28m fire grid., NAM227 5km forcing",
     "info" : "A medium three-domain configuration with 53x53km fire domain at 555m resolution and a 28m fire grid.",
     "template" : "profiles/3d_555m_NAM227M.json"
+  },
+  "3d-555m_NAM227" : {
+    "identifier" : "3d-555m_NAM227",
+    "title" : "Three domains, 5km/1.6km/0.55km cell size, 28m fire grid., NAM227 5km forcing",
+    "info" : "A three-domain configuration with 66x66km fire domain at 555m resolution and a 28m fire grid.",
+    "template" : "profiles/3d_555m_NAM227.json"
   },
   "3d-555m_NAM218L" : {
     "identifier" : "3d-555m_NAM218L",

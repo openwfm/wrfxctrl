@@ -7,7 +7,7 @@
   "emissions_namelist_path": "etc/nlists/default.fire_emissions",
   "num_nodes": 7,
   "ppn": 28,
-  "wall_time_hrs": 3,
+  "wall_time_hrs": 12,
   "start_utc": "T-30",
   "end_utc": "T+300",
   "domains" : {

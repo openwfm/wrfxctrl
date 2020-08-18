@@ -1,5 +1,5 @@
 {
-  "grid_code": "3d-333m-NAM218",
+  "grid_code": "3d-333m-NAM218M",
   "grib_source": "NAM218",
   "wps_namelist_path": "etc/nlists/default.wps",
   "wrf_namelist_path": "etc/nlists/default.input",

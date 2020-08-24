@@ -29,6 +29,8 @@ from datetime import datetime, timedelta
 import pytz
 import os
 import stat
+import random
+import string
 import os.path as osp
 from subprocess import Popen
 from functools import wraps, update_wrapper
@@ -45,12 +47,15 @@ conf = load_sys_cfg()
 sims_path = conf['sims_path']
 simulations = load_simulations(sims_path)
 
-root = osp.join('/',conf['root'])
+#root = osp.join('/',conf['root'])
+root = osp.join('/',''.join(random.choice(string.ascii_lowercase) for i in range(5)))
 host = conf['host']
 debug = conf['debug'] in ['T' 'True' 't' 'true']
 port = conf['port']
 urls = {'submit': osp.normpath(root+'/submit'), 'welcome': osp.normpath(root+'/start'), 'overview': osp.normpath(root+'/overview')}
-print('Welcome page is http://%s:%s%s' % (host, port, urls['welcome']) )
+welcome_page = 'http://{0}:{1}{2}'.format(host,port,urls['welcome'])
+print('Welcome page is {}'.format(welcome_page))
+Popen(["firefox", welcome_page])
 
 app = Flask(__name__)
 

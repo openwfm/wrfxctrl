@@ -55,7 +55,7 @@ port = conf['port']
 urls = {'submit': osp.normpath(root+'/submit'), 'welcome': osp.normpath(root+'/start'), 'overview': osp.normpath(root+'/overview')}
 welcome_page = 'http://{0}:{1}{2}'.format(host,port,urls['welcome'])
 print('Welcome page is {}'.format(welcome_page))
-Popen(["firefox", welcome_page])
+#Popen(["firefox", welcome_page])
 
 app = Flask(__name__)
 

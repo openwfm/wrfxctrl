@@ -128,7 +128,7 @@
   "3d-555m-NAM218L" : {
     "identifier" : "3d-555m-NAM218L",
     "title" : "Three domains, 5km/1.6km/0.55km cell size, 28m fire grid, NAM218 12km forcing",
-    "info" : "A three-domain configuration with 480x480km at 5km resolution, 160x160km at 1.6km resolution, and 92x92km at 555m resolution with 28m fire grid.",
+    "info" : "A three-domain configuration with 975x975km at 5km resolution, 108x108km at 1.6km resolution, and 36x36km at 555m resolution with 28m fire grid.",
     "template" : "profiles/3d_555m_NAM218L.json"
   },
   "3d-555m-NAM218XL" : {

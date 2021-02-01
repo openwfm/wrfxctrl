@@ -1,0 +1,11 @@
+{
+   "host" : "127.0.0.1",
+   "port" : "5000",
+   "root" : "",
+   "debug" : "True",
+   "wrfxweb_url" : "http://host.domain/root",
+   "wrfxpy_path" : "/Users/chaseporter/Desktop/wildfires/wrfxpy",
+   "jobs_path" : "/Users/chaseporter/Desktop/wildfires/wrfxctrl/jobs",
+   "logs_path" : "/Users/chaseporter/Desktop/wildfires/wrfxctrl/logs",
+   "sims_path" : "/Users/chaseporter/Desktop/wildfires/wrfxctrl/simulations"
+}

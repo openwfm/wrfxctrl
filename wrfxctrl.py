@@ -38,7 +38,7 @@ cluster = None
 simulations = {}
 profiles = None
 
-#conf params and state
+# conf params and state
 conf = load_sys_cfg()
 sims_path = conf['sims_path']
 simulations = load_simulations(sims_path)
@@ -46,11 +46,12 @@ simulations = load_simulations(sims_path)
 root = conf['root']
 host = conf['host']
 debug = conf['debug'] in ['T', 'True', 't', 'true']
-port=conf['port']
+port = conf['port']
 urls = {'submit': root+'/submit', 'welcome': root+'/start', 'overview': root+'/overview'}
 print ('Welcome page is http://%s:%s%s' % (host, port, urls['welcome']) )
 
 app = Flask(__name__)
+
 
 # lifted from: http://arusahni.net/blog/2014/03/flask-nocache.html
 def nocache(view):
@@ -66,7 +67,7 @@ def nocache(view):
     return update_wrapper(no_cache, view)
 
 
-#@app.route(root)
+# @app.route(root)
 @app.route(urls['welcome'])
 @nocache
 def welcome():
@@ -80,11 +81,12 @@ def build():
         return render_template('build.html', profiles=profiles.values(), urls=urls)
     elif request.method == 'POST':
         # it's a POST so initiate a simulation
-        sim_cfg = request.form.copy()  # dictionary values set in the html  <select name="KEY" class="ui dropdown" id="KEY">
+        # dictionary values set in the html  <select name="KEY" class="ui dropdown" id="KEY">
+        sim_cfg = request.form.copy()
         print 'values returned by build page:'
-        print  json.dumps(sim_cfg, indent=4, separators=(',', ': '))
+        print json.dumps(sim_cfg, indent=4, separators=(',', ': '))
         sim_cfg['profile'] = profiles[sim_cfg['profile']]
-        sim_info = create_simulation(sim_cfg, conf,cluster)
+        sim_info = create_simulation(sim_cfg, conf, cluster)
         sim_id = sim_info['id']
         simulations[sim_id] = sim_info
         # print 'sim_info:'
@@ -95,7 +97,7 @@ def build():
 @app.route("/monitor/<sim_id>")
 @nocache
 def monitor(sim_id=None):
-    return render_template('monitor.html', sim = simulations.get(sim_id, None), urls=urls)
+    return render_template('monitor.html', sim=simulations.get(sim_id, None), urls=urls)
 
 
 @app.route(urls['overview'], methods=['GET', 'POST'])
@@ -117,14 +119,14 @@ def overview():
                     f = sims_path + '/' + sim_id + '.json'
                     if osp.isfile(f):
                         json.dump(sim, open(f,'w'), indent=4, separators=(',', ': '))
-                        simulations[sim_id]=sim
+                        simulations[sim_id] = sim
                     else:
                         print('File %s no longer exists, deleting simulation' % f)
                         del simulations[sim_id]
-        return render_template('overview.html', simulations = simulations, urls=urls)
+        return render_template('overview.html', simulations=simulations, urls=urls)
     elif request.method == 'POST':
         print 'Values returned by overview page:'
-        sims_checked= request.form.getlist('sim_chk')
+        sims_checked = request.form.getlist('sim_chk')
         print (sims_checked)
         for sim_id in sims_checked:  # Only the simulation(s) checked in checkbox.
             if 'RemoveB' in request.form:
@@ -167,19 +169,22 @@ def get_state(sim_id=None):
             sim_state = get_simulation_state(sim_info['log_file'])
             sim_info['state'] = sim_state
             sim_info['last_updated'] = to_esmf(datetime.now())
-            json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'),indent=1, separators=(',',':'))
+            json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'), indent=1, separators=(',', ':'))
         return json.dumps(sim_state)
+
 
 @app.route("/remove_sim/<sim_id>")
 def remove_sim(sim_id=None):
     if sim_id is not None:
-        delete_simulation(simulations(sim_id,conf))
+        delete_simulation(simulations(sim_id, conf))
         del simulations[sim_id]
+
 
 @app.route("/cancel_sim/<sim_id>")
 def cancel_sim(sim_id=None):
     if sim_id is not None:
-        cancel_simulation(simulations(sim_id,conf))
+        cancel_simulation(simulations(sim_id, conf))
+
 
 @app.route("/all_sims")
 def get_all_sims():
@@ -191,5 +196,5 @@ if __name__ == '__main__':
     profiles = load_profiles()
     cluster = Cluster(json.load(open('etc/cluster.json')))
     sys.stdout.flush()
-    app.run(host=host,port=port,debug=debug)
+    app.run(host=host, port=port, debug=debug)
 

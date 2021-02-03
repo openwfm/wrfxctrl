@@ -32,7 +32,6 @@ function initialize_map() {
 $('#profile-dropdown').dropdown({on: 'hover'});
 
 function buildTwoFields() {
-
   return $(`<div class="two fields">
         <div class="field">
           <input name="ignition_latitude" id="ign-lat" type="text" placeholder="Latitude ...">
@@ -44,9 +43,17 @@ function buildTwoFields() {
       </div>`);
 }
 
-$('.additional-marker').click(() => {
+var additionalMarkers = [];
+$('#additional-marker').click(() => {
   const additionalMarker = buildTwoFields();
-  const markers = $('#markers').append(additionalMarker);
+  $('#markers').append(additionalMarker);
+  additionalMarkers.push(additionalMarker);
+});
+
+$('#remove-marker').click(() => {
+  if (additionalMarkers.length < 1) return;
+  const lastMarker = additionalMarkers.pop();
+  lastMarker.remove();
 });
 
 $('.ui.menu')

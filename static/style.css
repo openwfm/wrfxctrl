@@ -32,7 +32,8 @@ div .fixed-height-grid {
   height: 200px;
 }
 
-.additional-marker {
+.marker-button {
+  display: inline-block;
   margin: auto;
   width: 40px;
   font-size: 2em;
@@ -43,7 +44,7 @@ div .fixed-height-grid {
   background-color: white;
 }
 
-.additional-marker:hover {
+.marker-button:hover {
   border-color: #a6a6a6;
   cursor: pointer;
 }

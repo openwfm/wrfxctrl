@@ -32,6 +32,26 @@ div .fixed-height-grid {
   height: 200px;
 }
 
+.additional-marker {
+  margin: auto;
+  width: 40px;
+  font-size: 2em;
+  border-color: #cccccc;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: .3rem;
+  background-color: white;
+}
+
+.additional-marker:hover {
+  border-color: #a6a6a6;
+  cursor: pointer;
+}
+
+.markers {
+  margin-bottom: 20px;
+}
+
 /* from github.com/ardhi/Leaflet.MousePosition */
 .leaflet-container .leaflet-control-mouseposition {
   background-color: rgba(255, 255, 255, 0.7);

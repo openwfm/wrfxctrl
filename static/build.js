@@ -31,6 +31,23 @@ function initialize_map() {
 // initialize Semantic elements
 $('#profile-dropdown').dropdown({on: 'hover'});
 
+function buildTwoFields() {
+
+  return $(`<div class="two fields">
+        <div class="field">
+          <input name="ignition_latitude" id="ign-lat" type="text" placeholder="Latitude ...">
+        </div>
+
+        <div class="field">
+          <input name="ignition_longitude" id="ign-lon" type="text" placeholder="Longitude ...">
+        </div>
+      </div>`);
+}
+
+$('.additional-marker').click(() => {
+  const additionalMarker = buildTwoFields();
+  const markers = $('#markers').append(additionalMarker);
+});
 
 $('.ui.menu')
     .on('click', '.item', function() {

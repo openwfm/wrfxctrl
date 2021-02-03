@@ -49,6 +49,21 @@ div .fixed-height-grid {
   cursor: pointer;
 }
 
+.active-field-button {
+  display: inline-block;
+  margin: auto;
+  padding: .63em 1em;
+  border-color: #cccccc;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: .3rem;
+  background-color: white;
+}
+
+.active-field-button:hover {
+  border-color: #a6a6a6;
+  cursor: pointer;
+}
 
 
 #markers {

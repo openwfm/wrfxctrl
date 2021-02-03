@@ -31,30 +31,35 @@ function initialize_map() {
 // initialize Semantic elements
 $('#profile-dropdown').dropdown({on: 'hover'});
 
-function buildTwoFields() {
+var markerId = 0;
+function buildTwoFields(id) {
   return $(`<div class="two fields">
         <div class="field">
-          <input name="ignition_latitude" id="ign-lat" type="text" placeholder="Latitude ...">
+          <input name="ignition_latitude" id="ign-lat${id}" type="text" placeholder="Latitude ...">
         </div>
 
         <div class="field">
-          <input name="ignition_longitude" id="ign-lon" type="text" placeholder="Longitude ...">
+          <input name="ignition_longitude" id="ign-lon${id}" type="text" placeholder="Longitude ...">
         </div>
       </div>`);
 }
 
 var additionalMarkers = [];
 $('#additional-marker').click(() => {
-  const additionalMarker = buildTwoFields();
+  const additionalMarker = buildTwoFields(additionalMarkers.length);
+  markerId = additionalMarkers.length;
   $('#markers').append(additionalMarker);
   additionalMarkers.push(additionalMarker);
 });
 
 $('#remove-marker').click(() => {
   if (additionalMarkers.length < 1) return;
+  markerId = markerId - 1;
   const lastMarker = additionalMarkers.pop();
   lastMarker.remove();
 });
+
+$('#additional-marker').click();
 
 $('.ui.menu')
     .on('click', '.item', function() {
@@ -102,7 +107,7 @@ $.fn.form.settings.rules.valid_latitude = function(e) {
 $('.ui.form')
   .form({
     fields: {
-      ignition_latitude   : {
+      ignition_latitude : {
         rules: [ {
           type: 'valid_latitude',
           prompt: 'The ignition latitude must be a number between 36 and 41.'} ]

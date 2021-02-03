@@ -1,4 +1,4 @@
-/* based on github.com/ardhi/Leaflet.MousePosition (MIT license) */
+  /* based on github.com/ardhi/Leaflet.MousePosition (MIT license) */
 
 L.Control.MousePosition = L.Control.extend({
   options: {
@@ -32,13 +32,18 @@ L.Control.MousePosition = L.Control.extend({
   },
   
   _onMouseClick: function(e) {
-    if(this._marker) {
-      this._map.removeLayer(this._marker);
+    if(!this._markers) {
+      this._markers = [];
     }
-    this._marker = L.marker(e.latlng).addTo(this._map);
-    $('#ign-lat').val(L.Util.formatNum(e.latlng.lat, this.options.numDigits));
-    $('#ign-lon').val(L.Util.formatNum(e.latlng.lng, this.options.numDigits));
-    
+    const marker = L.marker(e.latlng).addTo(this._map);
+    if(this._markers.length > markerId) {
+      this._map.removeLayer(this._markers[markerId]);
+      this._markers[markerId] = marker;
+    } else {
+      this._markers.push(marker);
+    }
+    $(`#ign-lat${markerId}`).val(L.Util.formatNum(e.latlng.lat, this.options.numDigits));
+    $(`#ign-lon${markerId}`).val(L.Util.formatNum(e.latlng.lng, this.options.numDigits));
   }
 
 });

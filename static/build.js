@@ -21,7 +21,7 @@ function initialize_map() {
     map = L.map('map', {
       center: [39, -106],
       zoom: 7,
-      layers: [base_layer_dict['MapQuest']],
+      layers: [base_layer_dict['OSM']],
       zoomControl: false
     });
 
@@ -31,6 +31,19 @@ function initialize_map() {
 
 // initialize Semantic elements
 $('#profile-dropdown').dropdown({on: 'hover'});
+
+const valid_longitude = (e) => {
+  var lng = parseFloat(e);
+  if(isNaN(lng) || lng < -128 || lng > -65) return false;
+  return true;
+}
+
+const valid_latitude = (e) => {
+  var lat = parseFloat(e);
+  if(isNaN(lat) || (lat < 22)|| (lat > 51)) return false;
+  return true;
+}
+
 
 var markerId = 0;
 function buildTwoFields(id) {
@@ -56,6 +69,15 @@ function setActiveMarker(newFieldId) {
   markerId = newFieldId;
 }
 
+function updateMarker(newFieldId) {
+  let lat = parseFloat($(`#ign-lat${newFieldId}`).val());
+  let lon = parseFloat($(`#ign-lon${newFieldId}`).val());
+  if (!valid_latitude(lat) || !valid_longitude(lon)) return;
+  if (markers[newFieldId]) map.removeLayer(markers[newFieldId]);
+  const marker = L.marker([lat, lon]).addTo(map);
+  markers[newFieldId] = marker;
+}
+
 var additionalMarkers = [];
 $('#additional-marker').click(() => {
   let newFieldId = additionalMarkers.length;
@@ -65,16 +87,22 @@ $('#additional-marker').click(() => {
   $(`#active-marker${newFieldId}`).click(() => {
     if (additionalMarkers.length > 1) setActiveMarker(newFieldId);
   });
+  $(`#ign-lat${newFieldId}`).change(() => {
+    updateMarker(newFieldId);
+  });
+  $(`#ign-lon${newFieldId}`).change((newLon) => {
+    updateMarker(newFieldId);
+  });
   additionalMarkers.push(additionalMarker);
 });
 
 $('#remove-marker').click(() => {
   if (additionalMarkers.length < 2) return;
-  if (markerId == additionalMarkers.length - 1) {
-    setActiveMarker(markerId - 1);
+  if (markerId == additionalMarkers.length - 1) setActiveMarker(markerId - 1);
+  if (markers[additionalMarkers.length - 1]) {
+    map.removeLayer(markers[additionalMarkers.length - 1]);
+    delete markers[additionalMarkers.length - 1];
   }
-  map.removeLayer(markers[additionalMarkers.length - 1]);
-  delete markers[additionalMarkers.length - 1];
   const lastMarker = additionalMarkers.pop();
   lastMarker.remove();
 });
@@ -111,18 +139,9 @@ $.fn.form.settings.rules.valid_ignition_time = function(str) {
   return true;
 }
 
-$.fn.form.settings.rules.valid_longitude = function(e) {
-  var lng = parseFloat(e);
-  if(isNaN(lng) || lng < -128 || lng > -65) return false;
-  return true;
-}
+$.fn.form.settings.rules.valid_longitude = valid_longitude; 
 
-$.fn.form.settings.rules.valid_latitude = function(e) {
-  var lat = parseFloat(e);
-  console.log(lat);
-  if(isNaN(lat) || (lat < 22)|| (lat > 51)) return false;
-  return true;
-}
+$.fn.form.settings.rules.valid_latitude = valid_latitude;
 
 $('.ui.form')
   .form({

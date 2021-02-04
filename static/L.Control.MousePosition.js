@@ -32,20 +32,16 @@ L.Control.MousePosition = L.Control.extend({
   },
   
   _onMouseClick: function(e) {
-    if(!this._markers) {
-      this._markers = {};
-    }
     const marker = L.marker(e.latlng).addTo(this._map);
-    if(this._markers[markerId]) {
-      this._map.removeLayer(this._markers[markerId]);
-      this._markers[markerId] = marker;
+    if(markers[markerId]) {
+      this._map.removeLayer(markers[markerId]);
+      markers[markerId] = marker;
     } else {
-      this._markers[markerId] = marker;
+      markers[markerId] = marker;
     }
     $(`#ign-lat${markerId}`).val(L.Util.formatNum(e.latlng.lat, this.options.numDigits));
     $(`#ign-lon${markerId}`).val(L.Util.formatNum(e.latlng.lng, this.options.numDigits));
   }
-
 });
 
 L.Map.mergeOptions({

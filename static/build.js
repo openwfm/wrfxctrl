@@ -3,6 +3,7 @@
 // declare variables in global scope
 var map = null;
 var base_layer_dict = null;
+var markers = {};
 
 // map initialization code
 function initialize_map() {
@@ -68,8 +69,12 @@ $('#additional-marker').click(() => {
 });
 
 $('#remove-marker').click(() => {
-  if (additionalMarkers.length < 1) return;
-  markerId = markerId - 1;
+  if (additionalMarkers.length < 2) return;
+  if (markerId == additionalMarkers.length - 1) {
+    setActiveMarker(markerId - 1);
+  }
+  map.removeLayer(markers[additionalMarkers.length - 1]);
+  delete markers[additionalMarkers.length - 1];
   const lastMarker = additionalMarkers.pop();
   lastMarker.remove();
 });

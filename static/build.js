@@ -41,20 +41,28 @@ function buildTwoFields(id) {
         <div class="field">
           <input name="ignition_longitude" id="ign-lon${id}" type="text" placeholder="Longitude ...">
         </div>
-        <div>
+        <div  >
           <span class="active-field-button" id="active-marker${id}">Active</span>
         </div>
       </div>`);
+}
+
+function setActiveMarker(newFieldId) {
+  $(`#active-marker${markerId}`).css("background-color", "white");
+  $(`#active-marker${markerId}`).css("color", "black");
+  $(`#active-marker${newFieldId}`).css("background-color", "#404040");
+  $(`#active-marker${newFieldId}`).css("color", "white");
+  markerId = newFieldId;
 }
 
 var additionalMarkers = [];
 $('#additional-marker').click(() => {
   let newFieldId = additionalMarkers.length;
   const additionalMarker = buildTwoFields(newFieldId);
-  markerId = newFieldId;
   $('#markers').append(additionalMarker);
+  setActiveMarker(newFieldId);
   $(`#active-marker${newFieldId}`).click(() => {
-    markerId = newFieldId;
+    if (additionalMarkers.length > 1) setActiveMarker(newFieldId);
   });
   additionalMarkers.push(additionalMarker);
 });

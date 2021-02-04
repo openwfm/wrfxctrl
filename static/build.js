@@ -22,8 +22,12 @@ function initialize_map() {
       center: [39, -106],
       zoom: 7,
       layers: [base_layer_dict['OSM']],
-      zoomControl: false
+      zoomControl: true,
+      minZoom: 3
     });
+
+    map.doubleClickZoom.disable();
+    map.scrollWheelZoom.disable();
 
     // add lon/lat display to bottom left corner of map
     L.control.mousePosition().addTo(map);

@@ -4,7 +4,7 @@
    "root" : "",
    "debug" : "True",
    "wrfxweb_url" : "http://host.domain/root",
-   "wrfxpy_path" : "/Users/chaseporter/Desktop/wildfires/wrfxpy",
+   "wrfxpy_path" : "/Users/chaseporter/Desktop/wildfires/test/wrfxpy",
    "jobs_path" : "/Users/chaseporter/Desktop/wildfires/wrfxctrl/jobs",
    "logs_path" : "/Users/chaseporter/Desktop/wildfires/wrfxctrl/logs",
    "sims_path" : "/Users/chaseporter/Desktop/wildfires/wrfxctrl/simulations"

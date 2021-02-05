@@ -32,94 +32,95 @@
     <br />
      
     <form class="ui form" method="POST">
-      
-    <h2>Step 1: Short description</h2>
-    <div class="field">
-      <label>Description</label>
-      <input name="description" type="text" id="experiment-description" placeholder="Web initiated run ...">
-    </div>
+        
+      <h2>Step 1: Short description</h2>
+      <div class="field">
+        <label>Description</label>
+        <input name="description" type="text" id="experiment-description" placeholder="Web initiated run ...">
+      </div>
 
-    <h2 class="ui header">Step 2: Ignition location</h2>
-     
-    <p>Select fire location by <b>clicking on the map</b> or filling out the boxes below</p>
-
-    <div id="map"></div>
+      <h2 class="ui header">Step 2: Ignition location</h2>
        
-    <div class="marker-buttons">
-      <div id="additional-marker" class="marker-button"><span>+</span></div>
-      <div id="remove-marker" class="marker-button"><span>-</span></div>
-    </div>
-    <div id="markers"></div>
+      <p>Select fire location by <b>clicking on the map</b> or filling out the boxes below</p>
+
+      <div id="map"></div>
+         
+      <div class="marker-buttons">
+        <div id="additional-marker" class="marker-button"><span>+</span></div>
+        <div id="remove-marker" class="marker-button"><span>-</span></div>
+      </div>
+      <div id="markers"></div>
+            
+      <h2>Step 3: Ignition time and forecast length</h2>
+      <p>The simulation will start at least 30 mins before the ignition time.  The maximum forecast length is 48 hrs.</p>
+        
+      <div class="ui two column grid fixed-height-grid">
+          <div class="column">
+              <div class="field">
+                <label>Ignition time [UTC]</label>
+                <div class="ui input left icon">
+                  <i class="calendar icon"></i>
+                  <input name="ignition_time" id="ign-time" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
+                </div>
+              </div>
+          </div>
+
+          <div class="column">
+              <div class="field">
+                  <label>Forecast length [hours]</label>
+                  <select name="fc_hours" class="ui dropdown" id="fc-hours">
+                      <option value="3">3</option>
+                      <option value="6">6</option>
+                      <option value="9">9</option>
+                      <option value="12">12</option>
+                      <option value="18">18</option>
+                      <option value="24">24</option>
+                      <option value="48">48</option>
+                  </select>
+             </div>
+          </div>
+      </div>
+
+        <h2>Step 4: Simulation profile</h2>
+        
+        <div class="ui two column grid fixed-height-grid">
           
-    <h2>Step 3: Ignition time and forecast length</h2>
-    <p>The simulation will start at least 30 mins before the ignition time.  The maximum forecast length is 48 hrs.</p>
-      
-    <div class="ui two column grid fixed-height-grid">
-        <div class="column">
+          <div class="column">
             <div class="field">
-              <label>Ignition time [UTC]</label>
-              <div class="ui input left icon">
-                <i class="calendar icon"></i>
-                <input name="ignition_time" id="ign-time" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
+              <div class="ui fluid vertical pointing menu">
+                <input type="hidden" name="profile" id="profile">
+                {% for profile in profiles %}
+                <a class="item"
+                    data-value="{{profile.identifier | safe}}"
+                    onmouseover="set_profile_text('{{profile.info | safe}}');"
+                    onclick="$('#profile').val('{{profile.identifier}}');">
+                        {{profile.title | safe}}
+                </a>
+                {% endfor %}
               </div>
             </div>
-        </div>
-
-        <div class="column">
-            <div class="field">
-                <label>Forecast length [hours]</label>
-                <select name="fc_hours" class="ui dropdown" id="fc-hours">
-                    <option value="3">3</option>
-                    <option value="6">6</option>
-                    <option value="9">9</option>
-                    <option value="12">12</option>
-                    <option value="18">18</option>
-                    <option value="24">24</option>
-                    <option value="48">48</option>
-                </select>
-           </div>
-        </div>
-    </div>
-
-      <h2>Step 4: Simulation profile</h2>
-      
-      <div class="ui two column grid fixed-height-grid">
-        
-        <div class="column">
-          <div class="field">
-            <div class="ui fluid vertical pointing menu">
-              <input type="hidden" name="profile" id="profile">
-              {% for profile in profiles %}
-              <a class="item"
-                  data-value="{{profile.identifier | safe}}"
-                  onmouseover="set_profile_text('{{profile.info | safe}}');"
-                  onclick="$('#profile').val('{{profile.identifier}}');">
-                      {{profile.title | safe}}
-              </a>
-              {% endfor %}
-            </div>
           </div>
-        </div>
-      
-        <div class="column">
-          <h3>Profile description</h3>
-          <p id="profile-info-text">
-            Select a simulation profile from the dropdown box.  The simulation profile will specify parameters of your job not set in this form.
-          </p>
+        
+          <div class="column">
+            <h3>Profile description</h3>
+            <p id="profile-info-text">
+              Select a simulation profile from the dropdown box.  The simulation profile will specify parameters of your job not set in this form.
+            </p>
+          </div>
+          
         </div>
         
-      </div>
-      
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      
-      <button class="ui massive negative button" style="margin-bottom: 20px;" type="submit">
-        <i class="fire icon"></i>Ignite
-      </button>
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        
+        <button class="ui massive negative button" style="margin-bottom: 20px;" type="submit">
+          <i class="fire icon"></i>Ignite
+        </button>
+      </form>
       <a href="{{ urls['welcome'] }}" class="ui right floated blue button">Home</a>
       
       <div>

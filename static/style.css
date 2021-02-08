@@ -34,6 +34,7 @@ div .fixed-height-grid {
 
 .marker-button {
   display: inline-block;
+  vertical-align: bottom;
   margin: auto;
   width: 40px;
   font-size: 2em;
@@ -42,6 +43,10 @@ div .fixed-height-grid {
   border-width: 1px;
   border-radius: .3rem;
   background-color: white;
+}
+
+.marker-buttons {
+  height: 70px;
 }
 
 .marker-button:hover {
@@ -69,6 +74,11 @@ div .fixed-height-grid {
 #markers {
   margin-bottom: 20px;
   margin-top: 20px;
+}
+
+#ignition-type-field {
+  display: inline-block;
+  width: 200px;
 }
 
 /* from github.com/ardhi/Leaflet.MousePosition */

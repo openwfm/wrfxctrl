@@ -34,8 +34,9 @@ div .fixed-height-grid {
 
 .marker-button {
   display: inline-block;
-  vertical-align: bottom;
+  vertical-align: top;
   margin: auto;
+  margin-top: 20px;
   width: 40px;
   font-size: 2em;
   border-color: #cccccc;
@@ -80,7 +81,7 @@ div .fixed-height-grid {
   display: inline-block;
   width: 200px;
 }
-
+  
 /* from github.com/ardhi/Leaflet.MousePosition */
 .leaflet-container .leaflet-control-mouseposition {
   background-color: rgba(255, 255, 255, 0.7);

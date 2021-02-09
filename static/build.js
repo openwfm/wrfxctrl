@@ -48,6 +48,12 @@ const valid_latitude = (e) => {
   return true;
 }
 
+const valid_markers = (e) => {
+  if(e == "ignition-area") {
+    return additionalMarkers.length >= 3;
+  }
+  return true;
+}
 
 var markerId = 0;
 function buildTwoFields(id) {
@@ -147,6 +153,8 @@ $.fn.form.settings.rules.valid_longitude = valid_longitude;
 
 $.fn.form.settings.rules.valid_latitude = valid_latitude;
 
+$.fn.form.settings.rules.valid_markers = valid_markers;
+
 $('.ui.form')
   .form({
     fields: {
@@ -159,6 +167,11 @@ $('.ui.form')
         rules: [ { 
           type: 'valid_longitude',
           prompt: 'The ignition longitude must be a number between -109 and -102.'} ]
+      },
+      ignition_type : {
+        rules: [ {
+          type: 'valid_markers',
+          prompt: 'When selecting an ignition area, must have at least 3 markers'} ]
       },
       ignition_time : {
         rules: [

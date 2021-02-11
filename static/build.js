@@ -36,36 +36,18 @@ function initialize_map() {
 // initialize Semantic elements
 $('#profile-dropdown').dropdown({on: 'hover'});
 
-const valid_longitude = (e) => {
-  var lng = parseFloat(e);
-  if(isNaN(lng) || lng < -128 || lng > -65) return false;
-  return true;
-}
-
-const valid_latitude = (e) => {
-  var lat = parseFloat(e);
-  if(isNaN(lat) || (lat < 22)|| (lat > 51)) return false;
-  return true;
-}
-
-const valid_markers = (e) => {
-  if(e == "ignition-area") {
-    return additionalMarkers.length >= 3;
-  }
-  return true;
-}
 
 var markerId = 0;
 function buildTwoFields(id) {
   return $(`<div class="two fields">
         <div class="field">
-          <input name="ignition_latitude" id="ign-lat${id}" type="text" placeholder="Latitude ...">
+          <input name="ignition_latitude${id}" id="ign-lat${id}" type="text" placeholder="Latitude ...">
         </div>
 
         <div class="field">
-          <input name="ignition_longitude" id="ign-lon${id}" type="text" placeholder="Longitude ...">
+          <input name="ignition_longitude${id}" id="ign-lon${id}" type="text" placeholder="Longitude ...">
         </div>
-        <div  >
+        <div>
           <span class="active-field-button" id="active-marker${id}">Active</span>
         </div>
       </div>`);
@@ -135,8 +117,9 @@ function set_profile_text(txt) {
   $('#profile-info-text').text(txt);
 }
 
-$.fn.form.settings.rules.valid_ignition_time = function(str) {
-  var ign_time = moment.utc(str, 'MMM D,YYYY h:mm a');
+
+const validateIgnitionTime = (str) => {
+ var ign_time = moment.utc(str, 'MMM D,YYYY h:mm a');
   var now = moment().utc();
   if(!ign_time.isValid())
     return false;
@@ -149,11 +132,33 @@ $.fn.form.settings.rules.valid_ignition_time = function(str) {
   return true;
 }
 
-$.fn.form.settings.rules.valid_longitude = valid_longitude; 
+const validateLongitude = (longitude) => {
+  var lng = parseFloat(longitude);
+  if(isNaN(lng) || lng < -128 || lng > -65) return false;
+  return true;
+}
 
-$.fn.form.settings.rules.valid_latitude = valid_latitude;
+const validateLatitude = (latitude) => {
+  var lat = parseFloat(latitude);
+  if(isNaN(lat) || (lat < 22)|| (lat > 51)) return false;
+  return true;
+}
 
-$.fn.form.settings.rules.valid_markers = valid_markers;
+const validateIgnitionType = (ignitionType) => {
+  if(ignitionType == "ignition-area") {
+    return additionalMarkers.length >= 3;
+  }
+  return true;
+}
+
+function validateForm() {
+  return true;
+}
+
+$.fn.form.settings.rules.valid_ignition_time = validateIgnitionTime
+$.fn.form.settings.rules.valid_longitude = validateLongitude; 
+$.fn.form.settings.rules.valid_latitude = validateLatitude;
+$.fn.form.settings.rules.valid_markers = validateIgnitionType;
 
 $('.ui.form')
   .form({
@@ -191,6 +196,17 @@ $('.ui.form')
     inline: true
   });
 
+
+$('.form').submit((event) => {
+  var valid = validateForm();
+  if(valid) {
+      $.ajax({
+          type:"post",
+          dataType: 'json',
+          data: $('.form').serialize()
+        })
+  }
+});
 
 $('#ign-time').datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
 $('#fc-hours').dropdown();

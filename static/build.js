@@ -161,7 +161,12 @@ const validateDescription = (description) => {
 }
 
 const validateProfile = (profile) => {
-  return profile != "";
+  if (profile == "") {
+    $('#profile-warning').addClass("activate-warning");
+    return false;
+  }
+  $('#profile-warning').removeClass("activate-warning");
+  return true;
 }
 
 function validateForm() {

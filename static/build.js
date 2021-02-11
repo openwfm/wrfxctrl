@@ -122,14 +122,11 @@ function set_profile_text(txt) {
 const validateIgnitionTime = () => {
   var ign_time = moment.utc($('#ign-time').val(), 'MMM D,YYYY h:mm a');
   var now = moment().utc();
-  if(!ign_time.isValid())
-    return false;
-//  if(ign_time > now) {
-//    return false;
-//  }
-  if(ign_time.year() < 1979) {
+  if(!ign_time.isValid() || ign_time.year() <  1979) {
+    $('#ignition-time-warning').addClass('activate-warning');
     return false;
   }
+  $('#ignition-time-warning').removeClass('activate-warning');
   return true;
 }
 
@@ -151,7 +148,6 @@ const validateLatitude = () => {
   var valid = true;
   for (var i = 0; i < additionalMarkers.length; i++) {
     var lat = $(`#ign-lat${i}`).val()
-    console.log('here ' + lat);
     if(isNaN(lat) || (lat < 22)|| (lat > 51)) {
       valid = false;
       $(`#lat-warning${i}`).addClass('activate-warning');

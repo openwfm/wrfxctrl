@@ -42,10 +42,11 @@ function buildTwoFields(id) {
   return $(`<div class="two fields">
         <div class="field">
           <input name="ignition_latitude${id}" id="ign-lat${id}" type="text" placeholder="Latitude ...">
+          <span id="lat-warning${id}" class="not-valid-warning">The ignition latitude must be a number between 36 and 41.</span>
         </div>
-
         <div class="field">
           <input name="ignition_longitude${id}" id="ign-lon${id}" type="text" placeholder="Longitude ...">
+          <span id="lon-warning${id}" class="not-valid-warning">The ignition longitude must be a number between -109 and -102.</span>
         </div>
         <div>
           <span class="active-field-button" id="active-marker${id}">Active</span>
@@ -118,8 +119,8 @@ function set_profile_text(txt) {
 }
 
 
-const validateIgnitionTime = (str) => {
- var ign_time = moment.utc(str, 'MMM D,YYYY h:mm a');
+const validateIgnitionTime = () => {
+  var ign_time = moment.utc($('#ign-time').val(), 'MMM D,YYYY h:mm a');
   var now = moment().utc();
   if(!ign_time.isValid())
     return false;
@@ -132,26 +133,47 @@ const validateIgnitionTime = (str) => {
   return true;
 }
 
-const validateLongitude = (longitude) => {
-  var lng = parseFloat(longitude);
-  if(isNaN(lng) || lng < -128 || lng > -65) return false;
-  return true;
-}
-
-const validateLatitude = (latitude) => {
-  var lat = parseFloat(latitude);
-  if(isNaN(lat) || (lat < 22)|| (lat > 51)) return false;
-  return true;
-}
-
-const validateIgnitionType = (ignitionType) => {
-  if(ignitionType == "ignition-area") {
-    return additionalMarkers.length >= 3;
+const validateLongitude = () => {
+  var valid = true;
+  for (var i = 0; i < additionalMarkers.length; i++) {
+    var lng = parseFloat($(`#ign-lon${i}`).val());
+    if(isNaN(lng) || lng < -128 || lng > -65){
+      valid = false;
+      $(`#lon-warning${i}`).addClass('activate-warning');
+    } else {
+      $(`#lon-warning${i}`).removeClass('activate-warning');
+    }
   }
+  return valid;
+}
+
+const validateLatitude = () => {
+  var valid = true;
+  for (var i = 0; i < additionalMarkers.length; i++) {
+    var lat = $(`#ign-lat${i}`).val()
+    console.log('here ' + lat);
+    if(isNaN(lat) || (lat < 22)|| (lat > 51)) {
+      valid = false;
+      $(`#lat-warning${i}`).addClass('activate-warning');
+    } else {
+      $(`#lat-warning${i}`).removeClass('activate-warning');
+    }
+  }
+  return valid;
+}
+
+const validateIgnitionType = () => {
+  var ignitionType = $('#ignition-type').val();
+  if(ignitionType == "ignition-area" && additionalMarkers.length < 3) {
+    $('#ignition-type-warning').addClass('activate-warning');
+    return false;
+  }
+  $('#ignition-type-warning').removeClass('activate-warning');
   return true;
 }
 
-const validateDescription = (description) => {
+const validateDescription = () => {
+  var description = $('#experiment-description').val();
   if (description == "") {
     $('#description-warning').addClass("activate-warning");
     return false;
@@ -160,7 +182,8 @@ const validateDescription = (description) => {
   return true;
 }
 
-const validateProfile = (profile) => {
+const validateProfile = () => {
+  var profile = $('#profile').val();
   if (profile == "") {
     $('#profile-warning').addClass("activate-warning");
     return false;
@@ -170,12 +193,12 @@ const validateProfile = (profile) => {
 }
 
 function validateForm() {
-  var validLatitude = validateLatitude($('#ign-lat0').val());
-  var validLongitude = validateLongitude($('#ign-lon0').val());
-  var validIgnitionType = validateIgnitionType($('#ignition-type').val());
-  var validDescription = validateDescription($('#experiment-description').val());
-  var validProfile = validateProfile($('#profile').val());
-  var validIgnitionTime = validateIgnitionTime($('#ign-time').val());
+  var validLatitude = validateLatitude();
+  var validLongitude = validateLongitude();
+  var validIgnitionType = validateIgnitionType();
+  var validDescription = validateDescription();
+  var validProfile = validateProfile();
+  var validIgnitionTime = validateIgnitionTime();
   return validLatitude && validLongitude && validLatitude && validIgnitionType && validDescription && validProfile && validIgnitionTime;
 }
 

@@ -151,54 +151,76 @@ const validateIgnitionType = (ignitionType) => {
   return true;
 }
 
-function validateForm() {
+const validateDescription = (description) => {
+  if (description == "") {
+    $('#description-warning').addClass("activate-warning");
+    return false;
+  }
+  $('#description-warning').removeClass("activate-warning");
   return true;
 }
 
-$.fn.form.settings.rules.valid_ignition_time = validateIgnitionTime
-$.fn.form.settings.rules.valid_longitude = validateLongitude; 
-$.fn.form.settings.rules.valid_latitude = validateLatitude;
-$.fn.form.settings.rules.valid_markers = validateIgnitionType;
+const validateProfile = (profile) => {
+  return profile != "";
+}
 
-$('.ui.form')
-  .form({
-    fields: {
-      ignition_latitude : {
-        rules: [ {
-          type: 'valid_latitude',
-          prompt: 'The ignition latitude must be a number between 36 and 41.'} ]
-      },
-      ignition_longitude : {
-        rules: [ { 
-          type: 'valid_longitude',
-          prompt: 'The ignition longitude must be a number between -109 and -102.'} ]
-      },
-      ignition_type : {
-        rules: [ {
-          type: 'valid_markers',
-          prompt: 'When selecting an ignition area, must have at least 3 markers'} ]
-      },
-      ignition_time : {
-        rules: [
-          {
-            type: 'valid_ignition_time',
-            prompt: 'The ignition time must be between 1/1/1979 and now in the format YYYY-MM-DD_HH:MM:SS.'
-          }
-        ]
-      },
-      profile : {
-        rules: [ {type: 'empty', 'prompt' : 'Please select a job profile.'} ]
-      },
-      description : {
-        rules: [ {type: 'empty', 'prompt' : 'Please enter a description'}]
-      }
-    },
-    inline: true
-  });
+function validateForm() {
+  var validLatitude = validateLatitude($('#ign-lat0').val());
+  var validLongitude = validateLongitude($('#ign-lon0').val());
+  var validIgnitionType = validateIgnitionType($('#ignition-type').val());
+  var validDescription = validateDescription($('#experiment-description').val());
+  var validProfile = validateProfile($('#profile').val());
+  var validIgnitionTime = validateIgnitionTime($('#ign-time').val());
+  return validLatitude && validLongitude && validLatitude && validIgnitionType && validDescription && validProfile && validIgnitionTime;
+}
+
+// $.fn.form.settings.rules.valid_ignition_time = validateIgnitionTime
+// $.fn.form.settings.rules.valid_longitude = validateLongitude; 
+// $.fn.form.settings.rules.valid_latitude = validateLatitude;
+// $.fn.form.settings.rules.valid_markers = validateIgnitionType;
+
+// $('.ui.form')
+//   .form({
+//     fields: {
+//       ignition_latitude : {
+//         rules: [ {
+//           type: 'valid_latitude',
+//           prompt: 'The ignition latitude must be a number between 36 and 41.'} ]
+//       },
+//       ignition_longitude : {
+//         rules: [ { 
+//           type: 'valid_longitude',
+//           prompt: 'The ignition longitude must be a number between -109 and -102.'} ]
+//       },
+//       ignition_type : {
+//         rules: [ {
+//           type: 'valid_markers',
+//           prompt: 'When selecting an ignition area, must have at least 3 markers'} ]
+//       },
+//       ignition_time : {
+//         rules: [
+//           {
+//             type: 'valid_ignition_time',
+//             prompt: 'The ignition time must be between 1/1/1979 and now in the format YYYY-MM-DD_HH:MM:SS.'
+//           }
+//         ]
+//       },
+//       profile : {
+//         rules: [ {type: 'empty', 'prompt' : 'Please select a job profile.'} ]
+//       },
+//       description : {
+//         rules: [ {type: 'empty', 'prompt' : 'Please enter a description'}]
+//       }
+//     },
+//     inline: true
+//   });
 
 
 $('.form').submit((event) => {
+  event.preventDefault();
+  console.log('here');
   var valid = validateForm();
+  console.log(valid);
   if(valid) {
       $.ajax({
           type:"post",

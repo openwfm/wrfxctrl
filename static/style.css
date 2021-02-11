@@ -32,6 +32,21 @@ div .fixed-height-grid {
   height: 200px;
 }
 
+.not-valid-warning {
+  display: none;
+  margin-top: 5px;
+  padding: 9px;
+  border-style: solid;
+  border-color: red;
+  border-width: 1px;
+  border-radius: .3rem;
+  color: red;
+}
+
+.activate-warning {
+  display: inline-block;
+}
+
 .marker-button {
   display: inline-block;
   vertical-align: top;

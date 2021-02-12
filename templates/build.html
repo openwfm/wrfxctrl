@@ -64,7 +64,7 @@
       <h2>Step 3: Ignition time and forecast length</h2>
       <p>The simulation will start at least 30 mins before the ignition time.  The maximum forecast length is 48 hrs.</p>
         
-      <div class="ui two column grid fixed-height-grid">
+      <div class="ui two column grid">
           <div class="column">
               <div class="field">
                 <label>Ignition time [UTC]</label>
@@ -94,7 +94,7 @@
 
         <h2>Step 4: Simulation profile</h2>
         
-        <div class="ui two column grid fixed-height-grid">
+        <div class="ui two column grid">
           
           <div class="column">
             <div class="field">
@@ -125,13 +125,12 @@
         <br />
         <br />
         <br />
-        <br />
-        <br />
-        <br />
         
-        <button class="ui massive negative button" style="margin-bottom: 20px;" type="submit">
-          <i class="fire icon"></i>Ignite
-        </button>
+        <div class="column">
+          <button class="ui massive negative button" style="margin-bottom: 20px;" type="submit">
+            <i class="fire icon"></i>Ignite
+          </button>
+        </div>
       </form>
       <a href="{{ urls['welcome'] }}" class="ui right floated blue button">Home</a>
       

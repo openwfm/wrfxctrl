@@ -198,15 +198,41 @@ function validateForm() {
   return validLatitude && validLongitude && validLatitude && validIgnitionType && validDescription && validProfile && validIgnitionTime;
 }
 
+function getLatitudes() {
+  var latitudes = [];
+  for (var i = 0; i < additionalMarkers.length; i++) {
+    latitudes.push(parseFloat($(`#ign-lat${i}`).val()));
+  }
+  return JSON.stringify(latitudes);
+}
+
+function getLongitudes() {
+  var longitudes = [];
+  for (var i = 0; i < additionalMarkers.length; i++) {
+    longitudes.push(parseFloat($(`#ign-lon${i}`).val()));
+  }
+
+  return JSON.stringify(longitudes)
+}
+
 $('.form').submit((event) => {
   event.preventDefault();
   var valid = validateForm();
   if(valid) {
-      $.ajax({
-          type:"post",
-          dataType: 'json',
-          data: $('.form').serialize()
-        })
+    var formData = {
+      "description": $('#experiment-description').val(),
+      "ignition_type": $('#ignition-type').val(),
+      "ignition_latitude": getLatitudes(),
+      "ignition_longitude": getLongitudes(),
+      "ignition_time": $('#ign-time').val(),
+      "fc_hours": $('#fc-hours').val(),
+      "profile": $('#profile').val()
+    }
+    $.ajax({
+        type:"post",
+        dataType: 'json',
+        data: formData
+      });
   }
 });
 

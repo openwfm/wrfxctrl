@@ -160,7 +160,7 @@ def create_simulation(info, conf, cluster):
     # store simulation configuration
     profile = info['profile']
     print ('profile = %s' % json.dumps(profile,indent=1, separators=(',',':')))
-    ign_lat, ign_lon = float(info['ignition_latitude']), float(info['ignition_longitude'])
+    ign_lat, ign_lon = float(info['ignition_latitude'][1:-1].split(',')[0]), float(info['ignition_longitude'][1:-1].split(',')[0])
     # example of ignition time: Apr 10, 1975 9:45 PM
     ign_time_esmf = to_esmf(datetime.strptime(info['ignition_time'], '%b %d, %Y %I:%M %p'))
     sim_descr = info['description']
@@ -219,6 +219,7 @@ def create_simulation(info, conf, cluster):
     cfg['ignitions'][domain][0]['time_utc'] = ign_time_esmf
     # example:  "latlon" : [39.894264, -103.903222]
     cfg['ignitions'][domain][0]['latlon'] = [ign_lat, ign_lon]
+    cfg['ignitions'][domain][0]['duration_s'] = fc_hours*60
 
     # switch on sending results to visualization server
     cfg['postproc']['shuttle'] = 'incremental'

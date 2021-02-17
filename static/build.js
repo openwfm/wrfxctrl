@@ -4,6 +4,8 @@
 var map = null;
 var base_layer_dict = null;
 var markers = {};
+var markerFields = [];
+var markerId = 0;
 
 // map initialization code
 function initialize_map() {
@@ -37,8 +39,7 @@ function initialize_map() {
 $('#profile-dropdown').dropdown({on: 'hover'});
 
 
-var markerId = 0;
-function buildTwoFields(id) {
+function buildLatLongFields(id) {
   return $(`<div class="two fields">
         <div class="field">
           <input name="ignition_latitude${id}" id="ign-lat${id}" type="text" placeholder="Latitude ...">
@@ -71,14 +72,13 @@ function updateMarker(newFieldId) {
   markers[newFieldId] = marker;
 }
 
-var additionalMarkers = [];
-$('#additional-marker').click(() => {
-  let newFieldId = additionalMarkers.length;
-  const additionalMarker = buildTwoFields(newFieldId);
-  $('#markers').append(additionalMarker);
+function buildNewMarker() {
+  let newFieldId = markerFields.length;
+  const newMarkerField = buildLatLongFields(newFieldId);
+  $('#markers').append(newMarkerField);
   setActiveMarker(newFieldId);
   $(`#active-marker${newFieldId}`).click(() => {
-    if (additionalMarkers.length > 1) setActiveMarker(newFieldId);
+    if (markerFields.length > 1) setActiveMarker(newFieldId);
   });
   $(`#ign-lat${newFieldId}`).change(() => {
     updateMarker(newFieldId);
@@ -86,45 +86,43 @@ $('#additional-marker').click(() => {
   $(`#ign-lon${newFieldId}`).change((newLon) => {
     updateMarker(newFieldId);
   });
-  additionalMarkers.push(additionalMarker);
-});
+  markerFields.push(newMarkerField);
+}
 
-$('#remove-marker').click(() => {
-  if (additionalMarkers.length < 2) return;
-  if (additionalMarkers.length == 3 && $('#ignition-type').val() == "ignition-area") return;
-  if (markerId == additionalMarkers.length - 1) setActiveMarker(markerId - 1);
-  if (markers[additionalMarkers.length - 1]) {
-    map.removeLayer(markers[additionalMarkers.length - 1]);
-    delete markers[additionalMarkers.length - 1];
+function removeMarker() {
+  if (markerFields.length < 2) return;
+  if (markerFields.length == 3 && $('#ignition-type').val() == "ignition-area") return;
+  if (markerId == markerFields.length - 1) setActiveMarker(markerId - 1);
+  if (markers[markerFields.length - 1]) {
+    map.removeLayer(markers[markerFields.length - 1]);
+    delete markers[markerFields.length - 1];
   }
-  const lastMarker = additionalMarkers.pop();
+  const lastMarker = markerFields.pop();
   lastMarker.remove();
-});
-
-$('#additional-marker').click();
+}
 
 function checkIgnitionType() {
   var ignitionType = $('#ignition-type').val();
   if(ignitionType == "ignition-area") {
-    while (additionalMarkers.length < 3) {
+    while (markerFields.length < 3) {
       $('#additional-marker').click();
     }
+  } else {
+
   }
 }
+
+$('#additional-marker').click(buildNewMarker);
+$('#remove-marker').click(removeMarker);
+$('#additional-marker').click();
 $('#ignition-type').change(checkIgnitionType)
 checkIgnitionType();
-
-$('.ui.menu')
-    .on('click', '.item', function() {
-        $(this)
-          .addClass('active')
-          .siblings('.item')
-            .removeClass('active');
-    });
+$('.ui.menu').on('click', '.item', function() {
+  $(this).addClass('active').siblings('.item').removeClass('active');
+});
 
 // Fill in a 'unique description'
 $('#experiment-description').text('Web initiated forecast at ' + moment().format());
-
 
 function set_profile_text(txt) {
   $('#profile-info-text').text(txt);
@@ -144,7 +142,7 @@ const validateIgnitionTime = () => {
 
 const validateLongitude = () => {
   var valid = true;
-  for (var i = 0; i < additionalMarkers.length; i++) {
+  for (var i = 0; i < markerFields.length; i++) {
     var lng = parseFloat($(`#ign-lon${i}`).val());
     if(isNaN(lng) || lng < -128 || lng > -65){
       valid = false;
@@ -158,7 +156,7 @@ const validateLongitude = () => {
 
 const validateLatitude = () => {
   var valid = true;
-  for (var i = 0; i < additionalMarkers.length; i++) {
+  for (var i = 0; i < markerFields.length; i++) {
     var lat = $(`#ign-lat${i}`).val()
     if(isNaN(lat) || (lat < 22)|| (lat > 51)) {
       valid = false;
@@ -201,7 +199,7 @@ function validateForm() {
 
 function getLatitudes() {
   var latitudes = [];
-  for (var i = 0; i < additionalMarkers.length; i++) {
+  for (var i = 0; i < markerFields.length; i++) {
     latitudes.push(parseFloat($(`#ign-lat${i}`).val()));
   }
   return JSON.stringify(latitudes);
@@ -209,10 +207,9 @@ function getLatitudes() {
 
 function getLongitudes() {
   var longitudes = [];
-  for (var i = 0; i < additionalMarkers.length; i++) {
+  for (var i = 0; i < markerFields.length; i++) {
     longitudes.push(parseFloat($(`#ign-lon${i}`).val()));
   }
-
   return JSON.stringify(longitudes)
 }
 

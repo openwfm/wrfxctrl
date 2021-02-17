@@ -91,6 +91,7 @@ $('#additional-marker').click(() => {
 
 $('#remove-marker').click(() => {
   if (additionalMarkers.length < 2) return;
+  if (additionalMarkers.length == 3 && $('#ignition-type').val() == "ignition-area") return;
   if (markerId == additionalMarkers.length - 1) setActiveMarker(markerId - 1);
   if (markers[additionalMarkers.length - 1]) {
     map.removeLayer(markers[additionalMarkers.length - 1]);
@@ -101,6 +102,17 @@ $('#remove-marker').click(() => {
 });
 
 $('#additional-marker').click();
+
+function checkIgnitionType() {
+  var ignitionType = $('#ignition-type').val();
+  if(ignitionType == "ignition-area") {
+    while (additionalMarkers.length < 3) {
+      $('#additional-marker').click();
+    }
+  }
+}
+$('#ignition-type').change(checkIgnitionType)
+checkIgnitionType();
 
 $('.ui.menu')
     .on('click', '.item', function() {
@@ -158,16 +170,6 @@ const validateLatitude = () => {
   return valid;
 }
 
-const validateIgnitionType = () => {
-  var ignitionType = $('#ignition-type').val();
-  if(ignitionType == "ignition-area" && additionalMarkers.length < 3) {
-    $('#ignition-type-warning').addClass('activate-warning');
-    return false;
-  }
-  $('#ignition-type-warning').removeClass('activate-warning');
-  return true;
-}
-
 const validateDescription = () => {
   var description = $('#experiment-description').val();
   if (description == "") {
@@ -191,11 +193,10 @@ const validateProfile = () => {
 function validateForm() {
   var validLatitude = validateLatitude();
   var validLongitude = validateLongitude();
-  var validIgnitionType = validateIgnitionType();
   var validDescription = validateDescription();
   var validProfile = validateProfile();
   var validIgnitionTime = validateIgnitionTime();
-  return validLatitude && validLongitude && validLatitude && validIgnitionType && validDescription && validProfile && validIgnitionTime;
+  return validLatitude && validLongitude && validLatitude && validDescription && validProfile && validIgnitionTime;
 }
 
 function getLatitudes() {

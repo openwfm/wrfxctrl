@@ -33,12 +33,8 @@ L.Control.MousePosition = L.Control.extend({
   
   _onMouseClick: function(e) {
     const marker = L.marker(e.latlng).addTo(this._map);
-    if(markers[markerId]) {
-      this._map.removeLayer(markers[markerId]);
-      markers[markerId] = marker;
-    } else {
-      markers[markerId] = marker;
-    }
+    if(markerFields[markerId].marker) this._map.removeLayer(markerFields[markerId].marker);
+    markerFields[markerId].marker = marker;
     $(`#ign-lat${markerId}`).val(L.Util.formatNum(e.latlng.lat, this.options.numDigits));
     $(`#ign-lon${markerId}`).val(L.Util.formatNum(e.latlng.lng, this.options.numDigits));
   }

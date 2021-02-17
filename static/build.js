@@ -3,8 +3,9 @@
 // declare variables in global scope
 var map = null;
 var base_layer_dict = null;
-var markers = {};
+// var markers = {};
 var markerFields = [];
+var ignitionTimes = [];
 var markerId = 0;
 
 // map initialization code
@@ -66,10 +67,10 @@ function setActiveMarker(newFieldId) {
 function updateMarker(newFieldId) {
   let lat = parseFloat($(`#ign-lat${newFieldId}`).val());
   let lon = parseFloat($(`#ign-lon${newFieldId}`).val());
-  if (!valid_latitude(lat) || !valid_longitude(lon)) return;
-  if (markers[newFieldId]) map.removeLayer(markers[newFieldId]);
+  if (!validLatitude(lat) || !validLongitude(lon)) return;
+  if (markerFields[newFieldId].marker) map.removeLayer(markerFields[newFieldId].marker);
   const marker = L.marker([lat, lon]).addTo(map);
-  markers[newFieldId] = marker;
+  markerFields[newFieldId].marker = marker;
 }
 
 function buildNewMarker() {
@@ -83,22 +84,19 @@ function buildNewMarker() {
   $(`#ign-lat${newFieldId}`).change(() => {
     updateMarker(newFieldId);
   });
-  $(`#ign-lon${newFieldId}`).change((newLon) => {
+  $(`#ign-lon${newFieldId}`).change(() => {
     updateMarker(newFieldId);
   });
-  markerFields.push(newMarkerField);
+  markerFields.push({field: newMarkerField});
 }
 
 function removeMarker() {
   if (markerFields.length < 2) return;
   if (markerFields.length == 3 && $('#ignition-type').val() == "ignition-area") return;
   if (markerId == markerFields.length - 1) setActiveMarker(markerId - 1);
-  if (markers[markerFields.length - 1]) {
-    map.removeLayer(markers[markerFields.length - 1]);
-    delete markers[markerFields.length - 1];
-  }
   const lastMarker = markerFields.pop();
-  lastMarker.remove();
+  lastMarker.field.remove();
+  if (lastMarker.marker) map.removeLayer(lastMarker.marker);
 }
 
 function checkIgnitionType() {
@@ -114,8 +112,8 @@ function checkIgnitionType() {
 
 $('#additional-marker').click(buildNewMarker);
 $('#remove-marker').click(removeMarker);
-$('#additional-marker').click();
 $('#ignition-type').change(checkIgnitionType)
+buildNewMarker();
 checkIgnitionType();
 $('.ui.menu').on('click', '.item', function() {
   $(this).addClass('active').siblings('.item').removeClass('active');
@@ -140,11 +138,16 @@ const validateIgnitionTime = () => {
   return true;
 }
 
-const validateLongitude = () => {
+const validLongitude = (lng) => {
+  if(isNaN(lng) || lng < -128 || lng > -65) return false;
+  return true;
+}
+
+const validateLongitudes = () => {
   var valid = true;
   for (var i = 0; i < markerFields.length; i++) {
     var lng = parseFloat($(`#ign-lon${i}`).val());
-    if(isNaN(lng) || lng < -128 || lng > -65){
+    if (!validLongitude(lng)) {
       valid = false;
       $(`#lon-warning${i}`).addClass('activate-warning');
     } else {
@@ -154,11 +157,16 @@ const validateLongitude = () => {
   return valid;
 }
 
-const validateLatitude = () => {
+const validLatitude = (lat) => {
+  if(isNaN(lat) || (lat < 22)|| (lat > 51)) return false;
+  return true;
+}
+
+const validateLatitudes = () => {
   var valid = true;
   for (var i = 0; i < markerFields.length; i++) {
-    var lat = $(`#ign-lat${i}`).val()
-    if(isNaN(lat) || (lat < 22)|| (lat > 51)) {
+    var lat = parseFloat($(`#ign-lat${i}`).val());
+    if(!validLatitude(lat)) {
       valid = false;
       $(`#lat-warning${i}`).addClass('activate-warning');
     } else {
@@ -189,8 +197,8 @@ const validateProfile = () => {
 }
 
 function validateForm() {
-  var validLatitude = validateLatitude();
-  var validLongitude = validateLongitude();
+  var validLatitudes = validateLatitudes();
+  var validLongitudes = validateLongitudes();
   var validDescription = validateDescription();
   var validProfile = validateProfile();
   var validIgnitionTime = validateIgnitionTime();

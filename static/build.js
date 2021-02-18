@@ -88,6 +88,7 @@ function buildNewMarker() {
     updateMarker(newFieldId);
   });
   markerFields.push({field: newMarkerField});
+  if ($('#ignition-type').val() == "multiple-ignitions" || ignitionTimes.length == 0) buildNewIgnitionTime();
 }
 
 function removeMarker() {
@@ -97,16 +98,62 @@ function removeMarker() {
   const lastMarker = markerFields.pop();
   lastMarker.field.remove();
   if (lastMarker.marker) map.removeLayer(lastMarker.marker);
+  if ($('#ignition-type').val() == "multiple-ignitions") removeIgnitionTime();
+}
+
+function buildNewIgnitionTime() {
+  let newFieldId = ignitionTimes.length;
+  const ignitionField = $(`
+        <div class="ui two column grid">
+          <div class="column">
+              <div class="field">
+                <label>Ignition time [UTC]</label>
+                <div class="ui input left icon">
+                  <i class="calendar icon"></i>
+                  <input name="ignition_time" id="ign-time${newFieldId}" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
+                  <span id="ignition-time-warning" class="not-valid-warning">The ignition time must be between 1/1/1979 and now in the format YYYY-MM-DD_HH:MM:SS</span>
+                </div>
+              </div>
+          </div>
+          <div class="column">
+              <div class="field">
+                  <label>Forecast length [hours]</label>
+                  <select name="fc_hours" class="ui dropdown" id="fc-hours${newFieldId}">
+                      <option value="3">3</option>
+                      <option value="6">6</option>
+                      <option value="9">9</option>
+                      <option value="12">12</option>
+                      <option value="18">18</option>
+                      <option value="24">24</option>
+                      <option value="48">48</option>
+                  </select>
+             </div>
+          </div>
+      </div>
+      `);
+  $('#ignition-times').append(ignitionField);
+  ignitionTimes.push(ignitionField);
+}
+
+function removeIgnitionTime() {
+  if (ignitionTimes.length == 1) return;
+  const lastIgnitionTime = ignitionTimes.pop();
+  lastIgnitionTime.remove();
 }
 
 function checkIgnitionType() {
   var ignitionType = $('#ignition-type').val();
   if(ignitionType == "ignition-area") {
     while (markerFields.length < 3) {
-      $('#additional-marker').click();
+      buildNewMarker();
+    }
+    while (ignitionTimes.length > 1) {
+      removeIgnitionTime();
     }
   } else {
-
+    while (ignitionTimes.length < markerFields.length) {
+      buildNewIgnitionTime();
+    }
   }
 }
 

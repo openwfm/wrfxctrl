@@ -111,8 +111,8 @@ function buildNewIgnitionTime() {
                 <div class="ui input left icon">
                   <i class="calendar icon"></i>
                   <input name="ignition_time" id="ign-time${newFieldId}" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
-                  <span id="ignition-time-warning" class="not-valid-warning">The ignition time must be between 1/1/1979 and now in the format YYYY-MM-DD_HH:MM:SS</span>
                 </div>
+                <span id="ignition-time-warning${newFieldId}" class="not-valid-warning">The ignition time must be between 1/1/1979 and now in the format YYYY-MM-DD_HH:MM:SS</span>
               </div>
           </div>
           <div class="column">
@@ -129,9 +129,11 @@ function buildNewIgnitionTime() {
                   </select>
              </div>
           </div>
-      </div>
+        </div>
       `);
+
   $('#ignition-times').append(ignitionField);
+  $(`#fc-hours${newFieldId}`).dropdown();
   ignitionTimes.push(ignitionField);
 }
 
@@ -174,15 +176,19 @@ function set_profile_text(txt) {
 }
 
 
-const validateIgnitionTime = () => {
-  var ign_time = moment.utc($('#ign-time').val(), 'MMM D,YYYY h:mm a');
-  var now = moment().utc();
-  if(!ign_time.isValid() || ign_time.year() <  1979) {
-    $('#ignition-time-warning').addClass('activate-warning');
-    return false;
+const validateIgnitionTimes = () => {
+  var valid = true;
+  for (var i = 0; i < ignitionTimes.length; i++) {
+    var ign_time = moment.utc($(`#ign-time${i}`).val(), 'MMM D,YYYY h:mm a');
+    var now = moment().utc();
+    if(!ign_time.isValid() || ign_time.year() <  1979) {
+      valid = false;
+      $(`#ignition-time-warning${i}`).addClass('activate-warning');
+    } else {
+      $(`#ignition-time-warning${i}`).removeClass('activate-warning');
+    }
   }
-  $('#ignition-time-warning').removeClass('activate-warning');
-  return true;
+  return valid;
 }
 
 const validLongitude = (lng) => {
@@ -248,7 +254,7 @@ function validateForm() {
   var validLongitudes = validateLongitudes();
   var validDescription = validateDescription();
   var validProfile = validateProfile();
-  var validIgnitionTime = validateIgnitionTime();
+  var validIgnitionTimes = validateIgnitionTimes();
   return validLatitude && validLongitude && validLatitude && validDescription && validProfile && validIgnitionTime;
 }
 
@@ -290,6 +296,5 @@ $('.form').submit((event) => {
 });
 
 $('#ign-time').datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
-$('#fc-hours').dropdown();
 $('#ignition-type').dropdown();
 

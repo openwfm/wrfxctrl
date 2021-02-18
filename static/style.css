@@ -49,10 +49,6 @@ div .fixed-height-grid {
   padding-bottom: 0px !important;
 }
 
-.ignition-time {
-  padding-bottom: 0px !important;
-}
-
 .activate-warning {
   display: inline-block;
 }
@@ -78,6 +74,18 @@ div .fixed-height-grid {
 .marker-button:hover {
   border-color: #a6a6a6;
   cursor: pointer;
+}
+
+.ignition-id {
+  display: inline-block;
+  margin: auto;
+  margin-top: 0px;
+  padding: .63em 1em;
+  background-color: white;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: .3rem;
+  border-color: #cccccc;
 }
 
 .active-field-button {

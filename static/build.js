@@ -42,6 +42,9 @@ $('#profile-dropdown').dropdown({on: 'hover'});
 
 function buildLatLongFields(id) {
   return $(`<div class="two fields">
+        <div class="ignition-id">
+          <span>${id}</span>
+        </div>
         <div class="field">
           <input name="ignition_latitude${id}" id="ign-lat${id}" type="text" placeholder="Latitude ...">
           <span id="lat-warning${id}" class="not-valid-warning">The ignition latitude must be a number between 36 and 41.</span>
@@ -104,28 +107,27 @@ function removeMarker() {
 function buildNewIgnitionTime() {
   let newFieldId = ignitionTimes.length;
   const ignitionField = $(`
-        <div class="ui two column grid">
-          <div class="column ignition-time">
-              <div class="field">
-                <div class="ui input left icon">
-                  <i class="calendar icon"></i>
-                  <input name="ignition_time" id="ign-time${newFieldId}" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
-                </div>
-                <span id="ignition-time-warning${newFieldId}" class="not-valid-warning">The ignition time must be between 1/1/1979 and now in the format YYYY-MM-DD_HH:MM:SS</span>
-              </div>
+        <div class="two fields">
+          <div id="ignition-time-id-${newFieldId}" class="ignition-id">
+            <span>${newFieldId}</span>
           </div>
-          <div class="column ignition-time">
-              <div class="field">
-                  <select name="fc_hours" class="ui dropdown" id="fc-hours${newFieldId}">
-                      <option value="3">3</option>
-                      <option value="6">6</option>
-                      <option value="9">9</option>
-                      <option value="12">12</option>
-                      <option value="18">18</option>
-                      <option value="24">24</option>
-                      <option value="48">48</option>
-                  </select>
-             </div>
+          <div class="field">
+            <div class="ui input left icon">
+              <i class="calendar icon"></i>
+              <input name="ignition_time" id="ign-time${newFieldId}" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
+            </div>
+            <span id="ignition-time-warning${newFieldId}" class="not-valid-warning">The ignition time must be between 1/1/1979 and now in the format YYYY-MM-DD_HH:MM:SS</span>
+          </div>
+          <div class="field">
+              <select name="fc_hours" class="ui dropdown" id="fc-hours${newFieldId}">
+                  <option value="3">3</option>
+                  <option value="6">6</option>
+                  <option value="9">9</option>
+                  <option value="12">12</option>
+                  <option value="18">18</option>
+                  <option value="24">24</option>
+                  <option value="48">48</option>
+              </select>
           </div>
         </div>
       `);
@@ -150,7 +152,9 @@ function checkIgnitionType() {
     while (ignitionTimes.length > 1) {
       removeIgnitionTime();
     }
+    $('#ignition-time-id-0').hide();
   } else {
+    $('#ignition-time-id-0').show();
     while (ignitionTimes.length < markerFields.length) {
       buildNewIgnitionTime();
     }

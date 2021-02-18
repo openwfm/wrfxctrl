@@ -105,9 +105,8 @@ function buildNewIgnitionTime() {
   let newFieldId = ignitionTimes.length;
   const ignitionField = $(`
         <div class="ui two column grid">
-          <div class="column">
+          <div class="column ignition-time">
               <div class="field">
-                <label>Ignition time [UTC]</label>
                 <div class="ui input left icon">
                   <i class="calendar icon"></i>
                   <input name="ignition_time" id="ign-time${newFieldId}" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
@@ -115,9 +114,8 @@ function buildNewIgnitionTime() {
                 <span id="ignition-time-warning${newFieldId}" class="not-valid-warning">The ignition time must be between 1/1/1979 and now in the format YYYY-MM-DD_HH:MM:SS</span>
               </div>
           </div>
-          <div class="column">
+          <div class="column ignition-time">
               <div class="field">
-                  <label>Forecast length [hours]</label>
                   <select name="fc_hours" class="ui dropdown" id="fc-hours${newFieldId}">
                       <option value="3">3</option>
                       <option value="6">6</option>

@@ -43,8 +43,14 @@ div .fixed-height-grid {
   color: red;
 }
 
-.ignition-times-lables {
-  
+.ignition-times-labels {
+  display: inline-block;
+  font-weight: bold;
+  padding-bottom: 0px !important;
+}
+
+.ignition-time {
+  padding-bottom: 0px !important;
 }
 
 .activate-warning {

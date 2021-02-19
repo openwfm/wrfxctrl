@@ -293,7 +293,23 @@ function getLongitudes() {
   for (var i = 0; i < markerFields.length; i++) {
     longitudes.push(parseFloat($(`#ign-lon${i}`).val()));
   }
-  return JSON.stringify(longitudes)
+  return JSON.stringify(longitudes);
+}
+
+function getIgnitionTimes() {
+  var igns = [];
+  for (var i = 0; i < ignitionTimes.length; i++) {
+    igns.push($(`#ign-time${i}`).val());
+  }
+  return JSON.stringify(igns);
+}
+
+function getIgnitionDurations() {
+  var fcHours = [];
+  for (var i = 0; i < ignitionTimes.length; i++) {
+    fcHours.push(parseInt($(`#fc-hours${i}`).val()));
+  } 
+  return JSON.stringify(fcHours);
 }
 
 $('.form').submit((event) => {
@@ -305,8 +321,8 @@ $('.form').submit((event) => {
       "ignition_type": $('#ignition-type').val(),
       "ignition_latitude": getLatitudes(),
       "ignition_longitude": getLongitudes(),
-      "ignition_time": $('#ign-time').val(),
-      "fc_hours": $('#fc-hours').val(),
+      "ignition_time": getIgnitionTimes(),
+      "fc_hours": getIgnitionDurations(),
       "profile": $('#profile').val()
     }
     $.ajax({

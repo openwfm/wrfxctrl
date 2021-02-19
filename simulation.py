@@ -162,7 +162,7 @@ def create_simulation(info, conf, cluster):
     print ('profile = %s' % json.dumps(profile,indent=1, separators=(',',':')))
     ign_lat, ign_lon = float(info['ignition_latitude'][1:-1].split(',')[0]), float(info['ignition_longitude'][1:-1].split(',')[0])
     # example of ignition time: Apr 10, 1975 9:45 PM
-    ign_time_esmf = to_esmf(datetime.strptime(info['ignition_time'][2:-2], '%b %d, %Y %I:%M %p'))
+    ign_time_esmf = to_esmf(datetime.strptime(info['ignition_time'][2:-2].split("\",\"")[0], '%b %d, %Y %I:%M %p'))
     sim_descr = info['description']
     fc_hours = int(info['fc_hours'][1:-1].split(',')[0])
     sim_info = {

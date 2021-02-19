@@ -139,6 +139,7 @@ function buildNewIgnitionTime() {
 
   $('#ignition-times').append(ignitionField);
   $(`#fc-hours${newFieldId}`).dropdown();
+  $(`#ign-time${newFieldId}`).datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
   ignitionTimes.push(ignitionField);
 }
 
@@ -333,7 +334,6 @@ $('.form').submit((event) => {
   }
 });
 
-$('#ign-time0').datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
 $('#ignition-type').dropdown();
 $('#ignition-times-count').dropdown();
 

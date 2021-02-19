@@ -70,7 +70,11 @@ function setActiveMarker(newFieldId) {
 function updateMarker(newFieldId) {
   let lat = parseFloat($(`#ign-lat${newFieldId}`).val());
   let lon = parseFloat($(`#ign-lon${newFieldId}`).val());
-  if (!validLatitude(lat) || !validLongitude(lon)) return;
+  if (!validLatitude(lat) || !validLongitude(lon)) {
+    if (markerFields[newFieldId].marker) map.removeLayer(markerFields[newFieldId].marker);
+    delete markerFields[newFieldId].marker;
+    return;
+  }
   if (markerFields[newFieldId].marker) map.removeLayer(markerFields[newFieldId].marker);
   const marker = L.marker([lat, lon]).addTo(map);
   markerFields[newFieldId].marker = marker;
@@ -84,10 +88,10 @@ function buildNewMarker() {
   $(`#active-marker${newFieldId}`).click(() => {
     if (markerFields.length > 1) setActiveMarker(newFieldId);
   });
-  $(`#ign-lat${newFieldId}`).change(() => {
+  $(`#ign-lat${newFieldId}`).keyup(() => {
     updateMarker(newFieldId);
   });
-  $(`#ign-lon${newFieldId}`).change(() => {
+  $(`#ign-lon${newFieldId}`).keyup(() => {
     updateMarker(newFieldId);
   });
   markerFields.push({field: newMarkerField});
@@ -273,7 +277,7 @@ function validateForm() {
   var validDescription = validateDescription();
   var validProfile = validateProfile();
   var validIgnitionTimes = validateIgnitionTimes();
-  return validLatitude && validLongitude && validLatitude && validDescription && validProfile && validIgnitionTime;
+  return validLatitude && validLongitude && validLatitude && validDescription && validProfile && validIgnitionTimes;
 }
 
 function getLatitudes() {
@@ -313,7 +317,7 @@ $('.form').submit((event) => {
   }
 });
 
-$('#ign-time').datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
+$('#ign-time0').datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
 $('#ignition-type').dropdown();
 $('#ignition-times-count').dropdown();
 

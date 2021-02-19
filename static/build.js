@@ -297,33 +297,37 @@ function getLongitudes() {
   return JSON.stringify(longitudes);
 }
 
-function getIgnitionTimes() {
+function getIgnitionTimesAndDurations() {
   var igns = [];
-  for (var i = 0; i < ignitionTimes.length; i++) {
-    igns.push($(`#ign-time${i}`).val());
-  }
-  return JSON.stringify(igns);
-}
-
-function getIgnitionDurations() {
   var fcHours = [];
-  for (var i = 0; i < ignitionTimes.length; i++) {
-    fcHours.push(parseInt($(`#fc-hours${i}`).val()));
-  } 
-  return JSON.stringify(fcHours);
+  igns.push($('#ign-time0').val());
+  fcHours.push(parseInt($('#fc-hours0').val()));
+  for (var i = 1; i < markerFields.length; i++) {
+    if ($('#ignition-type').val() == "multiple-ignitions") {
+      if ($('#ignition-times-count').val() == "multiple") {
+        igns.push($(`#ign-time${i}`).val());
+        fcHours.push(parseInt($(`#fc-hours${i}`).val()));
+      } else {
+        igns.push($('#ign-time0').val());
+        fcHours.push(parseInt($('#fc-hours0').val()));
+      }
+    }
+  }
+  return [JSON.stringify(igns), JSON.stringify(fcHours)];
 }
 
 $('.form').submit((event) => {
   event.preventDefault();
   var valid = validateForm();
+  var [ignTimes, fcHours] = getIgnitionTimesAndDurations();
   if(valid) {
     var formData = {
       "description": $('#experiment-description').val(),
       "ignition_type": $('#ignition-type').val(),
       "ignition_latitude": getLatitudes(),
       "ignition_longitude": getLongitudes(),
-      "ignition_time": getIgnitionTimes(),
-      "fc_hours": getIgnitionDurations(),
+      "ignition_time": ignTimes,
+      "fc_hours": fcHours,
       "profile": $('#profile').val()
     }
     $.ajax({

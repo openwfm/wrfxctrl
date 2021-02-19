@@ -154,9 +154,9 @@ function checkIgnitionType() {
       removeIgnitionTime();
     }
     $('#ignition-time-id-0').hide();
-    $('#ignition-times-count').hide();
+    $('#ignition-times-count-field').hide();
   } else {
-    $('#ignition-times-count').show();
+    $('#ignition-times-count-field').show();
     checkIgnitionTimeCount();
   }
 }
@@ -315,4 +315,5 @@ $('.form').submit((event) => {
 
 $('#ign-time').datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
 $('#ignition-type').dropdown();
+$('#ignition-times-count').dropdown();
 

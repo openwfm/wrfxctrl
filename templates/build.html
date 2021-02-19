@@ -62,6 +62,13 @@
             
       <h2>Step 3: Ignition time and forecast length</h2>
       <p>The simulation will start at least 30 mins before the ignition time.  The maximum forecast length is 48 hrs.</p>
+      <div class="field">
+        <label>Single or Multiple Ignition Times</label>
+        <select name="ignition_times_count" id="ignition-times-count" style="width: 200px; margin: auto">
+          <option value="single">Single Ignition Time</option>
+          <option value="multiple">Multiple Ignition Times</option>
+        </select>
+      </div>
       <div id="ignition-times">
         <div class="ui two column grid" style="height:50px">
           <div class="column ignition-times-labels">

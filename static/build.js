@@ -91,7 +91,8 @@ function buildNewMarker() {
     updateMarker(newFieldId);
   });
   markerFields.push({field: newMarkerField});
-  if ($('#ignition-type').val() == "multiple-ignitions" || ignitionTimes.length == 0) buildNewIgnitionTime();
+  if (($('#ignition-type').val() == "multiple-ignitions" && $('#ignition-times-count').val() == "multiple")
+   || ignitionTimes.length == 0) buildNewIgnitionTime();
 }
 
 function removeMarker() {
@@ -153,6 +154,20 @@ function checkIgnitionType() {
       removeIgnitionTime();
     }
     $('#ignition-time-id-0').hide();
+    $('#ignition-times-count').hide();
+  } else {
+    $('#ignition-times-count').show();
+    checkIgnitionTimeCount();
+  }
+}
+
+function checkIgnitionTimeCount() {
+  var ignitionTimeCount = $('#ignition-times-count').val();
+  if(ignitionTimeCount == "single") {
+    while (ignitionTimes.length > 1) {
+      removeIgnitionTime();
+    }
+    $('#ignition-time-id-0').hide();
   } else {
     $('#ignition-time-id-0').show();
     while (ignitionTimes.length < markerFields.length) {
@@ -164,6 +179,7 @@ function checkIgnitionType() {
 $('#additional-marker').click(buildNewMarker);
 $('#remove-marker').click(removeMarker);
 $('#ignition-type').change(checkIgnitionType)
+$('#ignition-times-count').change(checkIgnitionTimeCount);
 buildNewMarker();
 checkIgnitionType();
 $('.ui.menu').on('click', '.item', function() {

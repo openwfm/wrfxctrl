@@ -160,11 +160,16 @@ def create_simulation(info, conf, cluster):
     # store simulation configuration
     profile = info['profile']
     print ('profile = %s' % json.dumps(profile,indent=1, separators=(',',':')))
-    ign_lat, ign_lon = float(info['ignition_latitude'][1:-1].split(',')[0]), float(info['ignition_longitude'][1:-1].split(',')[0])
+    ign_lat = [float(lat) for lat in info['ignition_latitude'][1:-1].split(',')]
+    ign_lon = [float(lon) for lon in info['ignition_longitude'][1:-1].split(',')]
+    # ign_lat, ign_lon = float(info['ignition_latitude'][1:-1].split(',')[0]), float(info['ignition_longitude'][1:-1].split(',')[0])
     # example of ignition time: Apr 10, 1975 9:45 PM
-    ign_time_esmf = to_esmf(datetime.strptime(info['ignition_time'][2:-2].split("\",\"")[0], '%b %d, %Y %I:%M %p'))
+    # ign_time_esmf = to_esmf(datetime.strptime(info['ignition_time'][2:-2].split("\",\"")[0], '%b %d, %Y %I:%M %p'))
+    ign_time_esmf = [to_esmf(datetime.strptime(ign_time, '%b %d, %Y %I:%M %p')) for ign_time in info['ignition_time'][2:-2].split("\",\"")]
     sim_descr = info['description']
-    fc_hours = int(info['fc_hours'][1:-1].split(',')[0])
+    fc_hours = [int(fc_hour) for fc_hour in info['fc_hours'][1:-1].split(',')]
+    ign_type = info['ignition_type']
+    # fc_hours = int(info['fc_hours'][1:-1].split(',')[0])
     sim_info = {
       'id' : sim_id,
       'started_at' : to_esmf(datetime.now()),
@@ -187,26 +192,37 @@ def create_simulation(info, conf, cluster):
     cfg['template'] = template
     cfg['profile'] = profile
     cfg['grid_code'] = sim_id
+    cfg['ignition_type'] = ign_type
     # cfg['qsys'] = cluster.qsys
     cfg['num_nodes'] = 6
     cfg['ppn'] = cluster.ppn
-    ign_time = to_utc(ign_time_esmf)
-    sim_start = (ign_time - timedelta(minutes=30)).replace(minute=0, second=0)
-    sim_end = sim_start + timedelta(hours=fc_hours)
-    sim_info['start_utc'] = to_esmf(sim_start)
-    sim_info['end_utc'] = to_esmf(sim_end)
-    cfg['start_utc'] = to_esmf(sim_start)
-    cfg['end_utc'] = to_esmf(sim_end)
+    # ign_time = to_utc(ign_time_esmf)
+    ign_time = [to_utc(ign_time_esmfs) for ign_time_esmfs in ign_time_esmf]
+    # sim_start = (ign_time - timedelta(minutes=30)).replace(minute=0, second=0)
+    sim_start = [(ign_times - timedelta(minutes=30)).replace(minute=0, second=0) for ign_times in ign_time]
+    # sim_end = sim_start + timedelta(hours=fc_hours)
+    sim_end = [sim_starts + timedelta(hours=fc_hours[i]) for i, sim_starts in enumerate(sim_start)] 
+    # sim_info['start_utc'] = to_esmf(sim_start)
+    start_utc = [to_esmf(sim_starts) for sim_starts in sim_start]
+    end_utc = [to_esmf(sim_ends) for sim_ends in sim_end]
+    sim_info['start_utc'] = start_utc
+    cfg['start_utc'] = start_utc
+    # sim_info['end_utc'] = to_esmf(sim_end)
+    sim_info['end_utc'] = end_utc
+    cfg['end_utc'] = end_utc
     if not cfg.has_key('grib_source') or cfg['grib_source'] == 'auto':
-        cfg['grib_source'] = select_grib_source(sim_start)
+        # cfg['grib_source'] = select_grib_source(sim_start)
+        cfg['grib_source'] = [select_grib_source(sim_starts) for sim_starts in sim_start]
         print 'GRIB source not specified, selected %s from sim start time' % cfg['grib_source']
     else:
         print 'Using GRIB source %s from %s' % (cfg['grib_source'], profile['template'])
 
     # build wrfpy_id and the visualization link
-    job_id = 'wfc-%s-%s-%02d' % (sim_id, to_esmf(sim_start), fc_hours)
+    # job_id = 'wfc-%s-%s-%02d' % (sim_id, to_esmf(sim_start), fc_hours)
+    job_id = ['wfc-%s-%s-%02d' % (sim_id, start_utcs, fc_hours[i]) for i, start_utcs in enumerate(start_utc)]
     sim_info['job_id']=job_id
-    sim_info['visualization_link'] = conf['wrfxweb_url'] + '/#/view1?sim_id=' + job_id
+    # sim_info['visualization_link'] = conf['wrfxweb_url'] + '/#/view1?sim_id=' + job_id
+    sim_info['visualization_link'] = [conf['wrfxweb_url'] + '/#/view1?sim_id=' + job_ids for job_ids in job_id]
     cfg['job_id']=job_id
 
     # place top-level domain
@@ -219,7 +235,8 @@ def create_simulation(info, conf, cluster):
     cfg['ignitions'][domain][0]['time_utc'] = ign_time_esmf
     # example:  "latlon" : [39.894264, -103.903222]
     cfg['ignitions'][domain][0]['latlon'] = [ign_lat, ign_lon]
-    cfg['ignitions'][domain][0]['duration_s'] = fc_hours*60
+    # cfg['ignitions'][domain][0]['duration_s'] = fc_hours*60
+    cfg['ignitions'][domain][0]['duration_s'] = [fc_hour*60 for fc_hour in fc_hours]
 
     # switch on sending results to visualization server
     cfg['postproc']['shuttle'] = 'incremental'

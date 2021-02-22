@@ -152,6 +152,7 @@ function removeIgnitionTime() {
 function checkIgnitionType() {
   var ignitionType = $('#ignition-type').val();
   if(ignitionType == "ignition-area") {
+    $('#ignition-perimeter-time').show();
     while (markerFields.length < 3) {
       buildNewMarker();
     }
@@ -161,6 +162,7 @@ function checkIgnitionType() {
     $('#ignition-time-id-0').hide();
     $('#ignition-times-count-field').hide();
   } else {
+    $('#ignition-perimeter-time').hide();
     $('#ignition-times-count-field').show();
     checkIgnitionTimeCount();
   }
@@ -340,4 +342,5 @@ $('.form').submit((event) => {
 
 $('#ignition-type').dropdown();
 $('#ignition-times-count').dropdown();
+$(`#ign-time-perimeter`).datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
 

@@ -32,14 +32,9 @@ L.Control.MousePosition = L.Control.extend({
   },
   
   _onMouseClick: function(e) {
-    const marker = L.marker(e.latlng, {title: markerId.toString(), draggable: true}).addTo(this._map);
-    marker.on("move", (e) => {
-      let latLon = e.target._latlng;
-      $(`#ign-lat${markerId}`).val(Math.floor(latLon.lat*10000)/10000);
-      $(`#ign-lon${markerId}`).val(Math.floor(latLon.lng*10000)/10000);
-    })
-    if(markerFields[markerId].marker) this._map.removeLayer(markerFields[markerId].marker);
-    markerFields[markerId].marker = marker;
+    var lat = L.Util.formatNum(e.latlng.lat, this.options.numDigits);
+    var lon = L.Util.formatNum(e.latlng.lng, this.options.numDigits);
+    buildMapMarker(markerId, lat, lon);
     $(`#ign-lat${markerId}`).val(L.Util.formatNum(e.latlng.lat, this.options.numDigits));
     $(`#ign-lon${markerId}`).val(L.Util.formatNum(e.latlng.lng, this.options.numDigits));
   }

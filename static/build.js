@@ -7,6 +7,7 @@ var base_layer_dict = null;
 var markerFields = [];
 var ignitionTimes = [];
 var markerId = 0;
+var polygon;
 
 // map initialization code
 function initialize_map() {
@@ -67,6 +68,17 @@ function setActiveMarker(newFieldId) {
   markerId = newFieldId;
 }
 
+function buildMapMarker(id, lat, lon) {
+  if (markerFields[id].marker) map.removeLayer(markerFields[id].marker);
+  const marker = L.marker([lat, lon], {title: id.toString(), draggable: true}).addTo(map);
+  markerFields[id].marker = marker;
+  marker.on("move", (e) => {
+    let latLon = e.target._latlng;
+    $(`#ign-lat${id}`).val(Math.floor(latLon.lat*10000)/10000);
+    $(`#ign-lon${id}`).val(Math.floor(latLon.lng*10000)/10000);
+  });
+}
+
 function updateMarker(newFieldId) {
   let lat = parseFloat($(`#ign-lat${newFieldId}`).val());
   let lon = parseFloat($(`#ign-lon${newFieldId}`).val());
@@ -75,9 +87,7 @@ function updateMarker(newFieldId) {
     delete markerFields[newFieldId].marker;
     return;
   }
-  if (markerFields[newFieldId].marker) map.removeLayer(markerFields[newFieldId].marker);
-  const marker = L.marker([lat, lon]).addTo(map);
-  markerFields[newFieldId].marker = marker;
+  buildMapMarker(newFieldId, lat, lon);
 }
 
 function buildNewMarker() {

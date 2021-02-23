@@ -200,17 +200,30 @@ function set_profile_text(txt) {
   $('#profile-info-text').text(txt);
 }
 
+const validateTime = (time) => {
+  var ign_time = moment.utc(time, 'MMM D,YYYY h:mm a');
+  if(!ign_time.isValid() || ign_time.year() <  1979) {
+    return false;
+  }
+  return true;
+}
 
 const validateIgnitionTimes = () => {
   var valid = true;
   for (var i = 0; i < ignitionTimes.length; i++) {
-    var ign_time = moment.utc($(`#ign-time${i}`).val(), 'MMM D,YYYY h:mm a');
-    var now = moment().utc();
-    if(!ign_time.isValid() || ign_time.year() <  1979) {
+    if(!validateTime($(`#ign-time${i}`).val())) {
       valid = false;
       $(`#ignition-time-warning${i}`).addClass('activate-warning');
     } else {
       $(`#ignition-time-warning${i}`).removeClass('activate-warning');
+    }
+  }
+  if ($('#ignition-type').val() == "ignition-area") {
+    if(!validateTime($('#ign-time-perimeter').val())) {
+      valid = false;
+      $(`#ignition-time-warning-perimeter`).addClass('activate-warning');
+    } else {
+      $(`#ignition-time-warning-perimeter`).removeClass('activate-warning');
     }
   }
   return valid;
@@ -322,6 +335,7 @@ $('.form').submit((event) => {
   event.preventDefault();
   var valid = validateForm();
   var [ignTimes, fcHours] = getIgnitionTimesAndDurations();
+  var ignitionType = $('#ignition-type').val();
   if(valid) {
     var formData = {
       "description": $('#experiment-description').val(),
@@ -332,6 +346,7 @@ $('.form').submit((event) => {
       "fc_hours": fcHours,
       "profile": $('#profile').val()
     }
+    if (ignitionType == "ignition-area") formData["perimeter_time"] = JSON.stringify($('#ign-time-perimeter').val());
     $.ajax({
         type:"post",
         dataType: 'json',

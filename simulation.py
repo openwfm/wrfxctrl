@@ -182,6 +182,8 @@ def create_simulation(info, conf, cluster):
       'log_file' : log_path,
       'state' : make_initial_state()
     }
+    if (ign_type == "ignition-area"):
+        sim_info['perimeter_time'] = to_esmf(datetime.strptime(info['perimeter_time'][1:-1], '%b %d, %Y %I:%M %p'))
 
     # build a new job template
     template = osp.abspath(profile['template'])
@@ -193,6 +195,8 @@ def create_simulation(info, conf, cluster):
     cfg['profile'] = profile
     cfg['grid_code'] = sim_id
     cfg['ignition_type'] = ign_type
+    if (ign_type == "ignition-area"):
+        cfg['perimeter_time'] = to_esmf(datetime.strptime(info['perimeter_time'][1:-1], '%b %d, %Y %I:%M %p'))
     # cfg['qsys'] = cluster.qsys
     cfg['num_nodes'] = 6
     cfg['ppn'] = cluster.ppn

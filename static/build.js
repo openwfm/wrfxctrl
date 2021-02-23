@@ -7,7 +7,7 @@ var base_layer_dict = null;
 var markerFields = [];
 var ignitionTimes = [];
 var markerId = 0;
-var polygon;
+var polygon = null;
 
 // map initialization code
 function initialize_map() {
@@ -40,6 +40,15 @@ function initialize_map() {
 // initialize Semantic elements
 $('#profile-dropdown').dropdown({on: 'hover'});
 
+const validLatitude = (lat) => {
+  if(isNaN(lat) || (lat < 22)|| (lat > 51)) return false;
+  return true;
+}
+
+const validLongitude = (lng) => {
+  if(isNaN(lng) || lng < -128 || lng > -65) return false;
+  return true;
+}
 
 function buildLatLongFields(id) {
   return $(`<div class="two fields">
@@ -68,6 +77,27 @@ function setActiveMarker(newFieldId) {
   markerId = newFieldId;
 }
 
+function updatePolygon() {
+  if ($('#ignition-type').val() == "multiple-ignitions" && polygon != null) {
+    map.removeLayer(polygon);
+    polygon = null;
+  } else {
+    var latLon = [];
+    for (var i = 0; i < markerFields.length; i++) {
+      var lat = parseFloat($(`#ign-lat${i}`).val());
+      var lon = parseFloat($(`#ign-lon${i}`).val());
+      if (validLatitude(lat) && validLongitude(lon)) latLon.push([lat, lon]);
+    }
+    if (latLon.length > 2) {
+      if (polygon != null) map.removeLayer(polygon);
+      polygon = L.polygon(latLon, {color: 'red'}).addTo(map);
+    } else if (polygon != null) {
+      map.removeLayer(polygon);
+      polygon = null;
+    }
+  }
+}
+
 function buildMapMarker(id, lat, lon) {
   if (markerFields[id].marker) map.removeLayer(markerFields[id].marker);
   const marker = L.marker([lat, lon], {title: id.toString(), draggable: true}).addTo(map);
@@ -76,8 +106,11 @@ function buildMapMarker(id, lat, lon) {
     let latLon = e.target._latlng;
     $(`#ign-lat${id}`).val(Math.floor(latLon.lat*10000)/10000);
     $(`#ign-lon${id}`).val(Math.floor(latLon.lng*10000)/10000);
+    updatePolygon();
   });
+  updatePolygon();
 }
+
 
 function updateMarker(newFieldId) {
   let lat = parseFloat($(`#ign-lat${newFieldId}`).val());
@@ -117,6 +150,7 @@ function removeMarker() {
   lastMarker.field.remove();
   if (lastMarker.marker) map.removeLayer(lastMarker.marker);
   if ($('#ignition-type').val() == "multiple-ignitions") removeIgnitionTime();
+  updatePolygon();
 }
 
 function buildNewIgnitionTime() {
@@ -176,6 +210,7 @@ function checkIgnitionType() {
     $('#ignition-times-count-field').show();
     checkIgnitionTimeCount();
   }
+  updatePolygon();
 }
 
 function checkIgnitionTimeCount() {
@@ -239,10 +274,7 @@ const validateIgnitionTimes = () => {
   return valid;
 }
 
-const validLongitude = (lng) => {
-  if(isNaN(lng) || lng < -128 || lng > -65) return false;
-  return true;
-}
+
 
 const validateLongitudes = () => {
   var valid = true;
@@ -258,10 +290,7 @@ const validateLongitudes = () => {
   return valid;
 }
 
-const validLatitude = (lat) => {
-  if(isNaN(lat) || (lat < 22)|| (lat > 51)) return false;
-  return true;
-}
+
 
 const validateLatitudes = () => {
   var valid = true;

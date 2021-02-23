@@ -34,9 +34,9 @@ L.Control.MousePosition = L.Control.extend({
   _onMouseClick: function(e) {
     var lat = L.Util.formatNum(e.latlng.lat, this.options.numDigits);
     var lon = L.Util.formatNum(e.latlng.lng, this.options.numDigits);
+    $(`#ign-lat${markerId}`).val(lat);
+    $(`#ign-lon${markerId}`).val(lon);
     buildMapMarker(markerId, lat, lon);
-    $(`#ign-lat${markerId}`).val(L.Util.formatNum(e.latlng.lat, this.options.numDigits));
-    $(`#ign-lon${markerId}`).val(L.Util.formatNum(e.latlng.lng, this.options.numDigits));
   }
 });
 

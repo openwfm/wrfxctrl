@@ -78,9 +78,11 @@ function setActiveMarker(newFieldId) {
 }
 
 function updatePolygon() {
-  if ($('#ignition-type').val() == "multiple-ignitions" && polygon != null) {
-    map.removeLayer(polygon);
-    polygon = null;
+  if ($('#ignition-type').val() == "multiple-ignitions") {
+    if (polygon != null) {
+      map.removeLayer(polygon);
+      polygon = null;
+    }
   } else {
     var latLon = [];
     for (var i = 0; i < markerFields.length; i++) {

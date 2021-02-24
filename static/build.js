@@ -94,7 +94,7 @@ function updatePolygon() {
       if (validLatitude(lat) && validLongitude(lon)) latLon.push([lat, lon]);
     }
     if (latLon.length > 2) {
-      polygon = L.polygon(latLon, {color: 'red'}).addTo(map);
+      polygon = L.polygon(latLon, {color: 'red'});
       var centroid = polygon.getBounds().getCenter();
       latLon.sort((a, b) => {
         var thetaA = Math.atan2((a[1] - centroid.lng) , (a[0] - centroid.lat));

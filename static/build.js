@@ -207,9 +207,6 @@ function checkIgnitionType() {
   var ignitionType = $('#ignition-type').val();
   if(ignitionType == "ignition-area") {
     $('#ignition-perimeter-time').show();
-    while (markerFields.length < 3) {
-      buildNewMarker();
-    }
     while (ignitionTimes.length > 1) {
       removeIgnitionTime();
     }
@@ -336,13 +333,26 @@ const validateProfile = () => {
   return true;
 }
 
+const validateIgnitionType = () => {
+  var ignitionType = $('#ignition-type').val();
+  if (ignitionType == "ignition-area") {
+    if (markerFields.length < 3) {
+      $('#ignition-type-warning').addClass("activate-warning");
+      return false;
+    }
+  }
+  $('#ignition-type-warning').removeClass("activate-warning");
+  return true;
+}
+
 function validateForm() {
+  var validIgnitionType = validateIgnitionType();
   var validLatitudes = validateLatitudes();
   var validLongitudes = validateLongitudes();
   var validDescription = validateDescription();
   var validProfile = validateProfile();
   var validIgnitionTimes = validateIgnitionTimes();
-  return validLatitude && validLongitude && validLatitude && validDescription && validProfile && validIgnitionTimes;
+  return validIgnitionType && validLatitude && validLongitude && validLatitude && validDescription && validProfile && validIgnitionTimes;
 }
 
 function getLatitudes() {

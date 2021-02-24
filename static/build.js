@@ -77,13 +77,16 @@ function setActiveMarker(newFieldId) {
   markerId = newFieldId;
 }
 
+function calculateCentroid(latLon) {
+
+}
+
 function updatePolygon() {
-  if ($('#ignition-type').val() == "multiple-ignitions") {
-    if (polygon != null) {
-      map.removeLayer(polygon);
-      polygon = null;
-    }
-  } else {
+  if (polygon != null) {
+    map.removeLayer(polygon);
+    polygon = null;
+  }
+  if ($('#ignition-type').val() == "ignition-area") {
     var latLon = [];
     for (var i = 0; i < markerFields.length; i++) {
       var lat = parseFloat($(`#ign-lat${i}`).val());
@@ -91,11 +94,16 @@ function updatePolygon() {
       if (validLatitude(lat) && validLongitude(lon)) latLon.push([lat, lon]);
     }
     if (latLon.length > 2) {
-      if (polygon != null) map.removeLayer(polygon);
       polygon = L.polygon(latLon, {color: 'red'}).addTo(map);
-    } else if (polygon != null) {
+      var centroid = polygon.getBounds().getCenter();
+      latLon.sort((a, b) => {
+        var thetaA = Math.atan2((a[1] - centroid.lng) , (a[0] - centroid.lat));
+        var thetaB = Math.atan2((b[1] - centroid.lng) , (b[0] - centroid.lat));
+        if (thetaA > thetaB) return 1;
+        return -1;
+      });
       map.removeLayer(polygon);
-      polygon = null;
+      polygon = L.polygon(latLon, {color: 'red'}).addTo(map);
     }
   }
 }

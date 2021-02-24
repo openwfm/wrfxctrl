@@ -112,6 +112,9 @@ function buildMapMarker(id, lat, lon) {
   if (markerFields[id].marker) map.removeLayer(markerFields[id].marker);
   const marker = L.marker([lat, lon], {title: id.toString(), draggable: true}).addTo(map);
   markerFields[id].marker = marker;
+  marker.on("click", () => {
+    setActiveMarker(id);
+  });
   marker.on("move", (e) => {
     let latLon = e.target._latlng;
     $(`#ign-lat${id}`).val(Math.floor(latLon.lat*10000)/10000);

@@ -59,8 +59,15 @@ class Marker extends HTMLElement {
 		this.latLon = [lat, lon];
 		this.querySelector('#ign-lat').value = lat;
 		this.querySelector('#ign-lon').value = lon;
-		const marker = L.marker([lat, lon], {title: this.index.toString(), draggable: true}).addTo(map);
+		// const marker = L.marker([lat, lon], {title: this.index.toString(), draggable: true}).addTo(map);
+		const marker = L.marker([lat, lon], {draggable: true}).bindPopup(this.index.toString(), {closeButton: false}).addTo(map);
 		this.marker = marker;
+		marker.on("mouseover", () => {
+			marker.openPopup();
+		});
+		marker.on("mouseout", () => {
+			marker.closePopup();
+		})
 		marker.on("click", () => {
 			this.setActiveMarker(this.index);
 		});
@@ -82,10 +89,6 @@ class Marker extends HTMLElement {
 		this.updatePolygon();
 	}
 
-	// remove() {
-	// 	this.querySelector('')
-	// }
-
 	setInactive() {
 		const activeMarker = this.querySelector('#active-marker');
 		activeMarker.style.backgroundColor = "white";
@@ -103,6 +106,9 @@ class Marker extends HTMLElement {
 	updateIndex(newIndex) {
 		this.index = newIndex;
 		this.querySelector('#marker-id').innerText = newIndex;
+		if (this.marker) {
+			this.marker._popup.setContent(newIndex.toString());
+		}
 	}
 }
 

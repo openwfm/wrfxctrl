@@ -40,16 +40,6 @@ function initialize_map() {
 // initialize Semantic elements
 $('#profile-dropdown').dropdown({on: 'hover'});
 
-const validLatitude = (lat) => {
-  if(isNaN(lat) || (lat < 22)|| (lat > 51)) return false;
-  return true;
-}
-
-const validLongitude = (lng) => {
-  if(isNaN(lng) || lng < -128 || lng > -65) return false;
-  return true;
-}
-
 function setActiveMarker(newFieldId) {
   markerFields[markerId].setInactive();
   markerFields[newFieldId].setActive();
@@ -99,6 +89,13 @@ function removeMarker(id = markerFields.length - 1) {
   updatePolygon();
 }
 
+function buildNewIgnitionTime() {
+  let newFieldId = ignitionTimes.length;
+  const ignitionField = new IgnitionTime(newFieldId);
+  $('#ignition-times').append(ignitionField);
+  ignitionTimes.push(ignitionField);
+}
+
 function buildNewMarker() {
   let newFieldId = markerFields.length;
   const newMarkerField = new Marker(newFieldId, setActiveMarker, removeMarker, updatePolygon);
@@ -109,44 +106,28 @@ function buildNewMarker() {
    || ignitionTimes.length == 0) buildNewIgnitionTime();
 }
 
-function buildNewIgnitionTime() {
-  let newFieldId = ignitionTimes.length;
-  const ignitionField = $(`
-        <div class="two fields">
-          <div id="ignition-time-id-${newFieldId}" class="ignition-id">
-            <span>${newFieldId}</span>
-          </div>
-          <div class="field">
-            <div class="ui input left icon">
-              <i class="calendar icon"></i>
-              <input name="ignition_time" id="ign-time${newFieldId}" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
-            </div>
-            <span id="ignition-time-warning${newFieldId}" class="not-valid-warning">The ignition time must be between 1/1/1979 and now in the format YYYY-MM-DD_HH:MM:SS</span>
-          </div>
-          <div class="field">
-              <select name="fc_hours" class="ui dropdown" id="fc-hours${newFieldId}">
-                  <option value="3">3</option>
-                  <option value="6">6</option>
-                  <option value="9">9</option>
-                  <option value="12">12</option>
-                  <option value="18">18</option>
-                  <option value="24">24</option>
-                  <option value="48">48</option>
-              </select>
-          </div>
-        </div>
-      `);
-
-  $('#ignition-times').append(ignitionField);
-  $(`#fc-hours${newFieldId}`).dropdown();
-  $(`#ign-time${newFieldId}`).datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
-  ignitionTimes.push(ignitionField);
-}
-
-function removeIgnitionTime(id) {
+function removeIgnitionTime(id = ignitionTimes.length - 1) {
   if (ignitionTimes.length == 1) return;
+  for (var i = id + 1; i < ignitionTimes.length; i++) {
+    ignitionTimes[i].updateIndex(i);
+  }
   const lastIgnitionTime = ignitionTimes.splice(id, 1)[0];
   lastIgnitionTime.remove();
+}
+
+function checkIgnitionTimeCount() {
+  var ignitionTimeCount = $('#ignition-times-count').val();
+  if(ignitionTimeCount == "single") {
+    while (ignitionTimes.length > 1) {
+      removeIgnitionTime();
+    }
+    ignitionTimes[0].hideIndex();
+  } else {
+    while (ignitionTimes.length < markerFields.length) {
+      buildNewIgnitionTime();
+    }
+    ignitionTimes[0].showIndex();
+  }
 }
 
 function checkIgnitionType() {
@@ -156,29 +137,15 @@ function checkIgnitionType() {
     while (ignitionTimes.length > 1) {
       removeIgnitionTime();
     }
-    $('#ignition-time-id-0').hide();
+    ignitionTimes[0].hideIndex();
     $('#ignition-times-count-field').hide();
   } else {
     $('#ignition-perimeter-time').hide();
     $('#ignition-times-count-field').show();
+    ignitionTimes[0].showIndex();
     checkIgnitionTimeCount();
   }
   updatePolygon();
-}
-
-function checkIgnitionTimeCount() {
-  var ignitionTimeCount = $('#ignition-times-count').val();
-  if(ignitionTimeCount == "single") {
-    while (ignitionTimes.length > 1) {
-      removeIgnitionTime();
-    }
-    $('#ignition-time-id-0').hide();
-  } else {
-    $('#ignition-time-id-0').show();
-    while (ignitionTimes.length < markerFields.length) {
-      buildNewIgnitionTime();
-    }
-  }
 }
 
 $('#additional-marker').click(buildNewMarker);
@@ -198,22 +165,12 @@ function set_profile_text(txt) {
   $('#profile-info-text').text(txt);
 }
 
-const validateTime = (time) => {
-  var ign_time = moment.utc(time, 'MMM D,YYYY h:mm a');
-  if(!ign_time.isValid() || ign_time.year() <  1979) {
-    return false;
-  }
-  return true;
-}
 
 const validateIgnitionTimes = () => {
   var valid = true;
   for (var i = 0; i < ignitionTimes.length; i++) {
-    if(!validateTime($(`#ign-time${i}`).val())) {
+    if(!ignitionTimes[i].validate()) {
       valid = false;
-      $(`#ignition-time-warning${i}`).addClass('activate-warning');
-    } else {
-      $(`#ignition-time-warning${i}`).removeClass('activate-warning');
     }
   }
   if ($('#ignition-type').val() == "ignition-area") {
@@ -226,8 +183,6 @@ const validateIgnitionTimes = () => {
   }
   return valid;
 }
-
-
 
 const validateLongitudes = () => {
   var valid = true;
@@ -320,8 +275,6 @@ function getLongitudes() {
 function getIgnitionTimesAndDurations() {
   var igns = [];
   var fcHours = [];
-  igns.push($('#ign-time0').val());
-  fcHours.push(parseInt($('#fc-hours0').val()));
   for (var i = 1; i < markerFields.length; i++) {
     if ($('#ignition-type').val() == "multiple-ignitions") {
       if ($('#ignition-times-count').val() == "multiple") {

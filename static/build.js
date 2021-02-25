@@ -95,7 +95,7 @@ function removeMarker(id = markerFields.length - 1) {
   if (lastMarker.marker) map.removeLayer(lastMarker.marker);
   lastMarker.remove();
   setActiveMarker(markerId)
-  // if ($('#ignition-type').val() == "multiple-ignitions") removeIgnitionTime();
+  if ($('#ignition-type').val() == "multiple-ignitions") removeIgnitionTime(id);
   updatePolygon();
 }
 
@@ -143,9 +143,9 @@ function buildNewIgnitionTime() {
   ignitionTimes.push(ignitionField);
 }
 
-function removeIgnitionTime() {
+function removeIgnitionTime(id) {
   if (ignitionTimes.length == 1) return;
-  const lastIgnitionTime = ignitionTimes.pop();
+  const lastIgnitionTime = ignitionTimes.splice(id, 1)[0];
   lastIgnitionTime.remove();
 }
 

@@ -50,30 +50,9 @@ const validLongitude = (lng) => {
   return true;
 }
 
-function buildLatLongFields(id) {
-  return $(`<div class="two fields">
-        <div class="ignition-id">
-          <span>${id}</span>
-        </div>
-        <div class="field">
-          <input name="ignition_latitude${id}" id="ign-lat${id}" type="text" placeholder="Latitude ...">
-          <span id="lat-warning${id}" class="not-valid-warning">The ignition latitude must be a number between 36 and 41.</span>
-        </div>
-        <div class="field">
-          <input name="ignition_longitude${id}" id="ign-lon${id}" type="text" placeholder="Longitude ...">
-          <span id="lon-warning${id}" class="not-valid-warning">The ignition longitude must be a number between -109 and -102.</span>
-        </div>
-        <div>
-          <span class="active-field-button" id="active-marker${id}">Active</span>
-        </div>
-      </div>`);
-}
-
 function setActiveMarker(newFieldId) {
-  $(`#active-marker${markerId}`).css("background-color", "white");
-  $(`#active-marker${markerId}`).css("color", "black");
-  $(`#active-marker${newFieldId}`).css("background-color", "#404040");
-  $(`#active-marker${newFieldId}`).css("color", "white");
+  markerFields[markerId].setInactive();
+  markerFields[newFieldId].setActive();
   markerId = newFieldId;
 }
 
@@ -87,25 +66,34 @@ function updatePolygon() {
     polygon = null;
   }
   if ($('#ignition-type').val() == "ignition-area") {
-    var latLon = [];
+    var latLons = [];
     for (var i = 0; i < markerFields.length; i++) {
-      var lat = parseFloat($(`#ign-lat${i}`).val());
-      var lon = parseFloat($(`#ign-lon${i}`).val());
-      if (validLatitude(lat) && validLongitude(lon)) latLon.push([lat, lon]);
+      var latLon = markerFields[i].latLon;
+      if (latLon.length != 0) latLons.push(latLon);
     }
-    if (latLon.length > 2) {
-      polygon = L.polygon(latLon, {color: 'red'});
+    if (latLons.length > 2) {
+      polygon = L.polygon(latLons, {color: 'red'});
       var centroid = polygon.getBounds().getCenter();
-      latLon.sort((a, b) => {
+      latLons.sort((a, b) => {
         var thetaA = Math.atan2((a[1] - centroid.lng) , (a[0] - centroid.lat));
         var thetaB = Math.atan2((b[1] - centroid.lng) , (b[0] - centroid.lat));
         if (thetaA > thetaB) return 1;
         return -1;
       });
       map.removeLayer(polygon);
-      polygon = L.polygon(latLon, {color: 'red'}).addTo(map);
+      polygon = L.polygon(latLons, {color: 'red'}).addTo(map);
     }
   }
+}
+
+function removeMarker(id = markerFields.length - 1) {
+  if (markerFields.length < 2) return;
+  if (markerId == markerFields.length - 1 ) setActiveMarker(markerId - 1);
+  const lastMarker = markerFields[id];
+  markerFields.splice(id, 1);
+  if (lastMarker.marker) map.removeLayer(lastMarker.marker);
+  // if ($('#ignition-type').val() == "multiple-ignitions") removeIgnitionTime();
+  updatePolygon();
 }
 
 function buildMapMarker(id, lat, lon) {
@@ -115,6 +103,9 @@ function buildMapMarker(id, lat, lon) {
   marker.on("click", () => {
     setActiveMarker(id);
   });
+  marker.on("dblclick", () => {
+    removeMarker(id);
+  });
   marker.on("move", (e) => {
     let latLon = e.target._latlng;
     $(`#ign-lat${id}`).val(Math.floor(latLon.lat*10000)/10000);
@@ -123,7 +114,6 @@ function buildMapMarker(id, lat, lon) {
   });
   updatePolygon();
 }
-
 
 function updateMarker(newFieldId) {
   let lat = parseFloat($(`#ign-lat${newFieldId}`).val());
@@ -138,33 +128,15 @@ function updateMarker(newFieldId) {
 
 function buildNewMarker() {
   let newFieldId = markerFields.length;
-  const newMarkerField = buildLatLongFields(newFieldId);
+  const newMarkerField = new Marker(newFieldId, setActiveMarker, removeMarker, updatePolygon);
   $('#markers').append(newMarkerField);
+  markerFields.push(newMarkerField);
   setActiveMarker(newFieldId);
-  $(`#active-marker${newFieldId}`).click(() => {
-    if (markerFields.length > 1) setActiveMarker(newFieldId);
-  });
-  $(`#ign-lat${newFieldId}`).keyup(() => {
-    updateMarker(newFieldId);
-  });
-  $(`#ign-lon${newFieldId}`).keyup(() => {
-    updateMarker(newFieldId);
-  });
-  markerFields.push({field: newMarkerField});
   if (($('#ignition-type').val() == "multiple-ignitions" && $('#ignition-times-count').val() == "multiple")
    || ignitionTimes.length == 0) buildNewIgnitionTime();
 }
 
-function removeMarker() {
-  if (markerFields.length < 2) return;
-  if (markerFields.length == 3 && $('#ignition-type').val() == "ignition-area") return;
-  if (markerId == markerFields.length - 1) setActiveMarker(markerId - 1);
-  const lastMarker = markerFields.pop();
-  lastMarker.field.remove();
-  if (lastMarker.marker) map.removeLayer(lastMarker.marker);
-  if ($('#ignition-type').val() == "multiple-ignitions") removeIgnitionTime();
-  updatePolygon();
-}
+
 
 function buildNewIgnitionTime() {
   let newFieldId = ignitionTimes.length;
@@ -239,7 +211,7 @@ function checkIgnitionTimeCount() {
 }
 
 $('#additional-marker').click(buildNewMarker);
-$('#remove-marker').click(removeMarker);
+$('#remove-marker').click(() => removeMarker());
 $('#ignition-type').change(checkIgnitionType)
 $('#ignition-times-count').change(checkIgnitionTimeCount);
 buildNewMarker();

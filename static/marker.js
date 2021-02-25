@@ -82,6 +82,10 @@ class Marker extends HTMLElement {
 		this.updatePolygon();
 	}
 
+	// remove() {
+	// 	this.querySelector('')
+	// }
+
 	setInactive() {
 		const activeMarker = this.querySelector('#active-marker');
 		activeMarker.style.backgroundColor = "white";

@@ -88,42 +88,15 @@ function updatePolygon() {
 
 function removeMarker(id = markerFields.length - 1) {
   if (markerFields.length < 2) return;
-  if (markerId == markerFields.length - 1 ) setActiveMarker(markerId - 1);
+  if (markerId == markerFields.length - 1 ) markerId = markerId - 1;
   const lastMarker = markerFields[id];
+  for (var i = id + 1; i < markerFields.length; i++ ) markerFields[i].updateIndex(i - 1);
   markerFields.splice(id, 1);
   if (lastMarker.marker) map.removeLayer(lastMarker.marker);
+  lastMarker.remove();
+  setActiveMarker(markerId)
   // if ($('#ignition-type').val() == "multiple-ignitions") removeIgnitionTime();
   updatePolygon();
-}
-
-function buildMapMarker(id, lat, lon) {
-  if (markerFields[id].marker) map.removeLayer(markerFields[id].marker);
-  const marker = L.marker([lat, lon], {title: id.toString(), draggable: true}).addTo(map);
-  markerFields[id].marker = marker;
-  marker.on("click", () => {
-    setActiveMarker(id);
-  });
-  marker.on("dblclick", () => {
-    removeMarker(id);
-  });
-  marker.on("move", (e) => {
-    let latLon = e.target._latlng;
-    $(`#ign-lat${id}`).val(Math.floor(latLon.lat*10000)/10000);
-    $(`#ign-lon${id}`).val(Math.floor(latLon.lng*10000)/10000);
-    updatePolygon();
-  });
-  updatePolygon();
-}
-
-function updateMarker(newFieldId) {
-  let lat = parseFloat($(`#ign-lat${newFieldId}`).val());
-  let lon = parseFloat($(`#ign-lon${newFieldId}`).val());
-  if (!validLatitude(lat) || !validLongitude(lon)) {
-    if (markerFields[newFieldId].marker) map.removeLayer(markerFields[newFieldId].marker);
-    delete markerFields[newFieldId].marker;
-    return;
-  }
-  buildMapMarker(newFieldId, lat, lon);
 }
 
 function buildNewMarker() {
@@ -135,8 +108,6 @@ function buildNewMarker() {
   if (($('#ignition-type').val() == "multiple-ignitions" && $('#ignition-times-count').val() == "multiple")
    || ignitionTimes.length == 0) buildNewIgnitionTime();
 }
-
-
 
 function buildNewIgnitionTime() {
   let newFieldId = ignitionTimes.length;

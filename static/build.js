@@ -58,7 +58,7 @@ function updatePolygon() {
   if ($('#ignition-type').val() == "ignition-area") {
     var latLons = [];
     for (var i = 0; i < markerFields.length; i++) {
-      var latLon = markerFields[i].latLon;
+      var latLon = markerFields[i].getLatLon();
       if (latLon.length != 0) latLons.push(latLon);
     }
     if (latLons.length > 2) {
@@ -184,32 +184,10 @@ const validateIgnitionTimes = () => {
   return valid;
 }
 
-const validateLongitudes = () => {
-  var valid = true;
+const validateLatLons = () => {
+  var validate = true;
   for (var i = 0; i < markerFields.length; i++) {
-    var lng = parseFloat($(`#ign-lon${i}`).val());
-    if (!validLongitude(lng)) {
-      valid = false;
-      $(`#lon-warning${i}`).addClass('activate-warning');
-    } else {
-      $(`#lon-warning${i}`).removeClass('activate-warning');
-    }
-  }
-  return valid;
-}
-
-
-
-const validateLatitudes = () => {
-  var valid = true;
-  for (var i = 0; i < markerFields.length; i++) {
-    var lat = parseFloat($(`#ign-lat${i}`).val());
-    if(!validLatitude(lat)) {
-      valid = false;
-      $(`#lat-warning${i}`).addClass('activate-warning');
-    } else {
-      $(`#lat-warning${i}`).removeClass('activate-warning');
-    }
+    if (!markerFields[i].validate()) validate = false
   }
   return valid;
 }
@@ -248,28 +226,22 @@ const validateIgnitionType = () => {
 
 function validateForm() {
   var validIgnitionType = validateIgnitionType();
-  var validLatitudes = validateLatitudes();
-  var validLongitudes = validateLongitudes();
+  var validLatLons = validateLatLons();
   var validDescription = validateDescription();
   var validProfile = validateProfile();
   var validIgnitionTimes = validateIgnitionTimes();
-  return validIgnitionType && validLatitude && validLongitude && validLatitude && validDescription && validProfile && validIgnitionTimes;
+  return validIgnitionType && validLatLons && validDescription && validProfile && validIgnitionTimes;
 }
 
-function getLatitudes() {
+function getLatLons() {
   var latitudes = [];
-  for (var i = 0; i < markerFields.length; i++) {
-    latitudes.push(parseFloat($(`#ign-lat${i}`).val()));
-  }
-  return JSON.stringify(latitudes);
-}
-
-function getLongitudes() {
   var longitudes = [];
   for (var i = 0; i < markerFields.length; i++) {
-    longitudes.push(parseFloat($(`#ign-lon${i}`).val()));
+    let [lat, lon] = markerFields[i].getLatLon();
+    latitudes.push(lat);
+    longitudes.push(lon);
   }
-  return JSON.stringify(longitudes);
+  return [JSON.stringify(latitudes), JSON.stringify(longitudes)];
 }
 
 function getIgnitionTimesAndDurations() {
@@ -289,29 +261,29 @@ function getIgnitionTimesAndDurations() {
   return [JSON.stringify(igns), JSON.stringify(fcHours)];
 }
 
-$('.form').submit((event) => {
-  event.preventDefault();
-  var valid = validateForm();
-  var [ignTimes, fcHours] = getIgnitionTimesAndDurations();
-  var ignitionType = $('#ignition-type').val();
-  if(valid) {
-    var formData = {
-      "description": $('#experiment-description').val(),
-      "ignition_type": $('#ignition-type').val(),
-      "ignition_latitude": getLatitudes(),
-      "ignition_longitude": getLongitudes(),
-      "ignition_time": ignTimes,
-      "fc_hours": fcHours,
-      "profile": $('#profile').val()
-    }
-    if (ignitionType == "ignition-area") formData["perimeter_time"] = JSON.stringify($('#ign-time-perimeter').val());
-    $.ajax({
-        type:"post",
-        dataType: 'json',
-        data: formData
-      });
-  }
-});
+// $('.form').submit((event) => {
+//   event.preventDefault();
+//   var valid = validateForm();
+//   var [ignTimes, fcHours] = getIgnitionTimesAndDurations();
+//   var ignitionType = $('#ignition-type').val();
+//   if(valid) {
+//     var formData = {
+//       "description": $('#experiment-description').val(),
+//       "ignition_type": $('#ignition-type').val(),
+//       "ignition_latitude": getLatitudes(),
+//       "ignition_longitude": getLongitudes(),
+//       "ignition_time": ignTimes,
+//       "fc_hours": fcHours,
+//       "profile": $('#profile').val()
+//     }
+//     if (ignitionType == "ignition-area") formData["perimeter_time"] = JSON.stringify($('#ign-time-perimeter').val());
+//     $.ajax({
+//         type:"post",
+//         dataType: 'json',
+//         data: formData
+//       });
+//   }
+// });
 
 $('#ignition-type').dropdown();
 $('#ignition-times-count').dropdown();

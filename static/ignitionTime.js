@@ -46,8 +46,6 @@ class IgnitionTime extends HTMLElement {
 		this.querySelector('#id-container').style.display = "inline-block";
 	}
 
-
-
 	validate() {
 		var ign_time_value = this.querySelector('#ign-time').value;
 		var ign_time = moment.utc(ign_time_value, 'MMM D,YYYY h:mm a');

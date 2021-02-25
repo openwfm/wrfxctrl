@@ -25,7 +25,6 @@ class Marker extends HTMLElement {
 		this.setActiveMarker = setActiveMarker;
 		this.removeMarker = removeMarker;
 		this.updatePolygon = updatePolygon;
-		this.latLon = [];
 	}
 
 	connectedCallback() {
@@ -50,13 +49,38 @@ class Marker extends HTMLElement {
 	  return true;
 	}
 
+	getLatLon() {
+		var latLon = []
+		var lat = parseFloat(this.querySelector('#ign-lat').value);
+		var lon = parseFloat(this.querySelector('#ign-lon').value);
+		if (this.validLatitude(lat) && this.validLongitude(lon)) latLon = [lat, lon];
+		return latLon;
+	}
+
+	validate() {
+		valid = true;
+		var lat = parseFloat(this.querySelector('#ign-lat').value);
+		if (!validLatitude(lat)) {
+			$(`#lat-warning`).addClass('activate-warning');
+			valid = false;
+		} else {
+			$(`#lat-warning`).removeClass('activate-warning');
+		}
+		var lon = parseFloat(this.querySelector('#ign-lon').value);
+		if (!validLongitude(lon)) {
+			$(`#lon-warning`).addClass('activate-warning');
+			valid = false;
+		} else {
+			$(`#lon-warning`).removeClass('activate-warning');
+		}
+		return valid;
+	}
+
 	buildMapMarker(lat, lon) {
 		if (this.marker) map.removeLayer(this.marker);
 		if (!this.validLatitude(lat) || !this.validLongitude(lon)) {
-			this.latLon = [];
 			return;
 		}
-		this.latLon = [lat, lon];
 		this.querySelector('#ign-lat').value = lat;
 		this.querySelector('#ign-lon').value = lon;
 		// const marker = L.marker([lat, lon], {title: this.index.toString(), draggable: true}).addTo(map);
@@ -76,12 +100,6 @@ class Marker extends HTMLElement {
 		});
 		marker.on("move", (e) => {
 			let latLon = e.target._latlng;
-			if (!this.validLatitude(latLon.lat) || !this.validLongitude(latLon.lng)) {
-				map.removeLayer(this.marker);
-				this.latLon = [];
-				return;
-			}
-			this.latLon = latLon;
 			this.querySelector('#ign-lat').value = Math.floor(latLon.lat*10000)/10000;
 			this.querySelector('#ign-lon').value = Math.floor(latLon.lng*10000)/10000;
 			this.updatePolygon();

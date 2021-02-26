@@ -48,12 +48,11 @@ class IgnitionTime extends HTMLElement {
 
 	validate() {
 		var ign_time_value = this.querySelector('#ign-time').value;
-		var ign_time = moment.utc(ign_time_value, 'MMM D,YYYY h:mm a');
-		if(!ign_time.isValid() || ign_time.year() <  1979) {
-			this.querySelector(`#ignition-time-warning`).addClass('activate-warning');
+		this.querySelector(`#ignition-time-warning`).className = 'not-valid-warning';
+		if(!validateTime(ign_time_value)) {
+			this.querySelector(`#ignition-time-warning`).className = 'not-valid-warning activate-warning';
 			return false;
 		}
-		this.querySelector(`#ignition-time-warning`).removeClass('activate-warning');
 		return true;
 	}
 

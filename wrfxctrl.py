@@ -85,13 +85,15 @@ def build():
         sim_cfg = request.form.copy()
         print 'values returned by build page:'
         print json.dumps(sim_cfg, indent=4, separators=(',', ': '))
-        sim_cfg['profile'] = profiles[sim_cfg['profile']]
-        sim_info = create_simulation(sim_cfg, conf, cluster)
-        sim_id = sim_info['id']
-        simulations[sim_id] = sim_info
-        # print 'sim_info:'
-        # print json.dumps(sim_info, indent=4, separators=(',', ': '))
-        return redirect("/monitor/%s" % sim_id)
+        
+        return render_template('build.html', profiles=profiles.values(), urls=urls)
+        # sim_cfg['profile'] = profiles[sim_cfg['profile']]
+        # sim_info = create_simulation(sim_cfg, conf, cluster)
+        # sim_id = sim_info['id']
+        # simulations[sim_id] = sim_info
+        # # print 'sim_info:'
+        # # print json.dumps(sim_info, indent=4, separators=(',', ': '))
+        # return redirect("/monitor/%s" % sim_id)
 
 
 @app.route("/monitor/<sim_id>")

@@ -1,5 +1,5 @@
 class Marker extends HTMLElement {
-	constructor(index, setActiveMarker, removeMarker, updatePolygon) {
+	constructor(index) {
 		super();
 		this.innerHTML = `
 			<div class="two fields" style="margin-bottom: 15px">
@@ -22,15 +22,12 @@ class Marker extends HTMLElement {
 		this.index = index;
 		this.marker = null;
 		this.active = false;
-		this.setActiveMarker = setActiveMarker;
-		this.removeMarker = removeMarker;
-		this.updatePolygon = updatePolygon;
 	}
 
 	connectedCallback() {
 		this.querySelector('#marker-id').innerText = this.index;
 		this.querySelector('#active-marker').onclick = () => {
-			if (!this.active) this.setActiveMarker(this.index);
+			if (!this.active) setActiveMarker(this.index);
 		};
 		this.querySelector('#ign-lat').keyup = () => {
 			var lat = parseFloat(this.querySelector(`#ign-lat`).value);
@@ -58,20 +55,18 @@ class Marker extends HTMLElement {
 	}
 
 	validate() {
-		valid = true;
+		var valid = true;
 		var lat = parseFloat(this.querySelector('#ign-lat').value);
-		if (!validLatitude(lat)) {
-			$(`#lat-warning`).addClass('activate-warning');
+		this.querySelector('#lat-warning').className = "not-valid-warning";
+		if (!this.validLatitude(lat)) {
+			this.querySelector('#lat-warning').className = "not-valid-warning activate-warning";
 			valid = false;
-		} else {
-			$(`#lat-warning`).removeClass('activate-warning');
 		}
 		var lon = parseFloat(this.querySelector('#ign-lon').value);
-		if (!validLongitude(lon)) {
-			$(`#lon-warning`).addClass('activate-warning');
+		this.querySelector(`#lon-warning`).className = 'activate-warning';
+		if (!this.validLongitude(lon)) {
+			this.querySelector(`#lon-warning`).className = 'not-valid-warning activate-warning';
 			valid = false;
-		} else {
-			$(`#lon-warning`).removeClass('activate-warning');
 		}
 		return valid;
 	}
@@ -93,18 +88,18 @@ class Marker extends HTMLElement {
 			marker.closePopup();
 		})
 		marker.on("click", () => {
-			this.setActiveMarker(this.index);
+			setActiveMarker(this.index);
 		});
 		marker.on("dblclick", () => {
-			this.removeMarker(this.index);
+			removeMarker(this.index);
 		});
 		marker.on("move", (e) => {
 			let latLon = e.target._latlng;
 			this.querySelector('#ign-lat').value = Math.floor(latLon.lat*10000)/10000;
 			this.querySelector('#ign-lon').value = Math.floor(latLon.lng*10000)/10000;
-			this.updatePolygon();
+			updatePolygon();
 		});
-		this.updatePolygon();
+		updatePolygon();
 	}
 
 	setInactive() {

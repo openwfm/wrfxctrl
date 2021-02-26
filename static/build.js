@@ -89,6 +89,12 @@ function removeMarker(id = markerFields.length - 1) {
   updatePolygon();
 }
 
+function validateTime(ign_time_value) {
+  var ign_time = moment.utc(ign_time_value, 'MMM D,YYYY h:mm a');
+  if(!ign_time.isValid() || ign_time.year() <  1979) return false;
+  return true;
+}
+
 function buildNewIgnitionTime() {
   let newFieldId = ignitionTimes.length;
   const ignitionField = new IgnitionTime(newFieldId);
@@ -98,7 +104,7 @@ function buildNewIgnitionTime() {
 
 function buildNewMarker() {
   let newFieldId = markerFields.length;
-  const newMarkerField = new Marker(newFieldId, setActiveMarker, removeMarker, updatePolygon);
+  const newMarkerField = new Marker(newFieldId);
   $('#markers').append(newMarkerField);
   markerFields.push(newMarkerField);
   setActiveMarker(newFieldId);
@@ -185,9 +191,9 @@ const validateIgnitionTimes = () => {
 }
 
 const validateLatLons = () => {
-  var validate = true;
+  var valid = true;
   for (var i = 0; i < markerFields.length; i++) {
-    if (!markerFields[i].validate()) validate = false
+    if (!markerFields[i].validate()) valid = false
   }
   return valid;
 }
@@ -247,43 +253,46 @@ function getLatLons() {
 function getIgnitionTimesAndDurations() {
   var igns = [];
   var fcHours = [];
+  var ignTimeAndDuration = ignitionTimes[0].getIgnitionTimeAndDuration();
+  igns.push(ignTimeAndDuration[0]);
+  fcHours.push(ignTimeAndDuration[1]);
   for (var i = 1; i < markerFields.length; i++) {
+    // If an area we dont want to post multiple ignitions
     if ($('#ignition-type').val() == "multiple-ignitions") {
       if ($('#ignition-times-count').val() == "multiple") {
-        igns.push($(`#ign-time${i}`).val());
-        fcHours.push(parseInt($(`#fc-hours${i}`).val()));
-      } else {
-        igns.push($('#ign-time0').val());
-        fcHours.push(parseInt($('#fc-hours0').val()));
+        ignTimeAndDuration = ignTimes[i].getIgnitionTimeAndDuration();
       }
+      igns.push(ignTimeAndDuration[0]);
+      fcHours.push(ignTimeAndDuration[1]);
     }
   }
   return [JSON.stringify(igns), JSON.stringify(fcHours)];
 }
 
-// $('.form').submit((event) => {
-//   event.preventDefault();
-//   var valid = validateForm();
-//   var [ignTimes, fcHours] = getIgnitionTimesAndDurations();
-//   var ignitionType = $('#ignition-type').val();
-//   if(valid) {
-//     var formData = {
-//       "description": $('#experiment-description').val(),
-//       "ignition_type": $('#ignition-type').val(),
-//       "ignition_latitude": getLatitudes(),
-//       "ignition_longitude": getLongitudes(),
-//       "ignition_time": ignTimes,
-//       "fc_hours": fcHours,
-//       "profile": $('#profile').val()
-//     }
-//     if (ignitionType == "ignition-area") formData["perimeter_time"] = JSON.stringify($('#ign-time-perimeter').val());
-//     $.ajax({
-//         type:"post",
-//         dataType: 'json',
-//         data: formData
-//       });
-//   }
-// });
+$('.form').submit((event) => {
+  event.preventDefault();
+  var valid = validateForm();
+  var [ignTimes, fcHours] = getIgnitionTimesAndDurations();
+  var [lats, lons] = getLatLons();
+  var ignitionType = $('#ignition-type').val();
+  if(valid) {
+    var formData = {
+      "description": $('#experiment-description').val(),
+      "ignition_type": $('#ignition-type').val(),
+      "ignition_latitude": lats,
+      "ignition_longitude": lons,
+      "ignition_time": ignTimes,
+      "fc_hours": fcHours,
+      "profile": $('#profile').val()
+    }
+    if (ignitionType == "ignition-area") formData["perimeter_time"] = JSON.stringify($('#ign-time-perimeter').val());
+    $.ajax({
+        type:"post",
+        dataType: 'json',
+        data: formData
+      });
+  }
+});
 
 $('#ignition-type').dropdown();
 $('#ignition-times-count').dropdown();

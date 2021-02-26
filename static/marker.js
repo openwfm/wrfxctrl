@@ -29,11 +29,14 @@ class Marker extends HTMLElement {
 		this.querySelector('#active-marker').onclick = () => {
 			if (!this.active) setActiveMarker(this.index);
 		};
-		this.querySelector('#ign-lat').keyup = () => {
+		const inputLatLon = () => {
 			var lat = parseFloat(this.querySelector(`#ign-lat`).value);
 			var lon = parseFloat(this.querySelector(`#ign-lon`).value);
+			console.log('here');
 			this.buildMapMarker(lat, lon);
 		}
+		this.querySelector('#ign-lat').oninput = inputLatLon;
+		this.querySelector('#ign-lon').oninput = inputLatLon;
 	}
 
 	validLatitude(lat) {
@@ -63,7 +66,7 @@ class Marker extends HTMLElement {
 			valid = false;
 		}
 		var lon = parseFloat(this.querySelector('#ign-lon').value);
-		this.querySelector(`#lon-warning`).className = 'activate-warning';
+		this.querySelector(`#lon-warning`).className = 'not-valid-warning';
 		if (!this.validLongitude(lon)) {
 			this.querySelector(`#lon-warning`).className = 'not-valid-warning activate-warning';
 			valid = false;
@@ -74,6 +77,7 @@ class Marker extends HTMLElement {
 	buildMapMarker(lat, lon) {
 		if (this.marker) map.removeLayer(this.marker);
 		if (!this.validLatitude(lat) || !this.validLongitude(lon)) {
+			updatePolygon();
 			return;
 		}
 		this.querySelector('#ign-lat').value = lat;

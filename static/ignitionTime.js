@@ -57,7 +57,7 @@ class IgnitionTime extends HTMLElement {
 	}
 
 	getIgnitionTimeAndDuration() {
-		return [this.querySelector('#ign-time').value, this.querySelector('#fc-hours').value];
+		return [this.querySelector('#ign-time').value, parseInt(this.querySelector('#fc-hours').value)];
 	}
 }
 window.customElements.define('ignition-time', IgnitionTime);

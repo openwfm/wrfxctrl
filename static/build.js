@@ -6,6 +6,8 @@ var base_layer_dict = null;
 // var markers = {};
 var markerFields = [];
 var ignitionTimes = [];
+var satelliteJSON = {};
+var satelliteMarkers = [];
 var markerId = 0;
 var polygon = null;
 
@@ -136,7 +138,18 @@ function checkIgnitionTimeCount() {
   }
 }
 
-function checkIgnitionType() {
+async function getSatelliteData() {
+  let json = {};
+  try {
+    const response = await fetch('/submit/sat_data');
+    json = await response.json();
+  } catch (error) {
+    console.error("Error fetching satellite data: " + error);
+  }
+  return json;
+}
+
+async function checkIgnitionType() {
   var ignitionType = $('#ignition-type').val();
   if(ignitionType == "ignition-area") {
     $('#ignition-perimeter-time').show();
@@ -151,11 +164,13 @@ function checkIgnitionType() {
     ignitionTimes[0].showIndex();
     checkIgnitionTimeCount();
   } else {
-    console.log("here");
-    const satelliteJSON = fetch('/submit/sat_data').then(fetchedJson => fetchedJson.json()).then(data => {
-      return data;
-    });
+    satelliteJSON = await getSatelliteData();
     console.log(satelliteJSON);
+    satelliteJSON['coordinates'].map((coordinates) => {
+      const newMarker = new Marker(-1);
+      newMarker.buildMapMarker(coordinates['lat'], coordinates['lon']);
+      satelliteMarkers.push(newMarker);
+    })
   }
   updatePolygon();
 }

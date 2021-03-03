@@ -83,7 +83,8 @@ class Marker extends HTMLElement {
 		this.querySelector('#ign-lat').value = lat;
 		this.querySelector('#ign-lon').value = lon;
 		// const marker = L.marker([lat, lon], {title: this.index.toString(), draggable: true}).addTo(map);
-		const marker = L.marker([lat, lon], {draggable: true}).bindPopup(this.index.toString(), {closeButton: false}).addTo(map);
+		var popUpString = this.index == -1 ? "lat: " + lat + " lon: " + lon : this.index.toString();
+		const marker = L.marker([lat, lon], {draggable: true}).bindPopup(popUpString, {closeButton: false}).addTo(map);
 		this.marker = marker;
 		marker.on("mouseover", () => {
 			marker.openPopup();
@@ -92,10 +93,16 @@ class Marker extends HTMLElement {
 			marker.closePopup();
 		})
 		marker.on("click", () => {
-			setActiveMarker(this.index);
+			if (this.index != -1) setActiveMarker(this.index);
 		});
 		marker.on("dblclick", () => {
-			removeMarker(this.index);
+			if (this.index != -1) {
+				removeMarker(this.index);
+			} else {
+				var index = satelliteMarkers.indexOf(this);
+				satelliteMarkers.splice(index, 1);
+				map.removeLayer(this.marker);
+			}
 		});
 		marker.on("move", (e) => {
 			let latLon = e.target._latlng;

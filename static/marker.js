@@ -82,31 +82,13 @@ class Marker extends HTMLElement {
 		}
 		this.querySelector('#ign-lat').value = lat;
 		this.querySelector('#ign-lon').value = lon;
-		// const marker = L.marker([lat, lon], {title: this.index.toString(), draggable: true}).addTo(map);
 		var marker;
-		if (this.index == -1) {
-			var popUpString = "lat: " + lat + " lon: " + lon;
-			var satIcon = L.icon({iconUrl: 'static/baseline_outlined_flag_black_18dp.png',
-								  iconSize: [20,20],
-								  iconAnchor: [6, 18], 
-								  popupAnchor: [-3, -20]})
-			marker = L.marker([lat, lon], {icon: satIcon}).bindPopup(popUpString, {closeButton: false}).addTo(map);
-		} else {
-			marker = L.marker([lat, lon], {draggable: true}).bindPopup(this.index.toString(), {closeButton: false}).addTo(map);
-		}
+		marker = L.marker([lat, lon], {draggable: true}).bindPopup(this.index.toString(), {closeButton: false}).addTo(map);
 		this.marker = marker;
-		marker.on("mouseover", () => {
-			marker.openPopup();
-		});
-		marker.on("mouseout", () => {
-			marker.closePopup();
-		})
-		marker.on("click", () => {
-			if (this.index != -1) setActiveMarker(this.index);
-		});
-		marker.on("dblclick", () => {
-			if (this.index != -1) removeMarker(this.index);
-		});
+		marker.on("mouseover", () => marker.openPopup());
+		marker.on("mouseout", () => marker.closePopup());
+		marker.on("click", () => setActiveMarker(this.index));
+		marker.on("dblclick", () => removeMarker(this.index));
 		marker.on("move", (e) => {
 			let latLon = e.target._latlng;
 			this.querySelector('#ign-lat').value = Math.floor(latLon.lat*10000)/10000;

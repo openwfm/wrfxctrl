@@ -154,6 +154,8 @@ async function getSatelliteData() {
     var lon = coordinates['lon'];
     var popUpString = "lat: " + lat + " lon: " + lon;
     var newMarker = L.marker([lat, lon], {icon: satIcon}).bindPopup(popUpString, {closeButton: false});
+    newMarker.on("mouseover", () => newMarker.openPopup());
+    newMarker.on("mouseout", () => newMarker.closePopup());
     satelliteMarkers.push(newMarker);
   });
 }
@@ -191,6 +193,7 @@ $('#additional-marker').click(buildNewMarker);
 $('#remove-marker').click(() => removeMarker());
 $('#ignition-type').change(checkIgnitionType)
 $('#ignition-times-count').change(checkIgnitionTimeCount);
+$('#show-sat-data').prop('checked', false);
 $('#show-sat-data').click(showSatData);
 buildNewMarker();
 checkIgnitionType();

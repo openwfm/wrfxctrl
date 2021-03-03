@@ -93,6 +93,7 @@ def build():
         # print json.dumps(sim_info, indent=4, separators=(',', ': '))
         return redirect("/monitor/%s" % sim_id)
 
+
 @app.route(urls['submit'] + '/sat_data', methods=['GET'])
 def getSatData():
     if request.method == 'GET':

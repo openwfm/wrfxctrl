@@ -139,17 +139,37 @@ function checkIgnitionTimeCount() {
 }
 
 async function getSatelliteData() {
-  let json = {};
   try {
     const response = await fetch('/submit/sat_data');
-    json = await response.json();
+    satelliteJSON = await response.json();
   } catch (error) {
     console.error("Error fetching satellite data: " + error);
   }
-  return json;
+  var satIcon = L.icon({iconUrl: 'static/baseline_outlined_flag_black_18dp.png',
+                  iconSize: [20,20],
+                  iconAnchor: [6, 18], 
+                  popupAnchor: [-3, -20]})
+  satelliteJSON['coordinates'].map((coordinates) => {
+    var lat = coordinates['lat'];
+    var lon = coordinates['lon'];
+    var popUpString = "lat: " + lat + " lon: " + lon;
+    var newMarker = L.marker([lat, lon], {icon: satIcon}).bindPopup(popUpString, {closeButton: false});
+    satelliteMarkers.push(newMarker);
+  });
 }
 
-async function checkIgnitionType() {
+async function showSatData() {
+  if (satelliteMarkers.length == 0) {
+    await getSatelliteData();
+  } 
+  if ($('#show-sat-data').prop('checked')) {
+    satelliteMarkers.map(marker => marker.addTo(map));
+  } else {
+    satelliteMarkers.map(marker => map.removeLayer(marker));
+  }
+}
+
+function checkIgnitionType() {
   var ignitionType = $('#ignition-type').val();
   if(ignitionType == "ignition-area") {
     $('#ignition-perimeter-time').show();
@@ -158,19 +178,11 @@ async function checkIgnitionType() {
     }
     ignitionTimes[0].hideIndex();
     $('#ignition-times-count-field').hide();
-  } else if(ignitionType == "multiple-ignitions") {
+  } else {
     $('#ignition-perimeter-time').hide();
     $('#ignition-times-count-field').show();
     ignitionTimes[0].showIndex();
     checkIgnitionTimeCount();
-  } else {
-    satelliteJSON = await getSatelliteData();
-    console.log(satelliteJSON);
-    satelliteJSON['coordinates'].map((coordinates) => {
-      const newMarker = new Marker(-1);
-      newMarker.buildMapMarker(coordinates['lat'], coordinates['lon']);
-      satelliteMarkers.push(newMarker);
-    })
   }
   updatePolygon();
 }
@@ -179,6 +191,7 @@ $('#additional-marker').click(buildNewMarker);
 $('#remove-marker').click(() => removeMarker());
 $('#ignition-type').change(checkIgnitionType)
 $('#ignition-times-count').change(checkIgnitionTimeCount);
+$('#show-sat-data').click(showSatData);
 buildNewMarker();
 checkIgnitionType();
 $('.ui.menu').on('click', '.item', function() {

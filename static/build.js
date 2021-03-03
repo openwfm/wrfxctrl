@@ -145,11 +145,17 @@ function checkIgnitionType() {
     }
     ignitionTimes[0].hideIndex();
     $('#ignition-times-count-field').hide();
-  } else {
+  } else if(ignitionType == "multiple-ignitions") {
     $('#ignition-perimeter-time').hide();
     $('#ignition-times-count-field').show();
     ignitionTimes[0].showIndex();
     checkIgnitionTimeCount();
+  } else {
+    console.log("here");
+    const satelliteJSON = fetch('/submit/sat_data').then(fetchedJson => fetchedJson.json()).then(data => {
+      return data;
+    });
+    console.log(satelliteJSON);
   }
   updatePolygon();
 }

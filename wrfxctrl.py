@@ -93,6 +93,12 @@ def build():
         # print json.dumps(sim_info, indent=4, separators=(',', ': '))
         return redirect("/monitor/%s" % sim_id)
 
+@app.route(urls['submit'] + '/sat_data', methods=['GET'])
+def getSatData():
+    if request.method == 'GET':
+        with open('./sat_data/filtered_hotspots_2021-03-02_2228.json', 'r') as read_file:
+            sat_data = json.load(read_file)
+        return sat_data
 
 @app.route("/monitor/<sim_id>")
 @nocache

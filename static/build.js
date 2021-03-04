@@ -145,10 +145,8 @@ async function getSatelliteData() {
   } catch (error) {
     console.error("Error fetching satellite data: " + error);
   }
-  var satIcon = L.icon({iconUrl: 'static/baseline_outlined_flag_black_18dp.png',
-                  iconSize: [20,20],
-                  iconAnchor: [6, 18], 
-                  popupAnchor: [-3, -20]})
+  var satIcon = L.icon({iconUrl: 'static/square_icon_filled.png',
+                  iconSize: [5,5]});
   satelliteJSON['coordinates'].map((coordinates) => {
     var lat = coordinates['lat'];
     var lon = coordinates['lon'];

@@ -83,7 +83,7 @@ class Marker extends HTMLElement {
 		this.querySelector('#ign-lat').value = lat;
 		this.querySelector('#ign-lon').value = lon;
 		var marker;
-		marker = L.marker([lat, lon], {draggable: true}).bindPopup(this.index.toString(), {closeButton: false}).addTo(map);
+		marker = L.marker([lat, lon], {draggable: true, autoPan: false}).bindPopup(this.index.toString(), {closeButton: false, autoPan: false}).addTo(map);
 		this.marker = marker;
 		marker.on("mouseover", () => marker.openPopup());
 		marker.on("mouseout", () => marker.closePopup());

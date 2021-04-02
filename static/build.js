@@ -10,6 +10,7 @@ var satelliteJSON = {};
 var satelliteMarkers = [];
 var markerId = 0;
 var polygon = null;
+var line = null;
 
 // map initialization code
 function initialize_map() {
@@ -52,30 +53,61 @@ function calculateCentroid(latLon) {
 
 }
 
+const removeDrawnFeature = (feature) => {
+  if (feature != null) {
+    map.removeLayer(feature);
+    feature = null;
+  }
+}
+
 function updatePolygon() {
   if (polygon != null) {
     map.removeLayer(polygon);
     polygon = null;
   }
-  if ($('#ignition-type').val() == "ignition-area") {
-    var latLons = [];
-    for (var i = 0; i < markerFields.length; i++) {
-      var latLon = markerFields[i].getLatLon();
-      if (latLon.length != 0) latLons.push(latLon);
-    }
-    if (latLons.length > 2) {
-      polygon = L.polygon(latLons, {color: 'red'});
-      var centroid = polygon.getBounds().getCenter();
-      latLons.sort((a, b) => {
-        var thetaA = Math.atan2((a[1] - centroid.lng) , (a[0] - centroid.lat));
-        var thetaB = Math.atan2((b[1] - centroid.lng) , (b[0] - centroid.lat));
-        if (thetaA > thetaB) return 1;
-        return -1;
-      });
-      map.removeLayer(polygon);
-      polygon = L.polygon(latLons, {color: 'red'}).addTo(map);
-    }
+  if (line != null) {
+    map.removeLayer(line);
+    line = null;
   }
+  if ($('#ignition-type').val() != "ignition-area") return;
+  var latLons = [];
+  for (var i = 0; i < markerFields.length; i++) {
+    var latLon = markerFields[i].getLatLon();
+    if (latLon.length != 0) latLons.push(latLon);
+  }
+  if (latLons.length > 2) {
+    polygon = L.polygon(latLons, {color: 'red'});
+    var centroid = polygon.getBounds().getCenter();
+    latLons.sort((a, b) => {
+      var thetaA = Math.atan2((a[1] - centroid.lng) , (a[0] - centroid.lat));
+      var thetaB = Math.atan2((b[1] - centroid.lng) , (b[0] - centroid.lat));
+      if (thetaA > thetaB) return 1;
+      return -1;
+    });
+    map.removeLayer(polygon);
+    polygon = L.polygon(latLons, {color: 'red'}).addTo(map);
+  } 
+}
+
+function updateLine() {
+  if (line != null) {
+    map.removeLayer(line);
+    line = null;
+  }
+  if (polygon != null) {
+    map.removeLayer(polygon);
+    polygon = null;
+  }
+  if ($('#ignition-type').val() != "ignition-line") return;
+  var latLons = markerFields.map(marker => marker.getLatLon()).filter(l => l.length > 0);
+  // console.log(latLons);
+  if (latLons.length > 1) line = L.polyline(latLons, {color: 'red'}).addTo(map);
+}
+
+const updateMap = () => {
+  var ignitionType = $('#ignition-type').val();
+  if (ignitionType == "ignition-line") updateLine();
+  if (ignitionType == "ignition-area") updatePolygon();
 }
 
 function removeMarker(id = markerFields.length - 1) {
@@ -87,8 +119,10 @@ function removeMarker(id = markerFields.length - 1) {
   if (lastMarker.marker) map.removeLayer(lastMarker.marker);
   lastMarker.remove();
   setActiveMarker(markerId)
-  if ($('#ignition-type').val() == "multiple-ignitions") removeIgnitionTime(id);
-  updatePolygon();
+  var ignitionType = $('#ignition-type').val();
+  if (ignitionType == "multiple-ignitions" || ignitionType == "ignition-line") removeIgnitionTime(id);
+  console.log("removed marker: " + markerFields.length);
+  updateMap();
 }
 
 function validateTime(ign_time_value) {
@@ -112,6 +146,7 @@ function buildNewMarker() {
   setActiveMarker(newFieldId);
   if (($('#ignition-type').val() == "multiple-ignitions" && $('#ignition-times-count').val() == "multiple")
    || ignitionTimes.length == 0) buildNewIgnitionTime();
+  console.log("added marker: " + markerFields.length);
 }
 
 function removeIgnitionTime(id = ignitionTimes.length - 1) {
@@ -183,8 +218,9 @@ function checkIgnitionType() {
     $('#ignition-times-count-field').show();
     ignitionTimes[0].showIndex();
     checkIgnitionTimeCount();
-  }
-  updatePolygon();
+  } 
+  if(ignitionType == "ignition-line") while (markerFields.length > 1) removeMarker();
+  updateMap();
 }
 
 $('#additional-marker').click(buildNewMarker);

@@ -75,9 +75,14 @@ class Marker extends HTMLElement {
 	}
 
 	buildMapMarker(lat, lon) {
+		const updateMap =  () => {
+			var ignitionType = $('#ignition-type').val();
+			if (ignitionType == "ignition-line") updateLine();
+			if (ignitionType == "ignition-area") updatePolygon();
+		}
 		if (this.marker) map.removeLayer(this.marker);
 		if (!this.validLatitude(lat) || !this.validLongitude(lon)) {
-			updatePolygon();
+			updateMap();
 			return;
 		}
 		this.querySelector('#ign-lat').value = lat;
@@ -93,9 +98,9 @@ class Marker extends HTMLElement {
 			let latLon = e.target._latlng;
 			this.querySelector('#ign-lat').value = Math.floor(latLon.lat*10000)/10000;
 			this.querySelector('#ign-lon').value = Math.floor(latLon.lng*10000)/10000;
-			updatePolygon();
+			updateMap();
 		});
-		updatePolygon();
+		updateMap();
 	}
 
 	setInactive() {

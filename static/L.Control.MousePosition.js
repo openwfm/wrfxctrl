@@ -50,7 +50,7 @@ L.Control.MousePosition = L.Control.extend({
     clearTimeout(timer);
     var lat = L.Util.formatNum(e.latlng.lat, this.options.numDigits);
     var lon = L.Util.formatNum(e.latlng.lng, this.options.numDigits);
-    buildNewMarker();
+    if (markerFields[markerId].getLatLon().length == 2) buildNewMarker();
     markerFields[markerId].buildMapMarker(lat, lon);
   }
 });

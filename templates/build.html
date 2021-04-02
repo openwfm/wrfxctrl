@@ -64,8 +64,24 @@
           <input type="checkbox" id="show-sat-data" value="sat-data">
         </div>
       </div>
-
       <div id="markers"></div>
+
+      <div class="marker-buttons">
+        <div id="additional-buffer" class="marker-button"><span>+</span></div>
+        <div id="remove-buffer" class="marker-button"><span>-</span></div>
+        <div id="buffer-type-field" class="field">
+          <label>Buffer Type</label>
+          <select name="buffer_type" id="buffer-type">
+            <option value="buffer-area">Buffer Area</option>
+            <option value="buffer-line">Buffer Line</option>
+          </select>
+        </div>
+        <div class="field" style="display: inline-block;">
+          <label>Enable Buffer Editing</label>
+          <input type="checkbox" id="add-buffer-line" value="add-buffer-line">
+        </div>
+      </div>
+      <div id="buffer-markers"></div>
             
       <h2>Step 3: Ignition time and forecast length</h2>
       <p>The simulation will start at least 30 mins before the ignition time.  The maximum forecast length is 48 hrs.</p>

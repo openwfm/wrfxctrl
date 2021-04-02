@@ -3,11 +3,13 @@
 // declare variables in global scope
 var map = null;
 var base_layer_dict = null;
-// var markers = {};
 var markerFields = [];
+var bufferFields = {0: []};
 var ignitionTimes = [];
 var satelliteJSON = {};
 var satelliteMarkers = [];
+var bufferId = 0;
+var bufferGroup = 0;
 var markerId = 0;
 var polygon = null;
 var line = null;
@@ -100,7 +102,6 @@ function updateLine() {
   }
   if ($('#ignition-type').val() != "ignition-line") return;
   var latLons = markerFields.map(marker => marker.getLatLon()).filter(l => l.length > 0);
-  // console.log(latLons);
   if (latLons.length > 1) line = L.polyline(latLons, {color: 'red'}).addTo(map);
 }
 
@@ -121,7 +122,6 @@ function removeMarker(id = markerFields.length - 1) {
   setActiveMarker(markerId)
   var ignitionType = $('#ignition-type').val();
   if (ignitionType == "multiple-ignitions" || ignitionType == "ignition-line") removeIgnitionTime(id);
-  console.log("removed marker: " + markerFields.length);
   updateMap();
 }
 
@@ -146,7 +146,11 @@ function buildNewMarker() {
   setActiveMarker(newFieldId);
   if (($('#ignition-type').val() == "multiple-ignitions" && $('#ignition-times-count').val() == "multiple")
    || ignitionTimes.length == 0) buildNewIgnitionTime();
-  console.log("added marker: " + markerFields.length);
+}
+
+function buildNewBufferMarker() {
+  const newBufferField = new Marker(bufferId);
+  $('#buffer-markers').append(newBufferField);
 }
 
 function removeIgnitionTime(id = ignitionTimes.length - 1) {
@@ -228,8 +232,10 @@ $('#remove-marker').click(() => removeMarker());
 $('#ignition-type').change(checkIgnitionType)
 $('#ignition-times-count').change(checkIgnitionTimeCount);
 $('#show-sat-data').prop('checked', false);
+$('#add-buffer-line').prop('checked', false);
 $('#show-sat-data').click(showSatData);
 buildNewMarker();
+buildNewBufferMarker();
 checkIgnitionType();
 $('.ui.menu').on('click', '.item', function() {
   $(this).addClass('active').siblings('.item').removeClass('active');
@@ -367,5 +373,6 @@ $('.form').submit((event) => {
 
 $('#ignition-type').dropdown();
 $('#ignition-times-count').dropdown();
+$('#buffer-type').dropdown();
 $(`#ign-time-perimeter`).datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
 

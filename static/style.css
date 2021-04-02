@@ -115,6 +115,11 @@ div .fixed-height-grid {
   width: 200px;
 }
 
+#buffer-type-field {
+  display: inline-block;
+  width: 200px;
+}
+
 #ignition-times-count-field {
   display: inline-block;
   width: 300px;

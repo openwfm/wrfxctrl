@@ -41,7 +41,6 @@ L.Control.MousePosition = L.Control.extend({
         var lon = L.Util.formatNum(e.latlng.lng, this.options.numDigits);
         if ($('#add-buffer-line').prop('checked')) {
           bufferFields[bufferGroup][bufferId].buildMapMarker(lat, lon);
-
         } else markerFields[markerId].buildMapMarker(lat, lon);
       }
       prevent = false;

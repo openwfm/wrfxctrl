@@ -35,6 +35,7 @@ function initialize_map() {
       minZoom: 3
     });
 
+    L.DomUtil.addClass(map._container,'pointer-cursor-enabled');
     map.doubleClickZoom.disable();
     map.scrollWheelZoom.disable();
 
@@ -149,8 +150,11 @@ function buildNewMarker() {
 }
 
 function buildNewBufferMarker() {
-  const newBufferField = new Marker(bufferId);
+  const newBufferId = bufferFields[bufferGroup].length;
+  const newBufferField = new Marker(newBufferId);
   $('#buffer-markers').append(newBufferField);
+  bufferFields[bufferGroup].push(newBufferField);
+  bufferId = newBufferId;
 }
 
 function removeIgnitionTime(id = ignitionTimes.length - 1) {
@@ -209,6 +213,7 @@ async function showSatData() {
 }
 
 function checkIgnitionType() {
+  // L.DomUtil.removeClass(map._container,'pointer-cursor-enabled');
   var ignitionType = $('#ignition-type').val();
   if(ignitionType == "ignition-area") {
     $('#ignition-perimeter-time').show();
@@ -223,7 +228,9 @@ function checkIgnitionType() {
     ignitionTimes[0].showIndex();
     checkIgnitionTimeCount();
   } 
-  if(ignitionType == "ignition-line") while (markerFields.length > 1) removeMarker();
+  if(ignitionType == "ignition-line") {
+    while (markerFields.length > 1) removeMarker();
+  }
   updateMap();
 }
 

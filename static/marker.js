@@ -75,11 +75,8 @@ class Marker extends HTMLElement {
 	}
 
 	buildMapMarker(lat, lon) {
-		const updateMap =  () => {
-			var ignitionType = $('#ignition-type').val();
-			if (ignitionType == "ignition-line") updateLine();
-			if (ignitionType == "ignition-area") updatePolygon();
-		}
+
+		var satIcon = L.icon({iconUrl: 'static/square_icon_filled.png', iconSize: [5,5]});
 		if (this.marker) map.removeLayer(this.marker);
 		if (!this.validLatitude(lat) || !this.validLongitude(lon)) {
 			updateMap();
@@ -88,7 +85,7 @@ class Marker extends HTMLElement {
 		this.querySelector('#ign-lat').value = lat;
 		this.querySelector('#ign-lon').value = lon;
 		var marker;
-		marker = L.marker([lat, lon], {draggable: true, autoPan: false}).bindPopup(this.index.toString(), {closeButton: false, autoPan: false}).addTo(map);
+		marker = L.marker([lat, lon], {icon: satIcon, draggable: true, autoPan: false}).bindPopup(this.index.toString(), {closeButton: false, autoPan: false}).addTo(map);
 		this.marker = marker;
 		marker.on("mouseover", () => marker.openPopup());
 		marker.on("mouseout", () => marker.closePopup());

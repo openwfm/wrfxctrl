@@ -56,14 +56,7 @@ function calculateCentroid(latLon) {
 
 }
 
-const removeDrawnFeature = (feature) => {
-  if (feature != null) {
-    map.removeLayer(feature);
-    feature = null;
-  }
-}
-
-function updatePolygon() {
+const removeDrawnFeatures = () => {
   if (polygon != null) {
     map.removeLayer(polygon);
     polygon = null;
@@ -72,6 +65,9 @@ function updatePolygon() {
     map.removeLayer(line);
     line = null;
   }
+}
+
+function updatePolygon() {
   if ($('#ignition-type').val() != "ignition-area") return;
   var latLons = [];
   for (var i = 0; i < markerFields.length; i++) {
@@ -88,26 +84,19 @@ function updatePolygon() {
       return -1;
     });
     map.removeLayer(polygon);
-    polygon = L.polygon(latLons, {color: 'red'}).addTo(map);
+    polygon = L.polygon(latLons, {color: 'orange'}).addTo(map);
   } 
 }
 
 function updateLine() {
-  if (line != null) {
-    map.removeLayer(line);
-    line = null;
-  }
-  if (polygon != null) {
-    map.removeLayer(polygon);
-    polygon = null;
-  }
   if ($('#ignition-type').val() != "ignition-line") return;
   var latLons = markerFields.map(marker => marker.getLatLon()).filter(l => l.length > 0);
-  if (latLons.length > 1) line = L.polyline(latLons, {color: 'red'}).addTo(map);
+  if (latLons.length > 1) line = L.polyline(latLons, {color: 'orange'}).addTo(map);
 }
 
 const updateMap = () => {
   var ignitionType = $('#ignition-type').val();
+  removeDrawnFeatures();
   if (ignitionType == "ignition-line") updateLine();
   if (ignitionType == "ignition-area") updatePolygon();
 }
@@ -189,7 +178,7 @@ async function getSatelliteData() {
     console.error("Error fetching satellite data: " + error);
   }
   var satIcon = L.icon({iconUrl: 'static/square_icon_filled.png',
-                  iconSize: [5,5]});
+                  iconSize: [7,7], opacity: .8});
   satelliteJSON['coordinates'].map((coordinates) => {
     var lat = coordinates['lat'];
     var lon = coordinates['lon'];

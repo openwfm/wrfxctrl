@@ -76,7 +76,7 @@ class Marker extends HTMLElement {
 
 	buildMapMarker(lat, lon) {
 
-		var satIcon = L.icon({iconUrl: 'static/square_icon_filled.png', iconSize: [5,5]});
+		var satIcon = L.icon({iconUrl: 'static/square_icon_orange.png', iconSize: [5,5]});
 		if (this.marker) map.removeLayer(this.marker);
 		if (!this.validLatitude(lat) || !this.validLongitude(lon)) {
 			updateMap();

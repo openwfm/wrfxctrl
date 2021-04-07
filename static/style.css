@@ -112,6 +112,14 @@ div .fixed-height-grid {
 #markers {
   margin-bottom: 20px;
   margin-top: 20px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+#ignition-times {
+  max-height: 150px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 #ignition-type-field {

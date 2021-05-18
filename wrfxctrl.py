@@ -47,8 +47,10 @@ conf = load_sys_cfg()
 sims_path = conf['sims_path']
 simulations = load_simulations(sims_path)
 
-#root = osp.join('/',conf['root'])
-root = osp.join('/',''.join(random.choice(string.ascii_lowercase) for i in range(5)))
+if 'root' in conf:
+    root = osp.join('/',conf['root'])
+else:
+    root = osp.join('/',''.join(random.choice(string.ascii_lowercase) for i in range(5)))
 host = conf['host']
 debug = conf['debug'] in ['T' 'True' 't' 'true']
 port = conf['port']

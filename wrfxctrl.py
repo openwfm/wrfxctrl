@@ -97,7 +97,8 @@ def build():
 @app.route(urls['submit'] + '/sat_data', methods=['GET'])
 def getSatData():
     if request.method == 'GET':
-        with open('./sat_data/filtered_hotspots_2021-03-03_1838.json', 'r') as read_file:
+        with open('./sat_data/filteredSatData.json', 'r') as read_file:
+        # with open('./sat_data/filtered_hotspots_2021-03-03_1838.json', 'r') as read_file:
             sat_data = json.load(read_file)
         return sat_data
 

@@ -11,15 +11,15 @@
 var map = null;
 var base_layer_dict = null;
 var ignitionMarkers = [];
-var bufferFields = {0: []};
+var markerId = 0;
 var ignitionTimes = [];
+var ignitionArea = null;
+var ignitionLine = null;
 var satelliteJSON = {};
 var satelliteMarkers = [];
 // var bufferId = 0;
-var bufferGroup = 0;
-var markerId = 0;
-var polygon = null;
-var line = null;
+// var bufferFields = {0: []};
+// var bufferGroup = 0;
 
 // map initialization code
 function initialize_map() {
@@ -148,7 +148,7 @@ function updateIgnitionDataOnMap() {
 function updateIgnitionLine() {
   if ($('#ignition-type').val() != "ignition-line") return;
   var latLons = ignitionMarkers.map(marker => marker.getLatLon()).filter(l => l.length > 0);
-  if (latLons.length > 1) line = L.polyline(latLons, {color: 'orange'}).addTo(map);
+  if (latLons.length > 1) ignitionLine = L.polyline(latLons, {color: 'orange'}).addTo(map);
 }
 
 function updateIgnitionArea() {
@@ -159,16 +159,16 @@ function updateIgnitionArea() {
     if (latLon.length != 0) latLons.push(latLon);
   }
   if (latLons.length > 2) {
-    polygon = L.polygon(latLons, {color: 'red'});
-    var centroid = polygon.getBounds().getCenter();
+    ignitionArea = L.polygon(latLons, {color: 'red'});
+    var centroid = ignitionArea.getBounds().getCenter();
     latLons.sort((a, b) => {
       var thetaA = Math.atan2((a[1] - centroid.lng) , (a[0] - centroid.lat));
       var thetaB = Math.atan2((b[1] - centroid.lng) , (b[0] - centroid.lat));
       if (thetaA > thetaB) return 1;
       return -1;
     });
-    map.removeLayer(polygon);
-    polygon = L.polygon(latLons, {color: 'orange'}).addTo(map);
+    map.removeLayer(ignitionArea);
+    ignitionArea = L.polygon(latLons, {color: 'orange'}).addTo(map);
   } 
 }
 
@@ -211,13 +211,13 @@ function updateTimesOfIgnition() {
 
 
 function removeDrawnFeatures() {
-  if (polygon != null) {
-    map.removeLayer(polygon);
-    polygon = null;
+  if (ignitionArea != null) {
+    map.removeLayer(ignitionArea);
+    ignitionArea = null;
   }
-  if (line != null) {
-    map.removeLayer(line);
-    line = null;
+  if (ignitionLine != null) {
+    map.removeLayer(ignitionLine);
+    ignitionLine = null;
   }
 }
 
@@ -362,7 +362,7 @@ function getTimesOfIgnitionAndDurations() {
     // If an area we dont want to post multiple ignitions
     if ($('#ignition-type').val() == "multiple-ignitions") {
       if ($('#ignition-times-count').val() == "multiple") {
-        ignTimeAndDuration = ignTimes[i].getIgnitionTimeAndDuration();
+        ignTimeAndDuration = ignitionTimes[i].getIgnitionTimeAndDuration();
       }
       igns.push(ignTimeAndDuration[0]);
       fcHours.push(ignTimeAndDuration[1]);

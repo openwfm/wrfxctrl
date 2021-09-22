@@ -1,4 +1,11 @@
+/** Contents
+ 1. Initialization block
+ 2. UI Interaction block
+ 3. Validation block
+*/
+
 class IgnitionMarker extends HTMLElement {
+	/** ===== Initialization block ===== */
 	constructor(index) {
 		super();
 		this.innerHTML = `
@@ -20,78 +27,56 @@ class IgnitionMarker extends HTMLElement {
 			</div>
 		`;
 		this.index = index;
-		this.marker = null;
-		this.active = false;
+		this.mapMarker = null;
+		this.isActive = false;
 	}
 
 	connectedCallback() {
 		this.querySelector('#marker-id').innerText = this.index;
 		this.querySelector('#active-marker').onclick = () => {
-			if (!this.active) setActiveIgnitionMarker(this.index);
+			if (!this.isActive) {
+				setActiveIgnitionMarker(this.index);
+			}
 		};
 		const inputLatLon = () => {
-			var lat = parseFloat(this.querySelector(`#ign-lat`).value);
-			var lon = parseFloat(this.querySelector(`#ign-lon`).value);
-			console.log('here');
-			this.buildMapMarker(lat, lon);
+			let lat = parseFloat(this.querySelector(`#ign-lat`).value);
+			let lon = parseFloat(this.querySelector(`#ign-lon`).value);
+			this.addMarkerToMapAtLatLon(lat, lon);
 		}
 		this.querySelector('#ign-lat').oninput = inputLatLon;
 		this.querySelector('#ign-lon').oninput = inputLatLon;
 	}
 
-	validLatitude(lat) {
-	  if(isNaN(lat) || (lat < 22)|| (lat > 51)) return false;
-	  return true;
-	}
-
-	validLongitude(lng) {
-	  if(isNaN(lng) || lng < -128 || lng > -65) return false;
-	  return true;
-	}
 
 	getLatLon() {
 		var latLon = []
 		var lat = parseFloat(this.querySelector('#ign-lat').value);
 		var lon = parseFloat(this.querySelector('#ign-lon').value);
-		if (this.validLatitude(lat) && this.validLongitude(lon)) latLon = [lat, lon];
+		if (this.isValidLatitude(lat) && this.isValidLongitude(lon)) latLon = [lat, lon];
 		return latLon;
 	}
 
-	validate() {
-		var valid = true;
-		var lat = parseFloat(this.querySelector('#ign-lat').value);
-		this.querySelector('#lat-warning').className = "not-valid-warning";
-		if (!this.validLatitude(lat)) {
-			this.querySelector('#lat-warning').className = "not-valid-warning activate-warning";
-			valid = false;
-		}
-		var lon = parseFloat(this.querySelector('#ign-lon').value);
-		this.querySelector(`#lon-warning`).className = 'not-valid-warning';
-		if (!this.validLongitude(lon)) {
-			this.querySelector(`#lon-warning`).className = 'not-valid-warning activate-warning';
-			valid = false;
-		}
-		return valid;
-	}
+	/* ===== UI Interaction block ===== */
 
-	buildMapMarker(lat, lon) {
-
-		var satIcon = L.icon({iconUrl: 'static/square_icon_orange.png', iconSize: [5,5]});
-		if (this.marker) map.removeLayer(this.marker);
-		if (!this.validLatitude(lat) || !this.validLongitude(lon)) {
+	addMarkerToMapAtLatLon(lat, lon) {
+		let satIcon = L.icon({iconUrl: 'static/square_icon_orange.png', iconSize: [5,5]});
+		if (this.mapMarker != null) {
+			map.removeLayer(this.mapMarker);
+		}
+		if (!this.isValidLatitude(lat) || !this.isValidLongitude(lon)) {
 			updateIgnitionDataOnMap();
 			return;
 		}
 		this.querySelector('#ign-lat').value = lat;
 		this.querySelector('#ign-lon').value = lon;
-		var marker;
-		marker = L.marker([lat, lon], {icon: satIcon, draggable: true, autoPan: false}).bindPopup(this.index.toString(), {closeButton: false, autoPan: false}).addTo(map);
-		this.marker = marker;
-		marker.on("mouseover", () => marker.openPopup());
-		marker.on("mouseout", () => marker.closePopup());
-		marker.on("click", () => setActiveIgnitionMarker(this.index));
-		marker.on("dblclick", () => removeIgnitionMarker(this.index));
-		marker.on("move", (e) => {
+		let mapMarker;
+		mapMarker = L.marker([lat, lon], {icon: satIcon, draggable: true, autoPan: false}).bindPopup(this.index.toString(), {closeButton: false, autoPan: false}).addTo(map);
+		this.mapMarker = mapMarker;
+		mapMarker.on("mouseover", () => mapMarker.openPopup());
+		mapMarker.on("mouseout", () => mapMarker.closePopup());
+		mapMarker.on("click", () => setActiveIgnitionMarker(this.index));
+		mapMarker.on("dblclick", () => removeIgnitionMarker(this.index));
+		mapMarker.on("move", (e) => {
 			let latLon = e.target._latlng;
 			this.querySelector('#ign-lat').value = Math.floor(latLon.lat*10000)/10000;
 			this.querySelector('#ign-lon').value = Math.floor(latLon.lng*10000)/10000;
@@ -104,22 +89,55 @@ class IgnitionMarker extends HTMLElement {
 		const activeMarker = this.querySelector('#active-marker');
 		activeMarker.style.backgroundColor = "white";
 		activeMarker.style.color = "black";
-		this.active = false;
+		this.isActive = false;
 	}
 
 	setActive() {
 		const activeMarker = this.querySelector('#active-marker');
 		activeMarker.style.backgroundColor = "#404040";
 		activeMarker.style.color = "white";
-		this.active = true;
+		this.isActive = true;
 	}
 
 	updateIndex(newIndex) {
 		this.index = newIndex;
 		this.querySelector('#marker-id').innerText = newIndex;
-		if (this.marker) {
-			this.marker._popup.setContent(newIndex.toString());
+		if (this.mapMarker) {
+			this.mapMarker._popup.setContent(newIndex.toString());
 		}
+	}
+
+	/** ===== Validation block ===== */
+
+	isValid() {
+		let valid = true;
+		let lat = parseFloat(this.querySelector('#ign-lat').value);
+		this.querySelector('#lat-warning').className = "not-valid-warning";
+		if (!this.isValidLatitude(lat)) {
+			this.querySelector('#lat-warning').className = "not-valid-warning activate-warning";
+			valid = false;
+		}
+		let lon = parseFloat(this.querySelector('#ign-lon').value);
+		this.querySelector(`#lon-warning`).className = 'not-valid-warning';
+		if (!this.isValidLongitude(lon)) {
+			this.querySelector(`#lon-warning`).className = 'not-valid-warning activate-warning';
+			valid = false;
+		}
+		return valid;
+	}
+
+	isValidLatitude(lat) {
+	  if(isNaN(lat) || (lat < 22)|| (lat > 51)) {
+	  	return false;
+	  }
+	  return true;
+	}
+
+	isValidLongitude(lng) {
+	  if(isNaN(lng) || lng < -128 || lng > -65) {
+	  	return false;
+	  }
+	  return true;
 	}
 }
 

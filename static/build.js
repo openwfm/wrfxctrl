@@ -126,8 +126,8 @@ function removeIgnitionMarker(id = ignitionMarkers.length - 1) {
     ignitionMarkers[i].updateIndex(i - 1);
   }
   ignitionMarkers.splice(id, 1);
-  if (lastMarker.marker) {
-    map.removeLayer(lastMarker.marker);
+  if (lastMarker.mapMarker) {
+    map.removeLayer(lastMarker.mapMarker);
   }
   lastMarker.remove();
   setActiveIgnitionMarker(activeMarkerId)
@@ -333,7 +333,7 @@ function isIgnitionTypeValid() {
 
 function areLatLonsValid() {
   for (let ignitionMarker of ignitionMarkers) {
-    if (!ignitionMarker.validate()) {
+    if (!ignitionMarker.isValid()) {
       return false
     }
   }
@@ -363,7 +363,7 @@ function isProfileValid() {
 function areTimesOfIgnitionValid() {
   let areValid = true;
   for (let ignitionTime of ignitionTimes) {
-    if(!ignitionTime.validate()) {
+    if(!ignitionTime.isValid()) {
       areValid = false;
     }
   }

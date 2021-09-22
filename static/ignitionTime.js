@@ -46,8 +46,8 @@ class IgnitionTime extends HTMLElement {
 		this.querySelector('#id-container').style.display = "inline-block";
 	}
 
-	validate() {
-		var ign_time_value = this.querySelector('#ign-time').value;
+	isValid() {
+		let ign_time_value = this.querySelector('#ign-time').value;
 		this.querySelector(`#ignition-time-warning`).className = 'not-valid-warning';
 		if(!isValidTime(ign_time_value)) {
 			this.querySelector(`#ignition-time-warning`).className = 'not-valid-warning activate-warning';

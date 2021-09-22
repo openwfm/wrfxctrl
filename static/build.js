@@ -1,6 +1,13 @@
 "use strict";
 
-// declare variables in global scope
+/** ===== Contents ===== 
+  1. Initialization block
+  2. IgnitionMarkers block 
+  3. DrawingDataOnMap block
+  4. FormSubmission block 
+  */
+
+/** ===== Initialization block ===== */
 var map = null;
 var base_layer_dict = null;
 var markerFields = [];
@@ -8,7 +15,7 @@ var bufferFields = {0: []};
 var ignitionTimes = [];
 var satelliteJSON = {};
 var satelliteMarkers = [];
-var bufferId = 0;
+// var bufferId = 0;
 var bufferGroup = 0;
 var markerId = 0;
 var polygon = null;
@@ -43,31 +50,108 @@ function initialize_map() {
     L.control.mousePosition().addTo(map);
 }
 
+function set_profile_text(txt) {
+  $('#profile-info-text').text(txt);
+}
+
 // initialize Semantic elements
 $('#profile-dropdown').dropdown({on: 'hover'});
+$('#additional-marker').click(createIgnitionMarker);
+$('#remove-marker').click(() => removeIgnitionMarker());
+$('#ignition-type').change(updateUIToIgnitionType)
+$('#ignition-times-count').change(updateTimesOfIgnition);
+$('#show-sat-data').prop('checked', false);
+$('#add-buffer-line').prop('checked', false);
+$('#show-sat-data').click(showSatData);
+$('#ignition-type').dropdown();
+$('#ignition-times-count').dropdown();
+$('#buffer-type').dropdown();
+$(`#ign-time-perimeter`).datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
+createIgnitionMarker();
+updateUIToIgnitionType();
+$('.ui.menu').on('click', '.item', function() {
+  $(this).addClass('active').siblings('.item').removeClass('active');
+});
+// Fill in a 'unique description'
+$('#experiment-description').text('Web initiated forecast at ' + moment().format());
 
-function setActiveMarker(newFieldId) {
+
+/** ===== IgnitionMarkers block ===== */
+
+function createIgnitionMarker() {
+  let newFieldId = markerFields.length;
+  const newMarkerField = new IgnitionMarker(newFieldId);
+  $('#markers').append(newMarkerField);
+  markerFields.push(newMarkerField);
+  setActiveIgnitionMarker(newFieldId);
+  if (($('#ignition-type').val() == "multiple-ignitions" && $('#ignition-times-count').val() == "multiple")
+   || ignitionTimes.length == 0) createTimeOfIgnition();
+}
+
+function createTimeOfIgnition() {
+  let newFieldId = ignitionTimes.length;
+  const ignitionField = new IgnitionTime(newFieldId);
+  $('#ignition-times').append(ignitionField);
+  ignitionTimes.push(ignitionField);
+}
+
+// function createBufferMarker() {
+//   const newBufferId = bufferFields[bufferGroup].length;
+//   const newBufferField = new IgnitionMarker(newBufferId);
+//   $('#buffer-markers').append(newBufferField);
+//   bufferFields[bufferGroup].push(newBufferField);
+//   bufferId = newBufferId;
+// }
+
+function setActiveIgnitionMarker(newFieldId) {
   markerFields[markerId].setInactive();
   markerFields[newFieldId].setActive();
   markerId = newFieldId;
+}
+
+function removeIgnitionMarker(id = markerFields.length - 1) {
+  if (markerFields.length < 2) return;
+  if (markerId == markerFields.length - 1 ) markerId = markerId - 1;
+  const lastMarker = markerFields[id];
+  for (var i = id + 1; i < markerFields.length; i++ ) markerFields[i].updateIndex(i - 1);
+  markerFields.splice(id, 1);
+  if (lastMarker.marker) map.removeLayer(lastMarker.marker);
+  lastMarker.remove();
+  setActiveIgnitionMarker(markerId)
+  var ignitionType = $('#ignition-type').val();
+  if (ignitionType == "multiple-ignitions" || ignitionType == "ignition-line") removeTimeOfIgnition(id);
+  updateIgnitionDataOnMap();
+}
+
+function removeTimeOfIgnition(id = ignitionTimes.length - 1) {
+  if (ignitionTimes.length == 1) return;
+  for (var i = id + 1; i < ignitionTimes.length; i++) {
+    ignitionTimes[i].updateIndex(i);
+  }
+  const lastIgnitionTime = ignitionTimes.splice(id, 1)[0];
+  lastIgnitionTime.remove();
 }
 
 function calculateCentroid(latLon) {
 
 }
 
-const removeDrawnFeatures = () => {
-  if (polygon != null) {
-    map.removeLayer(polygon);
-    polygon = null;
-  }
-  if (line != null) {
-    map.removeLayer(line);
-    line = null;
-  }
+/** ===== DrawingDataOnMap block ===== */
+
+function updateIgnitionDataOnMap() {
+  var ignitionType = $('#ignition-type').val();
+  removeDrawnFeatures();
+  if (ignitionType == "ignition-line") updateIgnitionLine();
+  if (ignitionType == "ignition-area") updateIgnitionArea();
 }
 
-function updatePolygon() {
+function updateIgnitionLine() {
+  if ($('#ignition-type').val() != "ignition-line") return;
+  var latLons = markerFields.map(marker => marker.getLatLon()).filter(l => l.length > 0);
+  if (latLons.length > 1) line = L.polyline(latLons, {color: 'orange'}).addTo(map);
+}
+
+function updateIgnitionArea() {
   if ($('#ignition-type').val() != "ignition-area") return;
   var latLons = [];
   for (var i = 0; i < markerFields.length; i++) {
@@ -88,85 +172,63 @@ function updatePolygon() {
   } 
 }
 
-function updateLine() {
-  if ($('#ignition-type').val() != "ignition-line") return;
-  var latLons = markerFields.map(marker => marker.getLatLon()).filter(l => l.length > 0);
-  if (latLons.length > 1) line = L.polyline(latLons, {color: 'orange'}).addTo(map);
-}
-
-const updateMap = () => {
+function updateUIToIgnitionType() {
+  // L.DomUtil.removeClass(map._container,'pointer-cursor-enabled');
   var ignitionType = $('#ignition-type').val();
-  removeDrawnFeatures();
-  if (ignitionType == "ignition-line") updateLine();
-  if (ignitionType == "ignition-area") updatePolygon();
-}
-
-function removeMarker(id = markerFields.length - 1) {
-  if (markerFields.length < 2) return;
-  if (markerId == markerFields.length - 1 ) markerId = markerId - 1;
-  const lastMarker = markerFields[id];
-  for (var i = id + 1; i < markerFields.length; i++ ) markerFields[i].updateIndex(i - 1);
-  markerFields.splice(id, 1);
-  if (lastMarker.marker) map.removeLayer(lastMarker.marker);
-  lastMarker.remove();
-  setActiveMarker(markerId)
-  var ignitionType = $('#ignition-type').val();
-  if (ignitionType == "multiple-ignitions" || ignitionType == "ignition-line") removeIgnitionTime(id);
-  updateMap();
-}
-
-function validateTime(ign_time_value) {
-  var ign_time = moment.utc(ign_time_value, 'MMM D,YYYY h:mm a');
-  if(!ign_time.isValid() || ign_time.year() <  1979) return false;
-  return true;
-}
-
-function buildNewIgnitionTime() {
-  let newFieldId = ignitionTimes.length;
-  const ignitionField = new IgnitionTime(newFieldId);
-  $('#ignition-times').append(ignitionField);
-  ignitionTimes.push(ignitionField);
-}
-
-function buildNewMarker() {
-  let newFieldId = markerFields.length;
-  const newMarkerField = new Marker(newFieldId);
-  $('#markers').append(newMarkerField);
-  markerFields.push(newMarkerField);
-  setActiveMarker(newFieldId);
-  if (($('#ignition-type').val() == "multiple-ignitions" && $('#ignition-times-count').val() == "multiple")
-   || ignitionTimes.length == 0) buildNewIgnitionTime();
-}
-
-function buildNewBufferMarker() {
-  const newBufferId = bufferFields[bufferGroup].length;
-  const newBufferField = new Marker(newBufferId);
-  $('#buffer-markers').append(newBufferField);
-  bufferFields[bufferGroup].push(newBufferField);
-  bufferId = newBufferId;
-}
-
-function removeIgnitionTime(id = ignitionTimes.length - 1) {
-  if (ignitionTimes.length == 1) return;
-  for (var i = id + 1; i < ignitionTimes.length; i++) {
-    ignitionTimes[i].updateIndex(i);
+  if(ignitionType == "ignition-area") {
+    $('#ignition-perimeter-time').show();
+    while (ignitionTimes.length > 1) {
+      removeTimeOfIgnition();
+    }
+    ignitionTimes[0].hideIndex();
+    $('#ignition-times-count-field').hide();
+  } else {
+    $('#ignition-perimeter-time').hide();
+    $('#ignition-times-count-field').show();
+    ignitionTimes[0].showIndex();
+    updateTimesOfIgnition();
+  } 
+  if(ignitionType == "ignition-line") {
+    while (markerFields.length > 1) removeIgnitionMarker();
   }
-  const lastIgnitionTime = ignitionTimes.splice(id, 1)[0];
-  lastIgnitionTime.remove();
+  updateIgnitionDataOnMap();
 }
 
-function checkIgnitionTimeCount() {
+function updateTimesOfIgnition() {
   var ignitionTimeCount = $('#ignition-times-count').val();
   if(ignitionTimeCount == "single") {
     while (ignitionTimes.length > 1) {
-      removeIgnitionTime();
+      removeTimeOfIgnition();
     }
     ignitionTimes[0].hideIndex();
   } else {
     while (ignitionTimes.length < markerFields.length) {
-      buildNewIgnitionTime();
+      createTimeOfIgnition();
     }
     ignitionTimes[0].showIndex();
+  }
+}
+
+
+function removeDrawnFeatures() {
+  if (polygon != null) {
+    map.removeLayer(polygon);
+    polygon = null;
+  }
+  if (line != null) {
+    map.removeLayer(line);
+    line = null;
+  }
+}
+
+async function showSatData() {
+  if (satelliteMarkers.length == 0) {
+    await getSatelliteData();
+  } 
+  if ($('#show-sat-data').prop('checked')) {
+    satelliteMarkers.map(marker => marker.addTo(map));
+  } else {
+    satelliteMarkers.map(marker => map.removeLayer(marker));
   }
 }
 
@@ -190,109 +252,44 @@ async function getSatelliteData() {
   });
 }
 
-async function showSatData() {
-  if (satelliteMarkers.length == 0) {
-    await getSatelliteData();
-  } 
-  if ($('#show-sat-data').prop('checked')) {
-    satelliteMarkers.map(marker => marker.addTo(map));
-  } else {
-    satelliteMarkers.map(marker => map.removeLayer(marker));
-  }
-}
+/** ===== FormSubmission block ===== */
 
-function checkIgnitionType() {
-  // L.DomUtil.removeClass(map._container,'pointer-cursor-enabled');
-  var ignitionType = $('#ignition-type').val();
-  if(ignitionType == "ignition-area") {
-    $('#ignition-perimeter-time').show();
-    while (ignitionTimes.length > 1) {
-      removeIgnitionTime();
+$('.form').submit((event) => {
+  event.preventDefault();
+  let formIsValid = isFormValid();
+  let [ignTimes, fcHours] = getTimesOfIgnitionAndDurations();
+  let [lats, lons] = getLatLons();
+  let ignitionType = $('#ignition-type').val();
+  if(formIsValid) {
+    let formData = {
+      "description": $('#experiment-description').val(),
+      "ignition_type": $('#ignition-type').val(),
+      "ignition_latitude": lats,
+      "ignition_longitude": lons,
+      "ignition_time": ignTimes,
+      "fc_hours": fcHours,
+      "profile": $('#profile').val()
     }
-    ignitionTimes[0].hideIndex();
-    $('#ignition-times-count-field').hide();
-  } else {
-    $('#ignition-perimeter-time').hide();
-    $('#ignition-times-count-field').show();
-    ignitionTimes[0].showIndex();
-    checkIgnitionTimeCount();
-  } 
-  if(ignitionType == "ignition-line") {
-    while (markerFields.length > 1) removeMarker();
+    if (ignitionType == "ignition-area") formData["perimeter_time"] = JSON.stringify($('#ign-time-perimeter').val());
+    $.ajax({
+        type:"post",
+        dataType: 'json',
+        data: formData
+      });
   }
-  updateMap();
-}
-
-$('#additional-marker').click(buildNewMarker);
-$('#remove-marker').click(() => removeMarker());
-$('#ignition-type').change(checkIgnitionType)
-$('#ignition-times-count').change(checkIgnitionTimeCount);
-$('#show-sat-data').prop('checked', false);
-$('#add-buffer-line').prop('checked', false);
-$('#show-sat-data').click(showSatData);
-buildNewMarker();
-buildNewBufferMarker();
-checkIgnitionType();
-$('.ui.menu').on('click', '.item', function() {
-  $(this).addClass('active').siblings('.item').removeClass('active');
 });
 
-// Fill in a 'unique description'
-$('#experiment-description').text('Web initiated forecast at ' + moment().format());
-
-function set_profile_text(txt) {
-  $('#profile-info-text').text(txt);
+function isFormValid() {
+  let ignitionTypeIsValid = isIgnitionTypeValid();
+  let latLonsAreValid = areLatLonsValid();
+  let descriptionIsValid = isDescriptionValid();
+  let profileIsValid = isProfileValid();
+  let timesOfIgnitionAreValid = areTimesOfIgnitionValid();
+  return ignitionTypeIsValid && latLonsAreValid && descriptionIsValid && profileIsValid && timesOfIgnitionAreValid;
 }
 
-
-const validateIgnitionTimes = () => {
-  var valid = true;
-  for (var i = 0; i < ignitionTimes.length; i++) {
-    if(!ignitionTimes[i].validate()) {
-      valid = false;
-    }
-  }
-  if ($('#ignition-type').val() == "ignition-area") {
-    if(!validateTime($('#ign-time-perimeter').val())) {
-      valid = false;
-      $(`#ignition-time-warning-perimeter`).addClass('activate-warning');
-    } else {
-      $(`#ignition-time-warning-perimeter`).removeClass('activate-warning');
-    }
-  }
-  return valid;
-}
-
-const validateLatLons = () => {
-  var valid = true;
-  for (var i = 0; i < markerFields.length; i++) {
-    if (!markerFields[i].validate()) valid = false
-  }
-  return valid;
-}
-
-const validateDescription = () => {
-  var description = $('#experiment-description').val();
-  if (description == "") {
-    $('#description-warning').addClass("activate-warning");
-    return false;
-  }
-  $('#description-warning').removeClass("activate-warning");
-  return true;
-}
-
-const validateProfile = () => {
-  var profile = $('#profile').val();
-  if (profile == "") {
-    $('#profile-warning').addClass("activate-warning");
-    return false;
-  }
-  $('#profile-warning').removeClass("activate-warning");
-  return true;
-}
-
-const validateIgnitionType = () => {
-  var ignitionType = $('#ignition-type').val();
+function isIgnitionTypeValid() {
+  let ignitionType = $('#ignition-type').val();
   if (ignitionType == "ignition-area") {
     if (markerFields.length < 3) {
       $('#ignition-type-warning').addClass("activate-warning");
@@ -303,27 +300,59 @@ const validateIgnitionType = () => {
   return true;
 }
 
-function validateForm() {
-  var validIgnitionType = validateIgnitionType();
-  var validLatLons = validateLatLons();
-  var validDescription = validateDescription();
-  var validProfile = validateProfile();
-  var validIgnitionTimes = validateIgnitionTimes();
-  return validIgnitionType && validLatLons && validDescription && validProfile && validIgnitionTimes;
-}
-
-function getLatLons() {
-  var latitudes = [];
-  var longitudes = [];
-  for (var i = 0; i < markerFields.length; i++) {
-    let [lat, lon] = markerFields[i].getLatLon();
-    latitudes.push(lat);
-    longitudes.push(lon);
+function areLatLonsValid() {
+  let areValid = true;
+  for (let i = 0; i < markerFields.length; i++) {
+    if (!markerFields[i].validate()) areValid = false
   }
-  return [JSON.stringify(latitudes), JSON.stringify(longitudes)];
+  return areValid;
 }
 
-function getIgnitionTimesAndDurations() {
+function isDescriptionValid() {
+  let description = $('#experiment-description').val();
+  if (description == "") {
+    $('#description-warning').addClass("activate-warning");
+    return false;
+  }
+  $('#description-warning').removeClass("activate-warning");
+  return true;
+}
+
+function isProfileValid() {
+  let profile = $('#profile').val();
+  if (profile == "") {
+    $('#profile-warning').addClass("activate-warning");
+    return false;
+  }
+  $('#profile-warning').removeClass("activate-warning");
+  return true;
+}
+
+function areTimesOfIgnitionValid() {
+  let areValid = true;
+  for (let i = 0; i < ignitionTimes.length; i++) {
+    if(!ignitionTimes[i].validate()) {
+      areValid = false;
+    }
+  }
+  if ($('#ignition-type').val() == "ignition-area") {
+    if(!isValidTime($('#ign-time-perimeter').val())) {
+      areValid = false;
+      $(`#ignition-time-warning-perimeter`).addClass('activate-warning');
+    } else {
+      $(`#ignition-time-warning-perimeter`).removeClass('activate-warning');
+    }
+  }
+  return areValid;
+}
+
+function isValidTime(ign_time_value) {
+  var ign_time = moment.utc(ign_time_value, 'MMM D,YYYY h:mm a');
+  if(!ign_time.isValid() || ign_time.year() <  1979) return false;
+  return true;
+}
+
+function getTimesOfIgnitionAndDurations() {
   var igns = [];
   var fcHours = [];
   var ignTimeAndDuration = ignitionTimes[0].getIgnitionTimeAndDuration();
@@ -342,33 +371,13 @@ function getIgnitionTimesAndDurations() {
   return [JSON.stringify(igns), JSON.stringify(fcHours)];
 }
 
-$('.form').submit((event) => {
-  event.preventDefault();
-  var valid = validateForm();
-  var [ignTimes, fcHours] = getIgnitionTimesAndDurations();
-  var [lats, lons] = getLatLons();
-  var ignitionType = $('#ignition-type').val();
-  if(valid) {
-    var formData = {
-      "description": $('#experiment-description').val(),
-      "ignition_type": $('#ignition-type').val(),
-      "ignition_latitude": lats,
-      "ignition_longitude": lons,
-      "ignition_time": ignTimes,
-      "fc_hours": fcHours,
-      "profile": $('#profile').val()
-    }
-    if (ignitionType == "ignition-area") formData["perimeter_time"] = JSON.stringify($('#ign-time-perimeter').val());
-    $.ajax({
-        type:"post",
-        dataType: 'json',
-        data: formData
-      });
+function getLatLons() {
+  var latitudes = [];
+  var longitudes = [];
+  for (var i = 0; i < markerFields.length; i++) {
+    let [lat, lon] = markerFields[i].getLatLon();
+    latitudes.push(lat);
+    longitudes.push(lon);
   }
-});
-
-$('#ignition-type').dropdown();
-$('#ignition-times-count').dropdown();
-$('#buffer-type').dropdown();
-$(`#ign-time-perimeter`).datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
-
+  return [JSON.stringify(latitudes), JSON.stringify(longitudes)];
+}

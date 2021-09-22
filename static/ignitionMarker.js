@@ -1,4 +1,4 @@
-class Marker extends HTMLElement {
+class IgnitionMarker extends HTMLElement {
 	constructor(index) {
 		super();
 		this.innerHTML = `
@@ -27,7 +27,7 @@ class Marker extends HTMLElement {
 	connectedCallback() {
 		this.querySelector('#marker-id').innerText = this.index;
 		this.querySelector('#active-marker').onclick = () => {
-			if (!this.active) setActiveMarker(this.index);
+			if (!this.active) setActiveIgnitionMarker(this.index);
 		};
 		const inputLatLon = () => {
 			var lat = parseFloat(this.querySelector(`#ign-lat`).value);
@@ -79,7 +79,7 @@ class Marker extends HTMLElement {
 		var satIcon = L.icon({iconUrl: 'static/square_icon_orange.png', iconSize: [5,5]});
 		if (this.marker) map.removeLayer(this.marker);
 		if (!this.validLatitude(lat) || !this.validLongitude(lon)) {
-			updateMap();
+			updateIgnitionDataOnMap();
 			return;
 		}
 		this.querySelector('#ign-lat').value = lat;
@@ -89,15 +89,15 @@ class Marker extends HTMLElement {
 		this.marker = marker;
 		marker.on("mouseover", () => marker.openPopup());
 		marker.on("mouseout", () => marker.closePopup());
-		marker.on("click", () => setActiveMarker(this.index));
-		marker.on("dblclick", () => removeMarker(this.index));
+		marker.on("click", () => setActiveIgnitionMarker(this.index));
+		marker.on("dblclick", () => removeIgnitionMarker(this.index));
 		marker.on("move", (e) => {
 			let latLon = e.target._latlng;
 			this.querySelector('#ign-lat').value = Math.floor(latLon.lat*10000)/10000;
 			this.querySelector('#ign-lon').value = Math.floor(latLon.lng*10000)/10000;
-			updateMap();
+			updateIgnitionDataOnMap();
 		});
-		updateMap();
+		updateIgnitionDataOnMap();
 	}
 
 	setInactive() {
@@ -123,4 +123,4 @@ class Marker extends HTMLElement {
 	}
 }
 
-window.customElements.define('ignition-marker', Marker);
+window.customElements.define('ignition-marker', IgnitionMarker);

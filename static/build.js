@@ -11,7 +11,7 @@
 var map = null;
 var base_layer_dict = null;
 var ignitionMarkers = [];
-var markerId = 0;
+var activeMarkerId = 0;
 var ignitionTimes = [];
 var ignitionArea = null;
 var ignitionLine = null;
@@ -103,29 +103,41 @@ function createTimeOfIgnition() {
 //   bufferId = newBufferId;
 // }
 
-function setActiveIgnitionMarker(newFieldId) {
-  ignitionMarkers[markerId].setInactive();
-  ignitionMarkers[newFieldId].setActive();
-  markerId = newFieldId;
+function setActiveIgnitionMarker(nextActiveMarkerId) {
+  ignitionMarkers[activeMarkerId].setInactive();
+  ignitionMarkers[nextActiveMarkerId].setActive();
+  activeMarkerId = nextActiveMarkerId;
 }
 
 function removeIgnitionMarker(id = ignitionMarkers.length - 1) {
-  if (ignitionMarkers.length < 2) return;
-  if (markerId == ignitionMarkers.length - 1 ) markerId = markerId - 1;
+  if (ignitionMarkers.length < 2) {
+    return;
+  }
+  if (activeMarkerId == ignitionMarkers.length - 1 ){
+    activeMarkerId = activeMarkerId - 1;
+  }
   const lastMarker = ignitionMarkers[id];
-  for (var i = id + 1; i < ignitionMarkers.length; i++ ) ignitionMarkers[i].updateIndex(i - 1);
+  for (let i = id + 1; i < ignitionMarkers.length; i++ ) {
+    ignitionMarkers[i].updateIndex(i - 1);
+  }
   ignitionMarkers.splice(id, 1);
-  if (lastMarker.marker) map.removeLayer(lastMarker.marker);
+  if (lastMarker.marker) {
+    map.removeLayer(lastMarker.marker);
+  }
   lastMarker.remove();
-  setActiveIgnitionMarker(markerId)
-  var ignitionType = $('#ignition-type').val();
-  if (ignitionType == "multiple-ignitions" || ignitionType == "ignition-line") removeTimeOfIgnition(id);
+  setActiveIgnitionMarker(activeMarkerId)
+  let ignitionType = $('#ignition-type').val();
+  if (ignitionType == "multiple-ignitions" || ignitionType == "ignition-line") {
+    removeTimeOfIgnition(id);
+  }
   updateIgnitionDataOnMap();
 }
 
 function removeTimeOfIgnition(id = ignitionTimes.length - 1) {
-  if (ignitionTimes.length == 1) return;
-  for (var i = id + 1; i < ignitionTimes.length; i++) {
+  if (ignitionTimes.length == 1) {
+    return;
+  }
+  for (let i = id + 1; i < ignitionTimes.length; i++) {
     ignitionTimes[i].updateIndex(i);
   }
   const lastIgnitionTime = ignitionTimes.splice(id, 1)[0];
@@ -139,32 +151,46 @@ function calculateCentroid(latLon) {
 /** ===== DrawingDataOnMap block ===== */
 
 function updateIgnitionDataOnMap() {
-  var ignitionType = $('#ignition-type').val();
+  let ignitionType = $('#ignition-type').val();
   removeDrawnFeatures();
-  if (ignitionType == "ignition-line") updateIgnitionLine();
-  if (ignitionType == "ignition-area") updateIgnitionArea();
+  if (ignitionType == "ignition-line") { 
+    updateIgnitionLine();
+  } else if (ignitionType == "ignition-area") { 
+    updateIgnitionArea();
+  }
 }
 
 function updateIgnitionLine() {
-  if ($('#ignition-type').val() != "ignition-line") return;
-  var latLons = ignitionMarkers.map(marker => marker.getLatLon()).filter(l => l.length > 0);
-  if (latLons.length > 1) ignitionLine = L.polyline(latLons, {color: 'orange'}).addTo(map);
+  if ($('#ignition-type').val() != "ignition-line") {
+    return;
+  }
+  let latLons = ignitionMarkers.map(marker => 
+    marker.getLatLon()).filter(l => l.length > 0);
+  if (latLons.length > 1) {
+    ignitionLine = L.polyline(latLons, {color: 'orange'}).addTo(map);
+  }
 }
 
 function updateIgnitionArea() {
-  if ($('#ignition-type').val() != "ignition-area") return;
-  var latLons = [];
-  for (var i = 0; i < ignitionMarkers.length; i++) {
-    var latLon = ignitionMarkers[i].getLatLon();
-    if (latLon.length != 0) latLons.push(latLon);
+  if ($('#ignition-type').val() != "ignition-area") {
+    return;
+  }
+  let latLons = [];
+  for (let i = 0; i < ignitionMarkers.length; i++) {
+    let latLon = ignitionMarkers[i].getLatLon();
+    if (latLon.length != 0) {
+      latLons.push(latLon);
+    }
   }
   if (latLons.length > 2) {
     ignitionArea = L.polygon(latLons, {color: 'red'});
-    var centroid = ignitionArea.getBounds().getCenter();
+    let centroid = ignitionArea.getBounds().getCenter();
     latLons.sort((a, b) => {
-      var thetaA = Math.atan2((a[1] - centroid.lng) , (a[0] - centroid.lat));
-      var thetaB = Math.atan2((b[1] - centroid.lng) , (b[0] - centroid.lat));
-      if (thetaA > thetaB) return 1;
+      let thetaA = Math.atan2((a[1] - centroid.lng) , (a[0] - centroid.lat));
+      let thetaB = Math.atan2((b[1] - centroid.lng) , (b[0] - centroid.lat));
+      if (thetaA > thetaB) {
+        return 1;
+      }
       return -1;
     });
     map.removeLayer(ignitionArea);
@@ -174,7 +200,7 @@ function updateIgnitionArea() {
 
 function updateUIToIgnitionType() {
   // L.DomUtil.removeClass(map._container,'pointer-cursor-enabled');
-  var ignitionType = $('#ignition-type').val();
+  let ignitionType = $('#ignition-type').val();
   if(ignitionType == "ignition-area") {
     $('#ignition-perimeter-time').show();
     while (ignitionTimes.length > 1) {
@@ -195,7 +221,7 @@ function updateUIToIgnitionType() {
 }
 
 function updateTimesOfIgnition() {
-  var ignitionTimeCount = $('#ignition-times-count').val();
+  let ignitionTimeCount = $('#ignition-times-count').val();
   if(ignitionTimeCount == "single") {
     while (ignitionTimes.length > 1) {
       removeTimeOfIgnition();
@@ -242,10 +268,10 @@ async function getSatelliteData() {
   var satIcon = L.icon({iconUrl: 'static/square_icon_filled.png',
                   iconSize: [7,7], opacity: .8});
   satelliteJSON['coordinates'].map((coordinates) => {
-    var lat = coordinates['lat'];
-    var lon = coordinates['lon'];
-    var popUpString = "lat: " + lat + " lon: " + lon;
-    var newMarker = L.marker([lat, lon], {icon: satIcon}).bindPopup(popUpString, {closeButton: false});
+    let lat = coordinates['lat'];
+    let lon = coordinates['lon'];
+    let popUpString = "lat: " + lat + " lon: " + lon;
+    let newMarker = L.marker([lat, lon], {icon: satIcon}).bindPopup(popUpString, {closeButton: false});
     newMarker.on("mouseover", () => newMarker.openPopup());
     newMarker.on("mouseout", () => newMarker.closePopup());
     satelliteMarkers.push(newMarker);
@@ -301,11 +327,12 @@ function isIgnitionTypeValid() {
 }
 
 function areLatLonsValid() {
-  let areValid = true;
-  for (let i = 0; i < ignitionMarkers.length; i++) {
-    if (!ignitionMarkers[i].validate()) areValid = false
+  for (let ignitionMarker of ignitionMarkers) {
+    if (!ignitionMarker.validate()) {
+      return false
+    }
   }
-  return areValid;
+  return true;
 }
 
 function isDescriptionValid() {
@@ -330,8 +357,8 @@ function isProfileValid() {
 
 function areTimesOfIgnitionValid() {
   let areValid = true;
-  for (let i = 0; i < ignitionTimes.length; i++) {
-    if(!ignitionTimes[i].validate()) {
+  for (let ignitionTime of ignitionTimes) {
+    if(!ignitionTime.validate()) {
       areValid = false;
     }
   }
@@ -347,18 +374,20 @@ function areTimesOfIgnitionValid() {
 }
 
 function isValidTime(ign_time_value) {
-  var ign_time = moment.utc(ign_time_value, 'MMM D,YYYY h:mm a');
-  if(!ign_time.isValid() || ign_time.year() <  1979) return false;
+  let ignTime = moment.utc(ign_time_value, 'MMM D,YYYY h:mm a');
+  if(!ignTime.isValid() || ignTime.year() <  1979) {
+    return false;
+  }
   return true;
 }
 
 function getTimesOfIgnitionAndDurations() {
-  var igns = [];
-  var fcHours = [];
-  var ignTimeAndDuration = ignitionTimes[0].getIgnitionTimeAndDuration();
+  let igns = [];
+  let fcHours = [];
+  let ignTimeAndDuration = ignitionTimes[0].getIgnitionTimeAndDuration();
   igns.push(ignTimeAndDuration[0]);
   fcHours.push(ignTimeAndDuration[1]);
-  for (var i = 1; i < ignitionMarkers.length; i++) {
+  for (let i = 1; i < ignitionMarkers.length; i++) {
     // If an area we dont want to post multiple ignitions
     if ($('#ignition-type').val() == "multiple-ignitions") {
       if ($('#ignition-times-count').val() == "multiple") {
@@ -372,10 +401,10 @@ function getTimesOfIgnitionAndDurations() {
 }
 
 function getLatLons() {
-  var latitudes = [];
-  var longitudes = [];
-  for (var i = 0; i < ignitionMarkers.length; i++) {
-    let [lat, lon] = ignitionMarkers[i].getLatLon();
+  let latitudes = [];
+  let longitudes = [];
+  for (let ignitionMarker of ignitionMarkers) {
+    let [lat, lon] = ignitionMarker.getLatLon();
     latitudes.push(lat);
     longitudes.push(lon);
   }

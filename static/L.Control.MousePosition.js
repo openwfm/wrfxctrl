@@ -41,7 +41,7 @@ L.Control.MousePosition = L.Control.extend({
         var lon = L.Util.formatNum(e.latlng.lng, this.options.numDigits);
         if ($('#add-buffer-line').prop('checked')) {
           bufferFields[bufferGroup][bufferId].buildMapMarker(lat, lon);
-        } else ignitionMarkers[markerId].buildMapMarker(lat, lon);
+        } else ignitionMarkers[activeMarkerId].buildMapMarker(lat, lon);
       }
       prevent = false;
     }, 200)
@@ -52,8 +52,8 @@ L.Control.MousePosition = L.Control.extend({
     clearTimeout(timer);
     var lat = L.Util.formatNum(e.latlng.lat, this.options.numDigits);
     var lon = L.Util.formatNum(e.latlng.lng, this.options.numDigits);
-    if (ignitionMarkers[markerId].getLatLon().length == 2) createIgnitionMarker();
-    ignitionMarkers[markerId].buildMapMarker(lat, lon);
+    if (ignitionMarkers[activeMarkerId].getLatLon().length == 2) createIgnitionMarker();
+    ignitionMarkers[activeMarkerId].buildMapMarker(lat, lon);
   }
 });
 

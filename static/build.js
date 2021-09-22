@@ -8,6 +8,11 @@
   */
 
 /** ===== Initialization block ===== */
+const MULTIPLE_IGNITION_TIMES = 'multiple';
+const IGNITION_TYPE_AREA = 'ignition-area';
+const IGNITION_TYPE_LINE = 'ignition-line';
+const IGNITION_TYPE_MULTIPLE = 'multiple-ignitions';
+
 var map = null;
 var base_layer_dict = null;
 var ignitionMarkers = [];
@@ -84,7 +89,7 @@ function createIgnitionMarker() {
   $('#markers').append(newMarkerField);
   ignitionMarkers.push(newMarkerField);
   setActiveIgnitionMarker(newFieldId);
-  if (($('#ignition-type').val() == "multiple-ignitions" && $('#ignition-times-count').val() == "multiple")
+  if (($('#ignition-type').val() != IGNITION_TYPE_AREA && $('#ignition-times-count').val() == MULTIPLE_IGNITION_TIMES)
    || ignitionTimes.length == 0) createTimeOfIgnition();
 }
 
@@ -127,7 +132,7 @@ function removeIgnitionMarker(id = ignitionMarkers.length - 1) {
   lastMarker.remove();
   setActiveIgnitionMarker(activeMarkerId)
   let ignitionType = $('#ignition-type').val();
-  if (ignitionType == "multiple-ignitions" || ignitionType == "ignition-line") {
+  if (ignitionType == IGNITION_TYPE_MULTIPLE || ignitionType == IGNITION_TYPE_LINE) {
     removeTimeOfIgnition(id);
   }
   updateIgnitionDataOnMap();
@@ -153,15 +158,15 @@ function calculateCentroid(latLon) {
 function updateIgnitionDataOnMap() {
   let ignitionType = $('#ignition-type').val();
   removeDrawnFeatures();
-  if (ignitionType == "ignition-line") { 
+  if (ignitionType == IGNITION_TYPE_LINE) { 
     updateIgnitionLine();
-  } else if (ignitionType == "ignition-area") { 
+  } else if (ignitionType == IGNITION_TYPE_AREA) { 
     updateIgnitionArea();
   }
 }
 
 function updateIgnitionLine() {
-  if ($('#ignition-type').val() != "ignition-line") {
+  if ($('#ignition-type').val() != IGNITION_TYPE_LINE) {
     return;
   }
   let latLons = ignitionMarkers.map(marker => 
@@ -172,7 +177,7 @@ function updateIgnitionLine() {
 }
 
 function updateIgnitionArea() {
-  if ($('#ignition-type').val() != "ignition-area") {
+  if ($('#ignition-type').val() != IGNITION_TYPE_AREA) {
     return;
   }
   let latLons = [];
@@ -201,7 +206,7 @@ function updateIgnitionArea() {
 function updateUIToIgnitionType() {
   // L.DomUtil.removeClass(map._container,'pointer-cursor-enabled');
   let ignitionType = $('#ignition-type').val();
-  if(ignitionType == "ignition-area") {
+  if(ignitionType == IGNITION_TYPE_AREA) {
     $('#ignition-perimeter-time').show();
     while (ignitionTimes.length > 1) {
       removeTimeOfIgnition();
@@ -214,7 +219,7 @@ function updateUIToIgnitionType() {
     ignitionTimes[0].showIndex();
     updateTimesOfIgnition();
   } 
-  if(ignitionType == "ignition-line") {
+  if(ignitionType == IGNITION_TYPE_LINE) {
     while (ignitionMarkers.length > 1) removeIgnitionMarker();
   }
   updateIgnitionDataOnMap();
@@ -296,7 +301,7 @@ $('.form').submit((event) => {
       "fc_hours": fcHours,
       "profile": $('#profile').val()
     }
-    if (ignitionType == "ignition-area") formData["perimeter_time"] = JSON.stringify($('#ign-time-perimeter').val());
+    if (ignitionType == IGNITION_TYPE_AREA) formData["perimeter_time"] = JSON.stringify($('#ign-time-perimeter').val());
     $.ajax({
         type:"post",
         dataType: 'json',
@@ -316,7 +321,7 @@ function isFormValid() {
 
 function isIgnitionTypeValid() {
   let ignitionType = $('#ignition-type').val();
-  if (ignitionType == "ignition-area") {
+  if (ignitionType == IGNITION_TYPE_AREA) {
     if (ignitionMarkers.length < 3) {
       $('#ignition-type-warning').addClass("activate-warning");
       return false;
@@ -362,7 +367,7 @@ function areTimesOfIgnitionValid() {
       areValid = false;
     }
   }
-  if ($('#ignition-type').val() == "ignition-area") {
+  if ($('#ignition-type').val() == IGNITION_TYPE_AREA) {
     if(!isValidTime($('#ign-time-perimeter').val())) {
       areValid = false;
       $(`#ignition-time-warning-perimeter`).addClass('activate-warning');
@@ -389,8 +394,8 @@ function getTimesOfIgnitionAndDurations() {
   fcHours.push(ignTimeAndDuration[1]);
   for (let i = 1; i < ignitionMarkers.length; i++) {
     // If an area we dont want to post multiple ignitions
-    if ($('#ignition-type').val() == "multiple-ignitions") {
-      if ($('#ignition-times-count').val() == "multiple") {
+    if ($('#ignition-type').val() == IGNITION_TYPE_MULTIPLE) {
+      if ($('#ignition-times-count').val() == MULTIPLE_IGNITION_TIMES) {
         ignTimeAndDuration = ignitionTimes[i].getIgnitionTimeAndDuration();
       }
       igns.push(ignTimeAndDuration[0]);

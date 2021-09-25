@@ -17,6 +17,8 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 #
 
+from __future__ import absolute_import
+from __future__ import print_function
 from utils import to_esmf, to_utc, rm
 from datetime import datetime, timedelta
 import pytz
@@ -108,7 +110,7 @@ def delete_simulation_files(sim_id,conf):
     :param sim_id: the simulation id
     :param conf: configuration
     """
-    rm(simulation_paths(sim_id,conf).values())
+    rm(list(simulation_paths(sim_id,conf).values()))
 
 def load_simulations(sims_path):
     """
@@ -159,7 +161,7 @@ def create_simulation(info, conf, cluster):
 
     # store simulation configuration
     profile = info['profile']
-    print ('profile = %s' % json.dumps(profile,indent=1, separators=(',',':')))
+    print('profile = %s' % json.dumps(profile,indent=1, separators=(',',':')))
     ign_lat = [float(lat) for lat in info['ignition_latitude'][1:-1].split(',')]
     ign_lon = [float(lon) for lon in info['ignition_longitude'][1:-1].split(',')]
     # ign_lat, ign_lon = float(info['ignition_latitude'][1:-1].split(',')[0]), float(info['ignition_longitude'][1:-1].split(',')[0])
@@ -188,8 +190,8 @@ def create_simulation(info, conf, cluster):
     # build a new job template
     template = osp.abspath(profile['template'])
     cfg = json.load(open(template))
-    print ('Job template %s:' % template)
-    print json.dumps(cfg, indent=4, separators=(',', ': '))
+    print('Job template %s:' % template)
+    print(json.dumps(cfg, indent=4, separators=(',', ': ')))
     
     cfg['template'] = template
     cfg['profile'] = profile
@@ -214,12 +216,12 @@ def create_simulation(info, conf, cluster):
     # sim_info['end_utc'] = to_esmf(sim_end)
     sim_info['end_utc'] = end_utc
     cfg['end_utc'] = end_utc
-    if not cfg.has_key('grib_source') or cfg['grib_source'] == 'auto':
+    if 'grib_source' not in cfg or cfg['grib_source'] == 'auto':
         # cfg['grib_source'] = select_grib_source(sim_start)
         cfg['grib_source'] = [select_grib_source(sim_starts) for sim_starts in sim_start]
-        print 'GRIB source not specified, selected %s from sim start time' % cfg['grib_source']
+        print('GRIB source not specified, selected %s from sim start time' % cfg['grib_source'])
     else:
-        print 'Using GRIB source %s from %s' % (cfg['grib_source'], profile['template'])
+        print('Using GRIB source %s from %s' % (cfg['grib_source'], profile['template']))
 
     # build wrfpy_id and the visualization link
     # job_id = 'wfc-%s-%s-%02d' % (sim_id, to_esmf(sim_start), fc_hours)
@@ -235,7 +237,7 @@ def create_simulation(info, conf, cluster):
     cfg['domains']['1']['center_latlon'] = [ign_lat, ign_lon]
 
     # all templates have exactly one ignition
-    domain = cfg['ignitions'].keys()[0]
+    domain = list(cfg['ignitions'].keys())[0]
     cfg['ignitions'][domain][0]['time_utc'] = ign_time_esmf
     # example:  "latlon" : [39.894264, -103.903222]
     cfg['ignitions'][domain][0]['latlon'] = [ign_lat, ign_lon]
@@ -248,8 +250,8 @@ def create_simulation(info, conf, cluster):
 
     json.dump(cfg, open(json_path, 'w'),indent=1, separators=(',',':'))
 
-    print ('Job configuration %s:' % json_path)
-    print json.dumps(cfg, indent=4, separators=(',', ': '))
+    print('Job configuration %s:' % json_path)
+    print(json.dumps(cfg, indent=4, separators=(',', ': ')))
 
     # drop a shell script that will run the file
     with open(run_script, 'w') as f:
@@ -360,5 +362,5 @@ def get_simulation_state(path):
                 state['wrf'] = 'cancelled'
         f.close()
     except:
-        print "Cannot open file %s" % path
+        print("Cannot open file %s" % path)
     return state

@@ -4,7 +4,8 @@
   1. Initialization block
   2. IgnitionMarkers block 
   3. DrawingDataOnMap block
-  4. FormSubmission block 
+  4. SatelliteData block
+  5. FormSubmission block 
   */
 
 /** ===== Initialization block ===== */
@@ -12,6 +13,8 @@ const MULTIPLE_IGNITION_TIMES = 'multiple';
 const IGNITION_TYPE_AREA = 'ignition-area';
 const IGNITION_TYPE_LINE = 'ignition-line';
 const IGNITION_TYPE_MULTIPLE = 'multiple-ignitions';
+const SATELLITE_DATA_BATCH_SIZE = 50;
+const TIMEOUT_MS = 80;
 
 var map = null;
 var base_layer_dict = null;
@@ -22,6 +25,7 @@ var ignitionArea = null;
 var ignitionLine = null;
 var satelliteJSON = {};
 var satelliteMarkers = [];
+var addingSatData = false;
 // var bufferId = 0;
 // var bufferFields = {0: []};
 // var bufferGroup = 0;
@@ -252,14 +256,51 @@ function removeDrawnFeatures() {
   }
 }
 
+/** ===== SatelliteData block ===== */
 async function showSatData() {
   if (satelliteMarkers.length == 0) {
     await getSatelliteData();
-  } 
+    createSatelliteMarkers();
+  }
   if ($('#show-sat-data').prop('checked')) {
-    satelliteMarkers.map(marker => marker.addTo(map));
+    addingSatData = true;
+    addSatelliteMarkersInBatches();
   } else {
-    satelliteMarkers.map(marker => map.removeLayer(marker));
+    addingSatData = false;
+    removeSatelliteMarkersInBatches();
+    // satelliteMarkers.map(marker => map.removeLayer(marker));
+  }
+}
+
+function addSatelliteMarkersInBatches(index = 0, batchSize = SATELLITE_DATA_BATCH_SIZE) {
+  if (!addingSatData) {
+    return;
+  }
+
+  let batchEnd = Math.min(index + batchSize, satelliteMarkers.length);
+  for (index; index < batchEnd; index++) {
+    satelliteMarkers[index].addTo(map);
+  }
+
+  if (index < satelliteMarkers.length) {
+    setTimeout(addSatelliteMarkersInBatches, TIMEOUT_MS, index, batchSize);
+  } else {
+    addingSatData = false;
+  }
+}
+
+function removeSatelliteMarkersInBatches(index = 0, batchSize = SATELLITE_DATA_BATCH_SIZE) {
+  if (addingSatData) {
+    return;
+  }
+
+  let batchEnd = Math.min(index + batchSize, satelliteMarkers.length);
+  for (index; index < batchEnd; index++) {
+    map.removeLayer(satelliteMarkers[index]);
+  }
+
+  if (index < satelliteMarkers.length) {
+    setTimeout(removeSatelliteMarkersInBatches, TIMEOUT_MS, index, batchSize);
   }
 }
 
@@ -270,7 +311,10 @@ async function getSatelliteData() {
   } catch (error) {
     console.error("Error fetching satellite data: " + error);
   }
-  var satIcon = L.icon({iconUrl: 'static/square_icon_filled.png',
+}
+
+function createSatelliteMarkers() {
+  let satIcon = L.icon({iconUrl: 'static/square_icon_filled.png',
                   iconSize: [7,7], opacity: .8});
   satelliteJSON['coordinates'].map((coordinates) => {
     let lat = coordinates['lat'];

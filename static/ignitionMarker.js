@@ -28,6 +28,8 @@ class IgnitionMarker extends HTMLElement {
 		`;
 		this.index = index;
 		this.mapMarker = null;
+		this.ignitionMapMarker = null;
+		this.popup = null;
 		this.isActive = false;
 	}
 
@@ -69,17 +71,22 @@ class IgnitionMarker extends HTMLElement {
 		}
 		this.querySelector('#ign-lat').value = lat;
 		this.querySelector('#ign-lon').value = lon;
-		let mapMarker;
-		mapMarker = L.marker([lat, lon], {icon: satIcon, draggable: true, autoPan: false}).bindPopup(this.index.toString(), {closeButton: false, autoPan: false}).addTo(map);
+		let mapMarker = L.marker([lat, lon], {icon: satIcon, draggable: true, autoPan: false}).addTo(map);
+		this.ignitionMapMarker = new IgnitionMapMarker(lat, lon, this.index);
+        this.popup = L.popup({lat: lat, lng: lon},{closeOnClick: false, autoClose: false, autoPan: false});
+        this.popup.setContent(this.ignitionMapMarker);
+        mapMarker.bindPopup(this.popup);
 		this.mapMarker = mapMarker;
-		mapMarker.on("mouseover", () => mapMarker.openPopup());
-		mapMarker.on("mouseout", () => mapMarker.closePopup());
-		mapMarker.on("click", () => setActiveIgnitionMarker(this.index));
-		mapMarker.on("dblclick", () => removeIgnitionMarker(this.index));
+		mapMarker.on("click", () => {
+			mapMarker.openPopup();
+			setActiveIgnitionMarker(this.index)
+		});
+
 		mapMarker.on("move", (e) => {
 			let latLon = e.target._latlng;
 			this.querySelector('#ign-lat').value = Math.floor(latLon.lat*10000)/10000;
 			this.querySelector('#ign-lon').value = Math.floor(latLon.lng*10000)/10000;
+			this.ignitionMapMarker.updateLatLon(latLon.lat, latLon.lng);
 			updateIgnitionDataOnMap();
 		});
 		updateIgnitionDataOnMap();
@@ -102,10 +109,9 @@ class IgnitionMarker extends HTMLElement {
 	updateIndex(newIndex) {
 		this.index = newIndex;
 		this.querySelector('#marker-id').innerText = newIndex;
-		if (this.mapMarker) {
-			this.mapMarker._popup.setContent(newIndex.toString());
-		}
+		this.ignitionMapMarker.updateIndex(newIndex);
 	}
+
 
 	/** ===== Validation block ===== */
 
@@ -139,6 +145,49 @@ class IgnitionMarker extends HTMLElement {
 	  }
 	  return true;
 	}
+}	
+
+class IgnitionMapMarker extends HTMLElement {
+	constructor(lat, lon, index) {
+        const roundLatLon = (num) => Math.round(num*100)/100; 	
+		super();
+		this.innerHTML = `
+			<div id='ignitionMapMarker'>
+                <span id='removeMarker' class='interactive-button'>remove marker</span>
+                <div>
+                    <span id='markerIndex' style='margin: 1px; margin-right: 10px'>index: ${index}</span>
+                </div>
+                <div>
+                    <span id='markerLatLon' style='margin: 1px; margin-right: 10px'>lat: ${roundLatLon(lat)} lon: ${roundLatLon(lon)}</span>
+                </div>
+            </div>	
+		`;
+		this.lat = lat;
+		this.lon = lon;
+		this.index = index;
+	}
+
+	connectedCallback() {
+		const removeMarker = this.querySelector('#removeMarker');
+		removeMarker.onpointerdown = () => {
+			removeIgnitionMarker(this.index);
+		}
+	}
+
+    updateIndex(index) {
+    	this.index = index;
+    	const markerIndex = this.querySelector('#markerIndex');
+    	markerIndex.innerText = index;
+    }
+
+    updateLatLon(lat, lon) {
+        const roundLatLon = (num) => Math.round(num*100)/100; 	
+    	this.lat = lat;
+    	this.lon = lon;
+    	const markerLatLon = this.querySelector('#markerLatLon');
+    	markerLatLon.innerText = `lat: ${roundLatLon(lat)} lon: ${roundLatLon(lon)}`;
+    }
 }
 
 window.customElements.define('ignition-marker', IgnitionMarker);
+window.customElements.define('ignition-map-marker', IgnitionMapMarker);

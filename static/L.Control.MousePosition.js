@@ -41,7 +41,8 @@ L.Control.MousePosition = L.Control.extend({
         var lon = L.Util.formatNum(e.latlng.lng, this.options.numDigits);
         if ($('#add-buffer-line').prop('checked')) {
           bufferFields[bufferGroup][bufferId].addMarkerToMapAtLatLon(lat, lon);
-        } else ignitionMarkers[activeMarkerId].addMarkerToMapAtLatLon(lat, lon);
+        // } else ignitionMarkers[activeMarkerId].addMarkerToMapAtLatLon(lat, lon);
+        }
       }
       prevent = false;
     }, 200)

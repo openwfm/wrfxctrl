@@ -71,6 +71,26 @@ div .fixed-height-grid {
   background-color: white;
 }
 
+.leaflet-popup-tip {
+  display: none;
+  width: 0px;
+  height: 0px;
+  border: 0px;
+}
+
+.leaflet-popup {
+  bottom: 2px !important;
+}
+
+.interactive-button {
+  opacity: 50%;
+  cursor: pointer;
+}
+
+.interactive-button:hover {
+  opacity: 100%;
+}
+
 .marker-buttons {
   height: 70px;
 }

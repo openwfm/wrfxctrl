@@ -54,7 +54,7 @@ else:
 host = conf['host']
 debug = conf['debug'] in ['T' 'True' 't' 'true']
 port = conf['port']
-urls = {'submit': osp.normpath(root+'/submit'), 'welcome': osp.normpath(root+'/start'), 'overview': osp.normpath(root+'/overview')}
+urls = {'submit': osp.normpath(root+'submit'), 'welcome': osp.normpath(root+'start'), 'overview': osp.normpath(root+'/overview')}
 welcome_page = 'http://{0}:{1}{2}'.format(host,port,urls['welcome'])
 print('Welcome page is {}'.format(welcome_page))
 #Popen(["firefox", welcome_page])
@@ -82,8 +82,9 @@ def welcome():
     return render_template('welcome.html', cluster=cluster, urls=urls)
 
 
-@app.route(urls['submit'], methods=['GET', 'POST'])
+@app.route("/submit", methods=['GET', 'POST'])
 def build():
+    print('here');
     if request.method == 'GET':
         # it's a get so let's build a fire simulation
         return render_template('build.html', profiles=list(profiles.values()), urls=urls)
@@ -200,5 +201,5 @@ if __name__ == '__main__':
     profiles = load_profiles()
     cluster = Cluster(json.load(open('etc/cluster.json')))
     sys.stdout.flush()
-    app.run(host=host,port=port,debug=debug)
+    app.run(host=host,port=port,debug=True)
 

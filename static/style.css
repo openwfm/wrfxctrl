@@ -10,6 +10,10 @@ body {
   text-align: left;
 }
 
+.leaflet-container.pointer-cursor-enabled {
+  cursor: pointer;
+}
+
 #acknowledgement {
   font-size: small;
   position: fixed;

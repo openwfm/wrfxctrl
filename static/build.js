@@ -20,9 +20,14 @@ function initialize_map() {
     map = L.map('map', {
       center: [39, -106],
       zoom: 7,
-      layers: [base_layer_dict['MapQuest']],
-      zoomControl: false
+      layers: [base_layer_dict['OSM']],
+      zoomControl: true,
+      minZoom: 3
     });
+
+    L.DomUtil.addClass(map._container, 'pointer-cursor-enabled');
+    map.doubleClickZoom.disable();
+    map.scrollWheelZoom.disable();
 
     // add lon/lat display to bottom left corner of map
     L.control.mousePosition().addTo(map);

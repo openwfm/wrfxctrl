@@ -11,7 +11,7 @@ body {
 }
 
 .leaflet-container.pointer-cursor-enabled {
-  cursor: pointer;
+    cursor:pointer;
 }
 
 #acknowledgement {
@@ -36,6 +36,127 @@ div .fixed-height-grid {
   height: 200px;
 }
 
+.not-valid-warning {
+  display: none;
+  margin-top: 5px;
+  padding: 9px;
+  border-style: solid;
+  border-color: red;
+  border-width: 1px;
+  border-radius: .3rem;
+  color: red;
+}
+
+.ignition-times-labels {
+  display: inline-block;
+  font-weight: bold;
+  padding-bottom: 0px !important;
+}
+
+.activate-warning {
+  display: inline-block;
+}
+
+.marker-button {
+  display: inline-block;
+  vertical-align: top;
+  margin: auto;
+  margin-top: 20px;
+  width: 40px;
+  font-size: 2em;
+  border-color: #cccccc;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: .3rem;
+  background-color: white;
+}
+
+.leaflet-popup-tip {
+  display: none;
+  width: 0px;
+  height: 0px;
+  border: 0px;
+}
+
+.leaflet-popup {
+  bottom: 2px !important;
+}
+
+.interactive-button {
+  opacity: 50%;
+  cursor: pointer;
+}
+
+.interactive-button:hover {
+  opacity: 100%;
+}
+
+.marker-buttons {
+  height: 70px;
+}
+
+.marker-button:hover {
+  border-color: #a6a6a6;
+  cursor: pointer;
+}
+
+.ignition-id {
+  display: inline-block;
+  margin: auto;
+  margin-top: 0px;
+  padding: .63em 1em;
+  background-color: white;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: .3rem;
+  border-color: #cccccc;
+}
+
+.active-field-button {
+  display: inline-block;
+  margin: auto;
+  padding: .63em 1em;
+  border-color: #cccccc;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: .3rem;
+  background-color: white;
+}
+
+.active-field-button:hover {
+  border-color: #a6a6a6;
+  cursor: pointer;
+}
+
+
+#markers {
+  margin-bottom: 20px;
+  margin-top: 20px;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+/*#ignition-times {
+  max-height: 150px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}*/
+
+#ignition-type-field {
+  display: inline-block;
+  width: 200px;
+}
+
+#buffer-type-field {
+  display: inline-block;
+  width: 200px;
+}
+
+#ignition-times-count-field {
+  display: inline-block;
+  width: 300px;
+}
+  
 /* from github.com/ardhi/Leaflet.MousePosition */
 .leaflet-container .leaflet-control-mouseposition {
   background-color: rgba(255, 255, 255, 0.7);

@@ -97,7 +97,7 @@ def load_sys_cfg():
         sys_cfg = Dict(json.load(open('etc/conf.json')))
     except IOError:
         logging.critical('Cannot find system configuration, have you created etc/conf.json?')
-        sys.exit(2)
+        os.sys.exit(2)
     # set defaults
     sys = sys_cfg.sys_install_path = sys_cfg.get('sys_install_path',os.getcwd())
     sys_cfg.jobs_path = sys_cfg.get('jobs_path',osp.join(sys,'jobs'))

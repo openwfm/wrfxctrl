@@ -1,4 +1,6 @@
-/* based on github.com/ardhi/Leaflet.MousePosition (MIT license) */
+  /* based on github.com/ardhi/Leaflet.MousePosition (MIT license) */
+var timer = 0;
+var prevent = false;
 
 L.Control.MousePosition = L.Control.extend({
   options: {
@@ -14,6 +16,7 @@ L.Control.MousePosition = L.Control.extend({
     L.DomEvent.disableClickPropagation(this._container);
     map.on('mousemove', this._onMouseMove, this);
     map.on('click', this._onMouseClick, this);
+    map.on('dblclick', this._onMouseDoubleClick, this);
     this._container.innerHTML=this.options.emptyString;
     this._freeze = false;
     return this._container;
@@ -32,15 +35,27 @@ L.Control.MousePosition = L.Control.extend({
   },
   
   _onMouseClick: function(e) {
-    if(this._marker) {
-      this._map.removeLayer(this._marker);
-    }
-    this._marker = L.marker(e.latlng).addTo(this._map);
-    $('#ign-lat').val(L.Util.formatNum(e.latlng.lat, this.options.numDigits));
-    $('#ign-lon').val(L.Util.formatNum(e.latlng.lng, this.options.numDigits));
-    
-  }
+    timer = setTimeout(() => {
+      if (!prevent) {
+        var lat = L.Util.formatNum(e.latlng.lat, this.options.numDigits);
+        var lon = L.Util.formatNum(e.latlng.lng, this.options.numDigits);
+        if ($('#add-buffer-line').prop('checked')) {
+          bufferFields[bufferGroup][bufferId].addMarkerToMapAtLatLon(lat, lon);
+        // } else ignitionMarkers[activeMarkerId].addMarkerToMapAtLatLon(lat, lon);
+        }
+      }
+      prevent = false;
+    }, 200)
+  },
 
+  _onMouseDoubleClick: function(e) {
+    prevent = true;
+    clearTimeout(timer);
+    var lat = L.Util.formatNum(e.latlng.lat, this.options.numDigits);
+    var lon = L.Util.formatNum(e.latlng.lng, this.options.numDigits);
+    if (ignitionMarkers[activeMarkerId].getLatLon().length == 2) createIgnitionMarker();
+    ignitionMarkers[activeMarkerId].addMarkerToMapAtLatLon(lat, lon);
+  }
 });
 
 L.Map.mergeOptions({

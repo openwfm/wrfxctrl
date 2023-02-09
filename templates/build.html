@@ -31,106 +31,127 @@
     <br />
     <br />
      
-    <form class="ui form" method="POST">
-      
-    <h2>Step 1: Short description</h2>
-    <div class="field">
-      <label>Description</label>
-      <input name="description" type="text" id="experiment-description" placeholder="Web initiated run ...">
-    </div>
-
-    <h2 class="ui header">Step 2: Ignition location</h2>
-     
-    <p>Select fire location by <b>clicking on the map</b> or filling out the boxes below</p>
-
-    <div id="map"></div>
-       
-    <div class="two fields">
-      <div class="field">
-        <label>Latitude</label>
-        <input name="ignition_latitude" id="ign-lat" type="text" placeholder="Latitude ...">
-      </div>
-
-      <div class="field">
-        <label>Longitude</label>
-        <input name="ignition_longitude" id="ign-lon" type="text" placeholder="Longitude ...">
-      </div>
-    </div>
-      
-    <h2>Step 3: Ignition time and forecast length</h2>
-    <p>The simulation will start at least 30 mins before the ignition time.  The maximum forecast length is 48 hrs.</p>
-      
-    <div class="ui two column grid fixed-height-grid">
-        <div class="column">
-            <div class="field">
-              <label>Ignition time [UTC]</label>
-              <div class="ui input left icon">
-                <i class="calendar icon"></i>
-                <input name="ignition_time" id="ign-time" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
-              </div>
-            </div>
-        </div>
-
-        <div class="column">
-            <div class="field">
-                <label>Forecast length [hours]</label>
-                <select name="fc_hours" class="ui dropdown" id="fc-hours">
-                    <option value="3">3</option>
-                    <option value="6">6</option>
-                    <option value="9">9</option>
-                    <option value="12">12</option>
-                    <option value="18">18</option>
-                    <option value="24">24</option>
- 		    <option value="36">36</option>
-                    <option value="48">48</option>
-                    <option value="60">60</option>
-		    <option value="72">72</option>
-                </select>
-           </div>
-        </div>
-    </div>
-
-      <h2>Step 4: Simulation profile</h2>
-      
-      <div class="ui two column grid fixed-height-grid">
+    <form id="simulation_form" class="ui form" method="POST">
         
-        <div class="column">
-          <div class="field" style="height:300px;">
-            <div class="ui fluid vertical pointing menu" style="height:100%; overflow:auto;">
-              <input type="hidden" name="profile" id="profile">
-              {% for profile in profiles %}
-              <a class="item"
-                  data-value="{{profile.identifier | safe}}"
-                  onmouseover="set_profile_text('{{profile.info | safe}}');"
-                  onclick="$('#profile').val('{{profile.identifier}}');">
-                      {{profile.title | safe}}
-              </a>
-              {% endfor %}
-            </div>
+      <h2>Step 1: Short description</h2>
+      <div class="field">
+        <label>Description</label>
+        <input name="description" type="text" id="experiment-description" placeholder="Web initiated run ...">
+        <span id="description-warning" class="not-valid-warning">Please enter a description.</span>
+      </div>
+
+      <h2 class="ui header">Step 2: Ignition location</h2>
+       
+      <p>Select fire location by <b>clicking on the map</b> or filling out the boxes below</p>
+
+      <div id="map"></div>
+         
+      <div class="marker-buttons">
+        <div id="additional-marker" class="marker-button"><span>+</span></div>
+        <div id="remove-marker" class="marker-button"><span>-</span></div>
+
+        <div id="ignition-type-field" class="field">
+          <label>Ignition Type</label>
+          <select name="ignition_type" id="ignition-type">
+            <option value="ignition-area">Ignition Area</option>
+            <option value="multiple-ignitions">Multiple Ignitions</option>
+            <option value="ignition-line">Ignition Line</option>
+          </select>
+        </div>
+        <span id="ignition-type-warning" class="not-valid-warning">Ignition Areas must have at least three markers.</span>
+        <div class="field" style="display: inline-block;">
+          <label>Show GIS Hotspots</label>
+          <input type="checkbox" id="show-sat-data" value="sat-data">
+        </div>
+      </div>
+      <div id="markers"></div>
+
+<!--       <div class="marker-buttons">
+        <div id="additional-buffer" class="marker-button"><span>+</span></div>
+        <div id="remove-buffer" class="marker-button"><span>-</span></div>
+        <div id="buffer-type-field" class="field">
+          <label>Buffer Type</label>
+          <select name="buffer_type" id="buffer-type">
+            <option value="buffer-area">Buffer Area</option>
+            <option value="buffer-line">Buffer Line</option>
+          </select>
+        </div>
+        <div class="field" style="display: inline-block;">
+          <label>Enable Buffer Editing</label>
+          <input type="checkbox" id="add-buffer-line" value="add-buffer-line">
+        </div>
+      </div>
+      <div id="buffer-markers"></div>
+  -->           
+      <h2>Step 3: Ignition time and forecast length</h2>
+      <p>The simulation will start at least 30 mins before the ignition time.  The maximum forecast length is 48 hrs.</p>
+      <div id="ignition-times-count-field" class="field">
+        <label>Single or Multiple Ignition Times</label>
+        <select name="ignition_times_count" id="ignition-times-count" style="width: 200px; margin: auto">
+          <option value="single">Single Ignition Time</option>
+          <option value="multiple">Multiple Ignition Times</option>
+        </select>
+      </div>
+      <div id="ignition-times">
+        <div class="ui two column grid" style="height:50px">
+          <div class="column ignition-times-labels">
+            <span style="margin-left: 50px">Ignition time [UTC]</span>
+          </div>
+          <div class="column ignition-times-labels">
+            <span style="margin-left: 50px">Forecast length [hours]</span>
           </div>
         </div>
-      
-        <div class="column">
-          <h3>Profile description</h3>
-          <p id="profile-info-text">
-            Select a simulation profile from the dropdown box.  The simulation profile will specify parameters of your job not set in this form.
-          </p>
+      </div>
+      <div class="two fields" id="ignition-perimeter-time">
+        <div class="field" style="width: 375.2px; margin-left: 7px">
+          <label style="margin-left: -150px">Time reached perimeter</label>
+          <div class="ui input left icon">
+            <i class="calendar icon"></i>
+            <input name="ignition_time_perimeter" id="ign-time-perimeter" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
+          </div>
+          <span id="ignition-time-warning-perimeter" class="not-valid-warning">The ignition time must be between 1/1/1979 and now in the format YYYY-MM-DD_HH:MM:SS</span>
+        </div>
+      </div>
+        <h2>Step 4: Simulation profile</h2>
+        
+        <div class="ui two column grid">
+          
+          <div class="column">
+            <div class="field">
+                <span id="profile-warning" class="not-valid-warning">Please select a job profile.</span>
+              <div class="ui fluid vertical pointing menu">
+                <input type="hidden" name="profile" id="profile">
+                {% for profile in profiles %}
+                <a class="item"
+                    data-value="{{profile.identifier | safe}}"
+                    onmouseover="set_profile_text('{{profile.info | safe}}');"
+                    onclick="$('#profile').val('{{profile.identifier}}');">
+                        {{profile.title | safe}}
+                </a>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        
+          <div class="column">
+            <h3>Profile description</h3>
+            <p id="profile-info-text">
+              Select a simulation profile from the dropdown box.  The simulation profile will specify parameters of your job not set in this form.
+            </p>
+          </div>
+          
         </div>
         
-      </div>
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
-      <br />
- 
-      <button class="ui massive negative button" style="margin-bottom: 20px;" type="submit">
-        <i class="fire icon"></i>Ignite
-      </button>
+        <br />
+        <br />
+        <br />
+        
+        <div class="column">
+          <button class="ui massive negative button" style="margin-bottom: 20px;" type="submit">
+            <i class="fire icon"></i>Ignite
+          </button>
+        </div>
+      </form>
       <a href="{{ urls['welcome'] }}" class="ui right floated blue button">Home</a>
       
       <div>
@@ -141,6 +162,8 @@
   </div>
 </div>
 
+<script src="../static/ignitionMarker.js" type="text/javascript"></script>
+<script src="../static/ignitionTime.js" type="text/javascript"></script>
 <script src="{{url_for('static', filename='L.Control.MousePosition.js')}}"></script>
 <script src="{{url_for('static', filename='build.js')}}"></script>
 

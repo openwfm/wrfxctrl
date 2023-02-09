@@ -64,3 +64,4 @@ target/
 .ipynb_checkpoints
 
 jobs/
+etc/conf.json

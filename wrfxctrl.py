@@ -26,13 +26,9 @@ from utils import Dict, to_esmf, to_utc, load_profiles, load_sys_cfg
 from flask import Flask, render_template, request, redirect, make_response
 import json
 from datetime import datetime, timedelta
-import pytz
-import os
-import stat
 import random
 import string
 import os.path as osp
-from subprocess import Popen
 from functools import wraps, update_wrapper
 import sys
 from cleanup import cleanup_delete, cleanup_cancel
@@ -97,8 +93,8 @@ def build():
         sim_info = create_simulation(sim_cfg, conf, cluster)
         sim_id = sim_info['id']
         simulations[sim_id] = sim_info
-        # print 'sim_info:'
-        # print json.dumps(sim_info, indent=4, separators=(',', ': '))
+        print('sim_info:')
+        print(json.dumps(sim_info, indent=4, separators=(',', ': ')))
         return redirect("/monitor/%s" % sim_id)
 
 

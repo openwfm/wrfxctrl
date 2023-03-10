@@ -30,6 +30,7 @@ from subprocess import Popen, call, check_output
 import glob
 import logging
 import pprint
+import simplekml 
 
 def select_grib_source(start_time):
     now = datetime.utcnow().replace(tzinfo=pytz.UTC)
@@ -48,7 +49,8 @@ def simulation_paths(sim_id, conf):
     return {'log_path' : conf['logs_path'] + '/' + sim_id + '.log' ,
             'json_path' : conf['jobs_path'] + '/' + sim_id + '.json',
             'state_path' : conf['sims_path'] + '/' + sim_id + '.json',
-            'run_script' : conf['jobs_path'] + '/' + sim_id + '.sh'}
+            'run_script' : conf['jobs_path'] + '/' + sim_id + '.sh',
+            'kml_path': conf['kml_path'] + '/' + sim_id + '.kml'}
 
 def cancel_simulation(sim_info,conf):
     """
@@ -167,7 +169,6 @@ def create_simulation(info, conf, cluster):
     # ign_lat, ign_lon = float(info['ignition_latitude'][1:-1].split(',')[0]), float(info['ignition_longitude'][1:-1].split(',')[0])
     # example of ignition time: Apr 10, 1975 9:45 PM
     # ign_time_esmf = to_esmf(datetime.strptime(info['ignition_time'][2:-2].split("\",\"")[0], '%b %d, %Y %I:%M %p'))
-    ign_time_esmf = [to_esmf(datetime.strptime(ign_time, '%b %d, %Y %I:%M %p')) for ign_time in info['ignition_time'][2:-2].split("\",\"")]
     sim_descr = info['description']
     fc_hours = [int(fc_hour) for fc_hour in info['fc_hours'][1:-1].split(',')]
     ign_type = info['ignition_type']
@@ -178,14 +179,23 @@ def create_simulation(info, conf, cluster):
       'description' : sim_descr,
       'ign_latitude' : ign_lat,
       'ign_longitude' : ign_lon,
-      'ign_time_esmf' : ign_time_esmf,
       'fc_hours' : fc_hours,
       'profile' : info['profile'],
       'log_file' : log_path,
       'state' : make_initial_state()
     }
     if (ign_type == "ignition-area"):
+        ign_time = info['ignition_time'][2:-2].split("\",\"")[0]
+        ign_time_esmf = to_esmf(datetime.strptime(ign_time, '%b %d, %Y %I:%M %p'))
+        sim_info['ign_time_esmf'] = ign_time_esmf
+        kml_path = path['kml_path']
+        write_kml(ign_lat, ign_lon, ign_time_esmf, kml_path)
         sim_info['perimeter_time'] = to_esmf(datetime.strptime(info['perimeter_time'][1:-1], '%b %d, %Y %I:%M %p'))
+        sim_info['kml_path'] = kml_path
+    else:
+        ign_time_esmf = [to_esmf(datetime.strptime(ign_time, '%b %d, %Y %I:%M %p')) for ign_time in info['ignition_time'][2:-2].split("\",\"")]
+        sim_info['ign_time_esmf'] = ign_time_esmf
+    ign_time_esmf = [to_esmf(datetime.strptime(ign_time, '%b %d, %Y %I:%M %p')) for ign_time in info['ignition_time'][2:-2].split("\",\"")]
 
     # build a new job template
     template = osp.abspath(profile['template'])
@@ -274,6 +284,21 @@ def create_simulation(info, conf, cluster):
 
     return sim_info
 
+def write_kml(ign_lat, ign_lon, time, path):
+    color = simplekml.Color.red
+    kml = simplekml.Kml()
+    kml.document.name = "Perimeters"
+    multipoly = kml.newmultigeometry(name='PERIM_'+time)
+    outer = []
+    for n, lat in enumerate(ign_lat):
+        outer.append((ign_lon[n], lat))
+    multipoly.newpolygon(outerboundaryis=outer)
+    multipoly.timestamp.when = time
+    polycolor = '00'+color[2:]
+    multipoly.style.polystyle.color = polycolor
+    multipoly.style.linestyle.color = color
+    kml.save(path)
+    path
 
 def parse_error(state, line):
     """

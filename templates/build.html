@@ -22,7 +22,7 @@
 <script src="https://www.mapquestapi.com/sdk/leaflet/v2.2/mq-map.js?key=3rdoGP1zhCE27Q69RXFiR0A3foqbvoZd"></script>
 </head>
 
-<body onload="initialize_map();">
+<body>
 
 <div class="ui one column stackable center aligned page grid">
   <div class="column twelve wide">
@@ -45,26 +45,15 @@
       <p>Select fire location by <b>clicking on the map</b> or filling out the boxes below</p>
 
       <div id="map"></div>
-         
-      <div class="marker-buttons">
-        <div id="additional-marker" class="marker-button"><span>+</span></div>
-        <div id="remove-marker" class="marker-button"><span>-</span></div>
 
-        <div id="ignition-type-field" class="field">
-          <label>Ignition Type</label>
-          <select name="ignition_type" id="ignition-type">
-            <option value="ignition-area">Ignition Area</option>
-            <option value="multiple-ignitions">Multiple Ignitions</option>
-            <option value="ignition-line">Ignition Line</option>
-          </select>
-        </div>
-        <span id="ignition-type-warning" class="not-valid-warning">Ignition Areas must have at least three markers.</span>
-        <div class="field" style="display: inline-block;">
-          <label>Show GIS Hotspots</label>
-          <input type="checkbox" id="show-sat-data" value="sat-data">
-        </div>
-      </div>
-      <div id="markers"></div>
+      <ignition-type-selector></ignition-type-selector>
+         
+      <!-- <h3>Ignition Markers</h3>
+      <div id="markers"></div> -->
+
+      <!-- <h3>Ignition Perimeters</h3>
+      <div id="perimeter-markers"></div> -->
+      <ignition-perimeter></ignition-perimeter>
 
 <!--       <div class="marker-buttons">
         <div id="additional-buffer" class="marker-button"><span>+</span></div>
@@ -162,9 +151,13 @@
   </div>
 </div>
 
-<script src="../static/ignitionMarker.js" type="text/javascript"></script>
-<script src="../static/ignitionTime.js" type="text/javascript"></script>
-<script src="{{url_for('static', filename='L.Control.MousePosition.js')}}"></script>
+<script src="../static/js/appState.js" type="module"></script>
+<script src="../static/js/buildMap.js" type="module"></script>
+<script src="../static/js/components/ignitionMarker.js" type="module"></script>
+<!-- <script src="../static/ignitionTime.js" type="text/javascript"></script> -->
+<script src="../static/js/components/ignitionPerimeter/ignitionPerimeter.js" type="module"></script>
+<script src="../static/js/components/ignitionTypeSelector/ignitionTypeSelector.js" type="module"></script>
+<!-- <script src="{{url_for('static', filename='L.Control.MousePosition.js')}}"></script> -->
 <script src="{{url_for('static', filename='build.js')}}"></script>
 
 </body>

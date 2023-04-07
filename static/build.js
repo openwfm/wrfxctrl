@@ -1,5 +1,4 @@
 "use strict";
-
 /** ===== Contents ===== 
   1. Initialization block
   2. IgnitionMarkers block 
@@ -19,7 +18,9 @@ const TIMEOUT_MS = 80;
 var map = null;
 var base_layer_dict = null;
 var ignitionMarkers = [];
+var perimeterMarkers = [];
 var activeMarkerId = 0;
+var activePerimeterId = 0;
 var ignitionTimes = [];
 var ignitionArea = null;
 var ignitionLine = null;
@@ -31,33 +32,33 @@ var addingSatData = false;
 // var bufferGroup = 0;
 
 // map initialization code
-function initialize_map() {
+// function initialize_map() {
 
-    base_layer_dict = {
-      'MapQuest': MQ.mapLayer(),
-      'MQ Satellite': L.tileLayer('http://{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
-                                  attribution: 'Data and imagery by MapQuest',
-                                  subdomains: ['otile1', 'otile2', 'otile3', 'otile4']}),
-      'OSM': L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'})
-    };
+//     base_layer_dict = {
+//       'MapQuest': MQ.mapLayer(),
+//       'MQ Satellite': L.tileLayer('http://{s}.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png', {
+//                                   attribution: 'Data and imagery by MapQuest',
+//                                   subdomains: ['otile1', 'otile2', 'otile3', 'otile4']}),
+//       'OSM': L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+//                          attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'})
+//     };
 
-    // initialize map
-    map = L.map('map', {
-      center: [39, -106],
-      zoom: 7,
-      layers: [base_layer_dict['OSM']],
-      zoomControl: true,
-      minZoom: 3
-    });
+//     // initialize map
+//     map = L.map('map', {
+//       center: [39, -106],
+//       zoom: 7,
+//       layers: [base_layer_dict['OSM']],
+//       zoomControl: true,
+//       minZoom: 3
+//     });
 
-    L.DomUtil.addClass(map._container,'pointer-cursor-enabled');
-    map.doubleClickZoom.disable();
-    map.scrollWheelZoom.disable();
+//     L.DomUtil.addClass(map._container,'pointer-cursor-enabled');
+//     map.doubleClickZoom.disable();
+//     map.scrollWheelZoom.disable();
 
-    // add lon/lat display to bottom left corner of map
-    L.control.mousePosition().addTo(map);
-}
+//     // add lon/lat display to bottom left corner of map
+//     L.control.mousePosition().addTo(map);
+// }
 
 function set_profile_text(txt) {
   $('#profile-info-text').text(txt);
@@ -65,9 +66,9 @@ function set_profile_text(txt) {
 
 // initialize Semantic elements
 $('#profile-dropdown').dropdown({on: 'hover'});
-$('#additional-marker').click(createIgnitionMarker);
-$('#remove-marker').click(() => removeIgnitionMarker());
-$('#ignition-type').change(updateUIToIgnitionType)
+// $('#additional-marker').click(createIgnitionMarker);
+// $('#remove-marker').click(() => removeIgnitionMarker());
+// $('#ignition-type').change(updateUIToIgnitionType)
 $('#ignition-times-count').change(updateTimesOfIgnition);
 $('#show-sat-data').prop('checked', false);
 $('#add-buffer-line').prop('checked', false);
@@ -76,26 +77,43 @@ $('#ignition-type').dropdown();
 $('#ignition-times-count').dropdown();
 $('#buffer-type').dropdown();
 $(`#ign-time-perimeter`).datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
-createIgnitionMarker();
-updateUIToIgnitionType();
+// createIgnitionMarker();
+// createPerimeterMarker();
+// updateUIToIgnitionType();
 $('.ui.menu').on('click', '.item', function() {
   $(this).addClass('active').siblings('.item').removeClass('active');
 });
 // Fill in a 'unique description'
 $('#experiment-description').text('Web initiated forecast at ' + moment().format());
 
+function ignitionType() {
+  return $('#ignition-type').val();
+}
 
+function isMarkerTypePerimeter() {
+  return ignitionType() == "ignition-area";
+}
 /** ===== IgnitionMarkers block ===== */
 
-function createIgnitionMarker() {
-  let newFieldId = ignitionMarkers.length;
-  const newMarkerField = new IgnitionMarker(newFieldId);
-  $('#markers').append(newMarkerField);
-  ignitionMarkers.push(newMarkerField);
-  setActiveIgnitionMarker(newFieldId);
-  if (($('#ignition-type').val() != IGNITION_TYPE_AREA && $('#ignition-times-count').val() == MULTIPLE_IGNITION_TIMES)
-   || ignitionTimes.length == 0) createTimeOfIgnition();
-}
+// function createIgnitionMarker() {
+//   let newFieldId = ignitionMarkers.length;
+//   const newMarkerField = new IgnitionMarker(newFieldId);
+//   $('#markers').append(newMarkerField);
+//   ignitionMarkers.push(newMarkerField);
+//   setActiveIgnitionMarker(newFieldId);
+//   if (($('#ignition-type').val() != IGNITION_TYPE_AREA && $('#ignition-times-count').val() == MULTIPLE_IGNITION_TIMES)
+//    || ignitionTimes.length == 0) createTimeOfIgnition();
+// }
+
+// function createPerimeterMarker() {
+//   let newFieldId = perimeterMarkers.length;
+//   const newMarkerField = new IgnitionMarker(newFieldId);
+//   $('#perimeter-markers').append(newMarkerField);
+//   perimeterMarkers.push(newMarkerField);
+//   setActivePerimeterMarker(newFieldId);
+//   if ((ignitionType() != IGNITION_TYPE_AREA && $('#ignition-times-count').val() == MULTIPLE_IGNITION_TIMES)
+//    || ignitionTimes.length == 0) createTimeOfIgnition();
+// }
 
 function createTimeOfIgnition() {
   let newFieldId = ignitionTimes.length;
@@ -112,35 +130,41 @@ function createTimeOfIgnition() {
 //   bufferId = newBufferId;
 // }
 
-function setActiveIgnitionMarker(nextActiveMarkerId) {
-  ignitionMarkers[activeMarkerId].setInactive();
-  ignitionMarkers[nextActiveMarkerId].setActive();
-  activeMarkerId = nextActiveMarkerId;
-}
+// function setActiveIgnitionMarker(nextActiveMarkerId) {
+//   ignitionMarkers[activeMarkerId].setInactive();
+//   ignitionMarkers[nextActiveMarkerId].setActive();
+//   activeMarkerId = nextActiveMarkerId;
+// }
 
-function removeIgnitionMarker(id = ignitionMarkers.length - 1) {
-  if (ignitionMarkers.length < 2) {
-    return;
-  }
-  if (activeMarkerId == ignitionMarkers.length - 1 ){
-    activeMarkerId = activeMarkerId - 1;
-  }
-  const lastMarker = ignitionMarkers[id];
-  for (let i = id + 1; i < ignitionMarkers.length; i++ ) {
-    ignitionMarkers[i].updateIndex(i - 1);
-  }
-  ignitionMarkers.splice(id, 1);
-  if (lastMarker.mapMarker) {
-    map.removeLayer(lastMarker.mapMarker);
-  }
-  lastMarker.remove();
-  setActiveIgnitionMarker(activeMarkerId)
-  let ignitionType = $('#ignition-type').val();
-  if (ignitionType == IGNITION_TYPE_MULTIPLE || ignitionType == IGNITION_TYPE_LINE) {
-    removeTimeOfIgnition(id);
-  }
-  updateIgnitionDataOnMap();
-}
+// function setActivePerimeterMarker(nextActiveMarkerId) {
+//   perimeterMarkers[activePerimeterId].setInactive();
+//   perimeterMarkers[nextActiveMarkerId].setActive();
+//   activePerimeterId = nextActiveMarkerId;
+// }
+
+// function removeIgnitionMarker(id = ignitionMarkers.length - 1) {
+//   if (ignitionMarkers.length < 2) {
+//     return;
+//   }
+//   if (activeMarkerId == ignitionMarkers.length - 1 ){
+//     activeMarkerId = activeMarkerId - 1;
+//   }
+//   const lastMarker = ignitionMarkers[id];
+//   for (let i = id + 1; i < ignitionMarkers.length; i++ ) {
+//     ignitionMarkers[i].updateIndex(i - 1);
+//   }
+//   ignitionMarkers.splice(id, 1);
+//   if (lastMarker.mapMarker) {
+//     map.removeLayer(lastMarker.mapMarker);
+//   }
+//   lastMarker.remove();
+//   setActiveIgnitionMarker(activeMarkerId)
+//   let ignitionType = $('#ignition-type').val();
+//   if (ignitionType == IGNITION_TYPE_MULTIPLE || ignitionType == IGNITION_TYPE_LINE) {
+//     removeTimeOfIgnition(id);
+//   }
+//   updateIgnitionDataOnMap();
+// }
 
 function removeTimeOfIgnition(id = ignitionTimes.length - 1) {
   if (ignitionTimes.length == 1) {
@@ -207,27 +231,27 @@ function updateIgnitionArea() {
   } 
 }
 
-function updateUIToIgnitionType() {
-  // L.DomUtil.removeClass(map._container,'pointer-cursor-enabled');
-  let ignitionType = $('#ignition-type').val();
-  if(ignitionType == IGNITION_TYPE_AREA) {
-    $('#ignition-perimeter-time').show();
-    while (ignitionTimes.length > 1) {
-      removeTimeOfIgnition();
-    }
-    ignitionTimes[0].hideIndex();
-    $('#ignition-times-count-field').hide();
-  } else {
-    $('#ignition-perimeter-time').hide();
-    $('#ignition-times-count-field').show();
-    ignitionTimes[0].showIndex();
-    updateTimesOfIgnition();
-  } 
-  if(ignitionType == IGNITION_TYPE_LINE) {
-    while (ignitionMarkers.length > 1) removeIgnitionMarker();
-  }
-  updateIgnitionDataOnMap();
-}
+// function updateUIToIgnitionType() {
+//   // L.DomUtil.removeClass(map._container,'pointer-cursor-enabled');
+//   let ignitionType = $('#ignition-type').val();
+//   if(ignitionType == IGNITION_TYPE_AREA) {
+//     $('#ignition-perimeter-time').show();
+//     while (ignitionTimes.length > 1) {
+//       removeTimeOfIgnition();
+//     }
+//     ignitionTimes[0].hideIndex();
+//     $('#ignition-times-count-field').hide();
+//   } else {
+//     $('#ignition-perimeter-time').hide();
+//     $('#ignition-times-count-field').show();
+//     ignitionTimes[0].showIndex();
+//     updateTimesOfIgnition();
+//   } 
+//   if(ignitionType == IGNITION_TYPE_LINE) {
+//     while (ignitionMarkers.length > 1) removeIgnitionMarker();
+//   }
+//   updateIgnitionDataOnMap();
+// }
 
 function updateTimesOfIgnition() {
   let ignitionTimeCount = $('#ignition-times-count').val();

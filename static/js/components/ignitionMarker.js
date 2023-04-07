@@ -1,12 +1,7 @@
-/** Contents
- 1. Initialization block
- 2. UI Interaction block
- 3. Validation block
-*/
-
-class IgnitionMarker extends HTMLElement {
+import { buildMap } from "../buildMap.js";
+export class IgnitionMarker extends HTMLElement {
 	/** ===== Initialization block ===== */
-	constructor(index) {
+	constructor(index, context) {
 		super();
 		this.innerHTML = `
 			<div class="two fields" style="margin-bottom: 15px">
@@ -21,12 +16,10 @@ class IgnitionMarker extends HTMLElement {
 			      <input name="ignition_longitude" id="ign-lon" type="text" placeholder="Longitude ...">
 			      <span id="lon-warning" class="not-valid-warning">The ignition longitude must be a number between -109 and -102.</span>
 			    </div>
-			    <div>
-			      <span class="active-field-button" id="active-marker">Active</span>
-			    </div>
 			</div>
 		`;
 		this.index = index;
+		this.context = context;
 		this.mapMarker = null;
 		this.ignitionMapMarker = null;
 		this.popup = null;
@@ -35,11 +28,11 @@ class IgnitionMarker extends HTMLElement {
 
 	connectedCallback() {
 		this.querySelector('#marker-id').innerText = this.index;
-		this.querySelector('#active-marker').onclick = () => {
-			if (!this.isActive) {
-				setActiveIgnitionMarker(this.index);
-			}
-		};
+		// this.querySelector('#active-marker').onclick = () => {
+		// 	if (!this.isActive) {
+		// 		setActiveIgnitionMarker(this.index);
+		// 	}
+		// };
 		const inputLatLon = () => {
 			let lat = parseFloat(this.querySelector(`#ign-lat`).value);
 			let lon = parseFloat(this.querySelector(`#ign-lon`).value);
@@ -63,7 +56,7 @@ class IgnitionMarker extends HTMLElement {
 	addMarkerToMapAtLatLon(lat, lon) {
 		let satIcon = L.icon({iconUrl: 'static/square_icon_orange.png', iconSize: [5,5]});
 		if (this.mapMarker != null) {
-			map.removeLayer(this.mapMarker);
+			buildMap.map.removeLayer(this.mapMarker);
 		}
 		if (!this.isValidLatitude(lat) || !this.isValidLongitude(lon)) {
 			updateIgnitionDataOnMap();
@@ -71,7 +64,7 @@ class IgnitionMarker extends HTMLElement {
 		}
 		this.querySelector('#ign-lat').value = lat;
 		this.querySelector('#ign-lon').value = lon;
-		let mapMarker = L.marker([lat, lon], {icon: satIcon, draggable: true, autoPan: false}).addTo(map);
+		let mapMarker = L.marker([lat, lon], {icon: satIcon, draggable: true, autoPan: false}).addTo(buildMap.map);
 		this.ignitionMapMarker = new IgnitionMapMarker(lat, lon, this.index);
         this.popup = L.popup({lat: lat, lng: lon},{closeOnClick: false, autoClose: false, autoPan: false});
         this.popup.setContent(this.ignitionMapMarker);
@@ -79,7 +72,7 @@ class IgnitionMarker extends HTMLElement {
 		this.mapMarker = mapMarker;
 		mapMarker.on("click", () => {
 			mapMarker.openPopup();
-			setActiveIgnitionMarker(this.index)
+			// setActiveIgnitionMarker(this.index)
 		});
 
 		mapMarker.on("move", (e) => {
@@ -87,22 +80,24 @@ class IgnitionMarker extends HTMLElement {
 			this.querySelector('#ign-lat').value = Math.floor(latLon.lat*10000)/10000;
 			this.querySelector('#ign-lon').value = Math.floor(latLon.lng*10000)/10000;
 			this.ignitionMapMarker.updateLatLon(latLon.lat, latLon.lng);
-			updateIgnitionDataOnMap();
+			this.context.markerUpdate();
+			// buildMap.updateIgnitionDataOnMap();
 		});
-		updateIgnitionDataOnMap();
+		this.context.markerUpdate();
+		// buildMap.updateIgnitionDataOnMap();
 	}
 
 	setInactive() {
-		const activeMarker = this.querySelector('#active-marker');
-		activeMarker.style.backgroundColor = "white";
-		activeMarker.style.color = "black";
+		// const activeMarker = this.querySelector('#active-marker');
+		// activeMarker.style.backgroundColor = "white";
+		// activeMarker.style.color = "black";
 		this.isActive = false;
 	}
 
 	setActive() {
-		const activeMarker = this.querySelector('#active-marker');
-		activeMarker.style.backgroundColor = "#404040";
-		activeMarker.style.color = "white";
+		// const activeMarker = this.querySelector('#active-marker');
+		// activeMarker.style.backgroundColor = "#404040";
+		// activeMarker.style.color = "white";
 		this.isActive = true;
 	}
 

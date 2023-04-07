@@ -17,7 +17,7 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
     createPerimeterMarker() {
         let { perimeterMarkersListUI } = this.uiElements;
         let newFieldId = this.perimeterMarkers.length;
-        const newMarkerField = new IgnitionMarker(newFieldId, this);
+        const newMarkerField = new IgnitionMarker(newFieldId, this, "orange");
         perimeterMarkersListUI.append(newMarkerField)
         this.perimeterMarkers.push(newMarkerField);
     }
@@ -36,9 +36,6 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
     }
 
     markerUpdate() {
-        if (!appState.isPerimeter()) {
-          return;
-        }
         let latLons = [];
         for (let perimeterMarker of this.perimeterMarkers) {
           let latLon = perimeterMarker.getLatLon();

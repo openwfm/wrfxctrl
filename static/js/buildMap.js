@@ -66,6 +66,7 @@ export const buildMap = (function makeSimState() {
         }
 
         drawArea(latLons) {
+            this.removeArea();
             if (latLons.length > 2) {
                 ignitionArea = L.polygon(latLons);
                 let centroid = ignitionArea.getBounds().getCenter();
@@ -77,8 +78,20 @@ export const buildMap = (function makeSimState() {
                     }
                     return -1;
                 });
-                this.removeArea()
                 this.ignitionArea = L.polygon(latLons, {color: 'orange'}).addTo(this.map);
+            }
+        }
+
+        removeLine() {
+            if (this.ignitionLine) {
+                this.map.removeLayer(this.ignitionLine);
+            }
+        }
+
+        drawLine(latLons) {
+            this.removeLine();
+            if (latLons.length > 1) {
+                this.ignitionLine = L.polyline(latLons, {color: 'red'}).addTo(map);
             }
         }
     }

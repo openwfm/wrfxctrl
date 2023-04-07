@@ -1,7 +1,7 @@
 import { buildMap } from "../buildMap.js";
 export class IgnitionMarker extends HTMLElement {
 	/** ===== Initialization block ===== */
-	constructor(index, context) {
+	constructor(index, context, iconColor) {
 		super();
 		this.innerHTML = `
 			<div class="two fields" style="margin-bottom: 15px">
@@ -18,6 +18,11 @@ export class IgnitionMarker extends HTMLElement {
 			    </div>
 			</div>
 		`;
+		let markerMap = {
+			"orange":'static/square_icon_orange.png',
+			"red": 'static/square_icon_filled.png'
+		}
+		this.iconUrl = markerMap[iconColor];
 		this.index = index;
 		this.context = context;
 		this.mapMarker = null;
@@ -54,7 +59,7 @@ export class IgnitionMarker extends HTMLElement {
 	/* ===== UI Interaction block ===== */
 
 	addMarkerToMapAtLatLon(lat, lon) {
-		let satIcon = L.icon({iconUrl: 'static/square_icon_orange.png', iconSize: [5,5]});
+		let satIcon = L.icon({iconUrl: this.iconUrl, iconSize: [5,5]});
 		if (this.mapMarker != null) {
 			buildMap.map.removeLayer(this.mapMarker);
 		}

@@ -21,10 +21,10 @@ export const appState = (function makeAppState() {
         ignitionPerimeter() {
             return "0";
         }
-        ignitionPoint() {
+        ignitionPoints() {
             return "1";
         }
-        ignitionArea() {
+        ignitionLine() {
             return "2";
         }
 
@@ -32,12 +32,12 @@ export const appState = (function makeAppState() {
             return this.ignitionType == this.ignitionPerimeter();
         }
 
-        isArea() {
-            return this.ignitionType == this.ignitionArea();
+        isLine() {
+            return this.ignitionType == this.ignitionLine();
         }
 
         isPoints() {
-            return this.ignitionType == this.ignitionPoint();
+            return this.ignitionType == this.ignitionPoints();
         }
     }
     return new appState();

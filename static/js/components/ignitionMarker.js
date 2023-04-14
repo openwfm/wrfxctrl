@@ -28,16 +28,10 @@ export class IgnitionMarker extends HTMLElement {
 		this.mapMarker = null;
 		this.ignitionMapMarker = null;
 		this.popup = null;
-		this.isActive = false;
 	}
 
 	connectedCallback() {
 		this.querySelector('#marker-id').innerText = this.index;
-		// this.querySelector('#active-marker').onclick = () => {
-		// 	if (!this.isActive) {
-		// 		setActiveIgnitionMarker(this.index);
-		// 	}
-		// };
 		const inputLatLon = () => {
 			let lat = parseFloat(this.querySelector(`#ign-lat`).value);
 			let lon = parseFloat(this.querySelector(`#ign-lon`).value);
@@ -70,14 +64,13 @@ export class IgnitionMarker extends HTMLElement {
 		this.querySelector('#ign-lat').value = lat;
 		this.querySelector('#ign-lon').value = lon;
 		let mapMarker = L.marker([lat, lon], {icon: satIcon, draggable: true, autoPan: false}).addTo(buildMap.map);
-		this.ignitionMapMarker = new IgnitionMapMarker(lat, lon, this.index);
+		this.ignitionMapMarker = new IgnitionMapMarker(lat, lon, this.index, this.context);
         this.popup = L.popup({lat: lat, lng: lon},{closeOnClick: false, autoClose: false, autoPan: false});
         this.popup.setContent(this.ignitionMapMarker);
         mapMarker.bindPopup(this.popup);
 		this.mapMarker = mapMarker;
 		mapMarker.on("click", () => {
 			mapMarker.openPopup();
-			// setActiveIgnitionMarker(this.index)
 		});
 
 		mapMarker.on("move", (e) => {
@@ -86,24 +79,8 @@ export class IgnitionMarker extends HTMLElement {
 			this.querySelector('#ign-lon').value = Math.floor(latLon.lng*10000)/10000;
 			this.ignitionMapMarker.updateLatLon(latLon.lat, latLon.lng);
 			this.context.markerUpdate();
-			// buildMap.updateIgnitionDataOnMap();
 		});
 		this.context.markerUpdate();
-		// buildMap.updateIgnitionDataOnMap();
-	}
-
-	setInactive() {
-		// const activeMarker = this.querySelector('#active-marker');
-		// activeMarker.style.backgroundColor = "white";
-		// activeMarker.style.color = "black";
-		this.isActive = false;
-	}
-
-	setActive() {
-		// const activeMarker = this.querySelector('#active-marker');
-		// activeMarker.style.backgroundColor = "#404040";
-		// activeMarker.style.color = "white";
-		this.isActive = true;
 	}
 
 	updateIndex(newIndex) {
@@ -148,7 +125,7 @@ export class IgnitionMarker extends HTMLElement {
 }	
 
 class IgnitionMapMarker extends HTMLElement {
-	constructor(lat, lon, index) {
+	constructor(lat, lon, index, context) {
         const roundLatLon = (num) => Math.round(num*100)/100; 	
 		super();
 		this.innerHTML = `
@@ -162,6 +139,7 @@ class IgnitionMapMarker extends HTMLElement {
                 </div>
             </div>	
 		`;
+		this.context = context;
 		this.lat = lat;
 		this.lon = lon;
 		this.index = index;
@@ -170,7 +148,7 @@ class IgnitionMapMarker extends HTMLElement {
 	connectedCallback() {
 		const removeMarker = this.querySelector('#removeMarker');
 		removeMarker.onpointerdown = () => {
-			removeIgnitionMarker(this.index);
+			this.context.removeMarker(this.index);
 		}
 	}
 

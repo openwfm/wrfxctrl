@@ -44,7 +44,23 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
           }
         }
         buildMap.drawArea(latLons);
-      }
+    }
+
+    removeMarker(index) {
+        if (this.perimeterMarkers.length < 2) {
+            return;
+        }
+        const markerToRemove = this.perimeterMarkers[index];
+        for (let i = index + 1; i < this.perimeterMarkers.length; i++ ) {
+            this.perimeterMarkers[i].updateIndex(i - 1);
+        }
+        this.perimeterMarkers.splice(index, 1);
+        if (markerToRemove.mapMarker) {
+            buildMap.map.removeLayer(markerToRemove.mapMarker);
+        }
+        markerToRemove.remove();
+        this.markerUpdate();
+    }
 }
 
 window.customElements.define('ignition-perimeter', IgnitionPerimeter);

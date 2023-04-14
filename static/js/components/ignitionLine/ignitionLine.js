@@ -2,11 +2,13 @@ import { appState } from '../../appState.js';
 import { IgnitionMarker } from '../ignitionMarker.js';
 import { buildMap } from '../../buildMap.js';
 import { IgnitionLineUI } from './ignitionLineUI/ignitionLineUI.js';
+import { IgnitionTime } from '../../../ignitionTime.js';
 
 export class IgnitionLine extends IgnitionLineUI {
     constructor() {
         super();
         this.lineMarkers = [];
+        this.ignitionTimes = [];
     }
 
     connectedCallback() {
@@ -20,6 +22,7 @@ export class IgnitionLine extends IgnitionLineUI {
         const newMarkerField = new IgnitionMarker(newFieldId, this, "red");
         ignitionLineMarkersListUI.append(newMarkerField)
         this.lineMarkers.push(newMarkerField);
+        this.createIgnitionTime();
     }
 
     createAndAddMarker(lat, lon) {
@@ -31,6 +34,14 @@ export class IgnitionLine extends IgnitionLineUI {
         this.lastLineMarker().addMarkerToMapAtLatLon(lat, lon);
     }
 
+    createIgnitionTime() {
+        let { ignitionLineMarkersListUI } = this.uiElements;
+        let newFieldId = this.ignitionTimes.length;
+        let ignitionField = new IgnitionTime(newFieldId, "ignitionLine");
+        this.ignitionTimes.push(ignitionField);
+        ignitionLineMarkersListUI.append(ignitionField);
+    }
+
     lastLineMarker() {
         return this.lineMarkers.slice(-1)[0];
     }
@@ -39,6 +50,31 @@ export class IgnitionLine extends IgnitionLineUI {
         let latLons = this.lineMarkers.map(marker => 
             marker.getLatLon()).filter(l => l.length > 0);
         buildMap.drawLine(latLons);
+    }
+
+    removeMarker(index) {
+        if (this.lineMarkers.length < 2) {
+            return;
+        }
+        for (let i = index + 1; i < this.lineMarkers.length; i++ ) {
+            this.lineMarkers[i].updateIndex(i - 1);
+        }
+        const markerToRemove = this.lineMarkers.splice(index, 1)[0];
+        if (markerToRemove.mapMarker) {
+            buildMap.map.removeLayer(markerToRemove.mapMarker);
+        }
+        markerToRemove.remove();
+        this.markerUpdate();
+
+        this.removeIgnitionTime(index);
+    }
+
+    removeIgnitionTime(index) {
+        if (this.ignitionTimes.length < 2) {
+            return
+        }
+        const ignitionTimeToRemove = this.ignitionTimes.splice(index, 1)[0];
+        ignitionTimeToRemove.remove();
     }
 }
 

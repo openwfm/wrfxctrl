@@ -11,52 +11,104 @@ export class IgnitionLineUI extends AppStateSubscriber {
             ignitionEndUI: this.querySelector('#end-time-input'),
             ignitionLineComponentUI: this.querySelector('#ignition-line-component'),
             ignitionLineMarkersListUI: this.querySelector('#ignition-line-markers'),
+            startEndCheckboxUI: this.querySelector('#start-end-checkbox'),
+            startEndWrapperUI: this.querySelector('#start-end-dates'),
         };
+        this.startTimeId = '#start-time-input';
+        this.endTimeId = '#end-time-input';
     }
 
     connectedCallback() {
         this.setVisibilityFromAppState();
-        $('#start-time-input').datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
-        $('#end-time-input').datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
+        this.setUpStartEndCheckbox();
+        this.setUpStartEndDatePickers();
     }
 
-    isVisible() {
-        let { ignitionLineComponentUI } = this.uiElements;
-        return !ignitionLineComponentUI.classList.contains('hidden');
-    }
-
-    showComponent() {
-        let { ignitionLineComponentUI } = this.uiElements;
-        if (!this.isVisible()) {
-            ignitionLineComponentUI.classList.remove('hidden');
-        }
-    }
-
-    disableStartAndEndTimes() {
-        let { ignitionStartUI, ignitionEndUI } = this.uiElements;
-        ignitionStartUI.disabled = true;
-        ignitionEndUI.disabled = true;
-    }
-
-    enableStartAndEndTimes() {
-        let { ignitionStartUI, ignitionEndUI } = this.uiElements;
-        ignitionStartUI.disabled = false;
-        ignitionEndUI.disabled = false;
-    }
-
-    hideComponent() {
-        let { ignitionLineComponentUI } = this.uiElements;
-        if (this.isVisible()) {
-            ignitionLineComponentUI.classList.add('hidden');
-        }
+    evenSplitCheck() { 
+        const { startEndCheckboxUI } = this.uiElements;
+        return startEndCheckboxUI.checked;
     }
 
     setVisibilityFromAppState() {
+        let { ignitionLineComponentUI } = this.uiElements;
         if (appState.isLine()) {
-            this.showComponent();
+            this.showComponent(ignitionLineComponentUI);
         } else {
-            this.hideComponent();
+            this.hideComponent(ignitionLineComponentUI);
         }
+    }
+
+    setUpStartEndCheckbox() {
+        let { startEndCheckboxUI } = this.uiElements;
+        startEndCheckboxUI.checked = false;
+        startEndCheckboxUI.onclick = () => {
+            this.setStartAndEndDateVisibility();
+        }
+    }
+
+    setUpStartEndDatePickers() {
+        let now = moment().utc();
+        let oneHourFromNow = moment().add(1, 'h').utc();
+        $(this.startTimeId).datetimepicker({ value: now, formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15, maxDate: oneHourFromNow});
+        $(this.endTimeId).datetimepicker({ value: oneHourFromNow, formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15, minDate: now });
+        this.setStartAndEndDateVisibility();
+
+        $(this.startTimeId).change(() => {
+            $(this.endTimeId).datetimepicker({minDate: this.startTimeMoment().utc()})
+            this.evenlySplitDateTimes();
+        });
+
+        $(this.endTimeId).change(() => {
+            $(this.startTimeId).datetimepicker({maxDate: this.endTimeMoment().utc()})
+            this.evenlySplitDateTimes();
+        });
+    }
+
+    startTimeMoment() {
+        let start = this.startTime();
+        return moment(start);
+    }
+
+    startTime() {
+        let { ignitionStartUI } = this.uiElements;
+        return ignitionStartUI.value;
+    }
+
+    endTimeMoment() {
+        let end = this.endTime();
+        return moment(end);
+    }
+
+    endTime() {
+        let { ignitionEndUI } = this.uiElements;
+        return ignitionEndUI.value;
+    }
+
+    showComponent(component) {
+        if (!this.isVisible(component)) {
+            component.classList.remove('hidden');
+        }
+    }
+
+    hideComponent(component) {
+        if (this.isVisible(component)) {
+            component.classList.add('hidden');
+        }
+    }
+    
+    setStartAndEndDateVisibility() {
+        let { startEndWrapperUI } = this.uiElements;
+        if (this.evenSplitCheck()) {
+            this.showComponent(startEndWrapperUI);
+        } else {
+            this.hideComponent(startEndWrapperUI);
+        }
+    }
+
+    evenlySplitDateTimes() {}
+
+    isVisible(component) {
+        return !component.classList.contains('hidden');
     }
 
     ignitionTypeChange() {

@@ -33,7 +33,12 @@ export class IgnitionTime extends HTMLElement {
 	connectedCallback() {
 		// $(`#fc-hours${this.index}`).dropdown();
 		// $(this.dateChooserId).datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
-		$(this.dateChooserId).datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
+		this.setDateTimePicker(moment().utc());
+		// k$(this.dateChooserId).datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
+	}
+
+	setDateTimePicker(date) {
+		$(this.dateChooserId).datetimepicker({ value: date, formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
 	}
 
 	updateIndex(newIndex) {
@@ -61,6 +66,10 @@ export class IgnitionTime extends HTMLElement {
 
 	getIgnitionTimeAndDuration() {
 		return [this.querySelector('#ign-time').value, parseInt(this.querySelector(`#fc-hours${this.index}`).value)];
+	}
+
+	ignitionTime() {
+		return this.querySelector('#ign-time').value;
 	}
 }
 window.customElements.define('ignition-time', IgnitionTime);

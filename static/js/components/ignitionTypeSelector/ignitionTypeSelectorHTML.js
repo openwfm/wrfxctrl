@@ -3,8 +3,8 @@ export const ignitionTypeSelectorHTML = `
         <div id="ignition-type-field" class="field">
             <label>Marker Type</label>
             <select name="ignition_type" id="ignition-type-dropdown">
-                <option value="0">Ignition Perimeter</option>
                 <option value="1">Multiple Ignitions</option>
+                <option value="0">Ignition Perimeter</option>
                 <option value="2">Ignition Line</option>
             </select>
         </div>

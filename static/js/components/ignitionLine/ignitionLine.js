@@ -23,6 +23,9 @@ export class IgnitionLine extends IgnitionLineUI {
         ignitionLineMarkersListUI.append(newMarkerField)
         this.lineMarkers.push(newMarkerField);
         this.createIgnitionTime();
+        if (this.evenSplitCheck()) {
+            this.evenlySplitDateTimes();
+        }
     }
 
     createAndAddMarker(lat, lon) {
@@ -75,6 +78,22 @@ export class IgnitionLine extends IgnitionLineUI {
         }
         const ignitionTimeToRemove = this.ignitionTimes.splice(index, 1)[0];
         ignitionTimeToRemove.remove();
+    }
+
+    evenlySplitDateTimes() {
+        if (!this.evenSplitCheck() || !this.validIgnitionTimes()) {
+            return;
+        }
+        let difference = (this.endTimeMoment() - this.startTimeMoment()) / (this.ignitionTimes.length - 1);
+        let currentMoment = this.startTimeMoment();
+        for (let ignitionTime of this.ignitionTimes) {
+            ignitionTime.setDateTimePicker(currentMoment);
+            currentMoment = currentMoment.add(difference, 'ms');
+        }
+    }
+
+    validIgnitionTimes() {
+        return this.ignitionTimes.length > 1;
     }
 }
 

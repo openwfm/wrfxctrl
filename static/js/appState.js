@@ -1,7 +1,7 @@
 export const appState = (function makeAppState() {
     class appState {
         constructor() {
-            this.ignitionType = this.ignitionPerimeter();
+            this.ignitionType = this.ignitionPoints();
             this.subscribers = [];
         }
 

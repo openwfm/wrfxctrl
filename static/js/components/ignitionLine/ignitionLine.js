@@ -70,6 +70,9 @@ export class IgnitionLine extends IgnitionLineUI {
         this.markerUpdate();
 
         this.removeIgnitionTime(index);
+        if (this.evenSplitCheck()) {
+            this.evenlySplitDateTimes();
+        }
     }
 
     removeIgnitionTime(index) {
@@ -84,8 +87,9 @@ export class IgnitionLine extends IgnitionLineUI {
         if (!this.evenSplitCheck() || !this.validIgnitionTimes()) {
             return;
         }
-        let difference = (this.endTimeMoment() - this.startTimeMoment()) / (this.ignitionTimes.length - 1);
-        let currentMoment = this.startTimeMoment();
+        let currentMoment = appState.startMoment();
+        let endTimeMoment = appState.endMoment();
+        let difference = (endTimeMoment - currentMoment) / (this.ignitionTimes.length - 1);
         for (let ignitionTime of this.ignitionTimes) {
             ignitionTime.setDateTimePicker(currentMoment);
             currentMoment = currentMoment.add(difference, 'ms');
@@ -96,5 +100,3 @@ export class IgnitionLine extends IgnitionLineUI {
         return this.ignitionTimes.length > 1;
     }
 }
-
-window.customElements.define('ignition-line', IgnitionLine);

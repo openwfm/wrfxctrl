@@ -1,4 +1,3 @@
-import { appState } from '../../../appState.js';
 import { simulationStartAndEndTimesHTML } from './simulationStartAndEndTimesHTML.js';
 
 export class SimulationStartAndEndTimesUI extends HTMLElement {
@@ -22,21 +21,7 @@ export class SimulationStartAndEndTimesUI extends HTMLElement {
         let oneHourFromNow = moment().add(1, 'h');
 
         $(this.startTimeId).datetimepicker({ value: now.utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15, maxDate: oneHourFromNow.utc()});
-        appState.changeStartTime(now);
         $(this.endTimeId).datetimepicker({ value: oneHourFromNow.utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15, minDate: now.utc() });
-        appState.changeEndTime(oneHourFromNow);
-
-        $(this.startTimeId).change(() => {
-            let startMoment = this.startTimeMoment();
-            // $(this.endTimeId).datetimepicker({minDate: startMoment.utc()})
-            appState.changeStartTime(startMoment);
-        });
-
-        $(this.endTimeId).change(() => {
-            let endMoment = this.endTimeMoment();
-            // $(this.startTimeId).datetimepicker({maxDate: endMoment.utc()})
-            appState.changeEndTime(endMoment);
-        });
     }
 
     startTimeMoment() {

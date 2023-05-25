@@ -47,10 +47,6 @@ div .fixed-height-grid {
   color: red;
 }
 
-.hidden {
-  display: none;
-}
-
 .ignition-times-labels {
   display: inline-block;
   font-weight: bold;
@@ -115,6 +111,11 @@ div .fixed-height-grid {
   border-radius: .3rem;
   border-color: #cccccc;
 }
+
+.hidden {
+  display: none;
+}
+
 
 .active-field-button {
   display: inline-block;

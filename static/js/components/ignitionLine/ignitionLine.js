@@ -87,8 +87,8 @@ export class IgnitionLine extends IgnitionLineUI {
         if (!this.evenSplitCheck() || !this.validIgnitionTimes()) {
             return;
         }
-        let currentMoment = appState.startMoment();
-        let endTimeMoment = appState.endMoment();
+        let currentMoment = this.startTimeMoment();
+        let endTimeMoment = this.endTimeMoment();
         let difference = (endTimeMoment - currentMoment) / (this.ignitionTimes.length - 1);
         for (let ignitionTime of this.ignitionTimes) {
             ignitionTime.setDateTimePicker(currentMoment);

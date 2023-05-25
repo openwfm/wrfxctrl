@@ -1,10 +1,9 @@
 export const appState = (function makeAppState() {
     class appState {
         constructor() {
-            this.ignitionType = this.domainCenter();
+            this.ignitionType = this.ignitionLine();
             this.subscribers = [];
             this.igniteSubscribers = [];
-            this.startAndEndTimeSubscribers = [];
             this.startTimeMoment = null;
             this.endTimeMoment = null;
         }
@@ -16,32 +15,6 @@ export const appState = (function makeAppState() {
 
             if (component.validateForIgnition) {
                 this.igniteSubscribers.push(component);
-            }
-
-            if (component.startAndEndTimeChange) {
-                this.startAndEndTimeSubscribers.push(component);
-            }
-        }
-
-        startMoment() {
-            return moment(this.startTimeMoment)
-        }
-
-        changeStartTime(startTimeMoment) {
-            this.startTimeMoment = startTimeMoment;
-            for (let subscriber of this.startAndEndTimeSubscribers) {
-                subscriber.startAndEndTimeChange();
-            }
-        }
-
-        endMoment() {
-            return moment(this.endTimeMoment);
-        }
-
-        changeEndTime(endTimeMoment) {
-            this.endTimeMoment = endTimeMoment;
-            for (let subscriber of this.startAndEndTimeSubscribers) {
-                subscriber.startAndEndTimeChange();
             }
         }
 

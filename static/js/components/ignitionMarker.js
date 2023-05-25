@@ -5,7 +5,7 @@ export class IgnitionMarker extends HTMLElement {
 		super();
 		this.innerHTML = `
 			<div class="two fields" style="margin-bottom: 15px">
-			    <div class="ignition-id">
+			    <div id='ignition-id-container' class="ignition-id">
 			      <span id="marker-id"></span>
 			    </div>
 			    <div class="field">
@@ -22,7 +22,7 @@ export class IgnitionMarker extends HTMLElement {
 			"orange":'static/square_icon_orange.png',
 			"red": 'static/square_icon_filled.png'
 		}
-		this.iconUrl = markerMap[iconColor];
+		this.iconUrl = iconColor == null ? null : markerMap[iconColor];
 		this.index = index;
 		this.context = context;
 		this.mapMarker = null;
@@ -31,7 +31,7 @@ export class IgnitionMarker extends HTMLElement {
 	}
 
 	connectedCallback() {
-		this.querySelector('#marker-id').innerText = this.index;
+		this.indexVisibility();
 		const inputLatLon = () => {
 			let lat = parseFloat(this.querySelector(`#ign-lat`).value);
 			let lon = parseFloat(this.querySelector(`#ign-lon`).value);
@@ -41,6 +41,25 @@ export class IgnitionMarker extends HTMLElement {
 		this.querySelector('#ign-lon').oninput = inputLatLon;
 	}
 
+	indexVisibility() {
+		if (this.index == null) {
+			const indexContainer = this.querySelector('#ignition-id-container');
+			this.hideComponent(indexContainer);
+			return;
+		}
+
+		this.querySelector('#marker-id').innerText = this.index;
+	}
+
+	hideComponent(component) {
+        if (this.isVisible(component)) {
+            component.classList.add('hidden');
+        }
+    }
+
+    isVisible(component) {
+        return !component.classList.contains('hidden');
+    }
 
 	getLatLon() {
 		var latLon = []
@@ -53,7 +72,6 @@ export class IgnitionMarker extends HTMLElement {
 	/* ===== UI Interaction block ===== */
 
 	addMarkerToMapAtLatLon(lat, lon) {
-		let satIcon = L.icon({iconUrl: this.iconUrl, iconSize: [5,5]});
 		if (this.mapMarker != null) {
 			buildMap.map.removeLayer(this.mapMarker);
 		}
@@ -63,7 +81,7 @@ export class IgnitionMarker extends HTMLElement {
 		}
 		this.querySelector('#ign-lat').value = lat;
 		this.querySelector('#ign-lon').value = lon;
-		let mapMarker = L.marker([lat, lon], {icon: satIcon, draggable: true, autoPan: false}).addTo(buildMap.map);
+		const mapMarker = this.newMapMarker(lat, lon);
 		this.ignitionMapMarker = new IgnitionMapMarker(lat, lon, this.index, this.context);
         this.popup = L.popup({lat: lat, lng: lon},{closeOnClick: false, autoClose: false, autoPan: false});
         this.popup.setContent(this.ignitionMapMarker);
@@ -81,6 +99,16 @@ export class IgnitionMarker extends HTMLElement {
 			this.context.markerUpdate();
 		});
 		this.context.markerUpdate();
+	}
+
+	newMapMarker(lat, lon) {
+		let markerOptions = {draggable: true, autoPan: false};
+		if (this.iconUrl != null) {
+			let satIcon = L.icon({iconUrl: this.iconUrl, iconSize: [5,5]});
+			markerOptions["icon"] = satIcon;
+		}
+		
+		return L.marker([lat, lon], markerOptions).addTo(buildMap.map);
 	}
 
 	updateIndex(newIndex) {
@@ -131,7 +159,7 @@ class IgnitionMapMarker extends HTMLElement {
 		this.innerHTML = `
 			<div id='ignitionMapMarker'>
                 <span id='removeMarker' class='interactive-button'>remove marker</span>
-                <div>
+                <div id='markerIndexContainer'>
                     <span id='markerIndex' style='margin: 1px; margin-right: 10px'>index: ${index}</span>
                 </div>
                 <div>

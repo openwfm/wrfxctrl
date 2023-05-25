@@ -10,12 +10,18 @@ export class IgnitionLineUI extends AppStateSubscriber {
             ignitionLineComponentUI: this.querySelector('#ignition-line-component'),
             ignitionLineMarkersListUI: this.querySelector('#ignition-line-markers'),
             startEndCheckboxUI: this.querySelector('#start-end-checkbox'),
+            ignitionTimesUI: this.querySelector('#ignition-times'),
+            ignitionStartUI: this.querySelector('#start-ignition-input'),
+            ignitionEndUI: this.querySelector('#end-ignition-input')
         };
+        this.startTimeId = '#start-ignition-input';
+        this.endTimeId = '#end-ignition-input';
     }
 
     connectedCallback() {
         this.setVisibilityFromAppState();
         this.setUpStartEndCheckbox();
+        this.setUpStartEndDatePickers();
     }
 
     evenSplitCheck() { 
@@ -32,13 +38,63 @@ export class IgnitionLineUI extends AppStateSubscriber {
         }
     }
 
+    startTimeMoment() {
+        let start = this.startTime();
+        return moment(start);
+    }
+
+    startTime() {
+        let { ignitionStartUI } = this.uiElements;
+        return ignitionStartUI.value;
+    }
+
+    endTimeMoment() {
+        let end = this.endTime();
+        return moment(end);
+    }
+
+    endTime() {
+        let { ignitionEndUI } = this.uiElements;
+        return ignitionEndUI.value;
+    }
+
+    setUpStartEndDatePickers() {
+        let now = moment();
+        let oneHourFromNow = moment().add(1, 'h');
+
+        $(this.startTimeId).datetimepicker({ value: now.utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15, maxDate: oneHourFromNow.utc()});
+        $(this.endTimeId).datetimepicker({ value: oneHourFromNow.utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15, minDate: now.utc() });
+
+        $(this.startTimeId).change(() => {
+            // let startMoment = this.startTimeMoment();
+            // $(this.endTimeId).datetimepicker({minDate: startMoment.utc()})
+            // this.changeStartTime(startMoment);
+            this.evenlySplitDateTimes();
+        });
+
+        $(this.endTimeId).change(() => {
+            // let endMoment = this.endTimeMoment();
+            // $(this.startTimeId).datetimepicker({maxDate: endMoment.utc()})
+            this.evenlySplitDateTimes();
+        });
+        this.setIgnitionTimeVisibility();
+    }
+
     setUpStartEndCheckbox() {
         let { startEndCheckboxUI } = this.uiElements;
         startEndCheckboxUI.checked = false;
         startEndCheckboxUI.onclick = () => {
-            if (this.evenSplitCheck()) {
-                this.evenlySplitDateTimes();
-            }
+            this.setIgnitionTimeVisibility();
+            this.evenlySplitDateTimes();
+        }
+    }
+
+    setIgnitionTimeVisibility() {
+        const { ignitionTimesUI } = this.uiElements;
+        if (this.evenSplitCheck()) {
+            this.showComponent(ignitionTimesUI);
+        } else {
+            this.hideComponent(ignitionTimesUI);
         }
     }
 

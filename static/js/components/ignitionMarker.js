@@ -4,7 +4,7 @@ export class IgnitionMarker extends HTMLElement {
 	constructor(index, context, iconColor) {
 		super();
 		this.innerHTML = `
-			<div class="two fields" style="margin-bottom: 15px">
+			<div class="two fields ignition-marker" style="margin-bottom: 15px">
 			    <div id='ignition-id-container' class="ignition-id">
 			      <span id="marker-id"></span>
 			    </div>

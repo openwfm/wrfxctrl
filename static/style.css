@@ -141,6 +141,21 @@ div .fixed-height-grid {
   overflow-y: auto;
 }
 
+.ignition-markers {
+  max-height: 200px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.menu {
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.ignition-marker {
+  padding: 5px;
+}
+
 /*#ignition-times {
   max-height: 150px;
   overflow-x: hidden;

@@ -23,6 +23,6 @@ export const ignitionLineHTML = `
             <span id="ignition-time-warning" class="not-valid-warning">The ignition time must be between 1/1/1979 and now in the format YYYY-MM-DD_HH:MM:SS</span>
           </div>
         </div>
-        <div id="ignition-line-markers"></div> 
+        <div id="ignition-line-markers" class="ignition-markers"></div> 
     </div>
 `;

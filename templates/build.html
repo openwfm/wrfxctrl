@@ -58,6 +58,7 @@
       <ignition-line></ignition-line>
       <ignition-points></ignition-points>
       <domain-center></domain-center>
+      <validation-errors></validation-errors>
 
 <!--       <div class="marker-buttons">
         <div id="additional-buffer" class="marker-button"><span>+</span></div>
@@ -139,11 +140,12 @@
         <br />
         <br />
         
-        <div class="column">
+        <ignition-button></ignition-button>
+        <!-- <div class="column">
           <button class="ui massive negative button" style="margin-bottom: 20px;" type="submit">
             <i class="fire icon"></i>Ignite
           </button>
-        </div>
+        </div> -->
       </form>
       <a href="{{ urls['welcome'] }}" class="ui right floated blue button">Home</a>
       
@@ -165,6 +167,8 @@
 <script src="../static/js/components/ignitionLine/ignitionLineValidator.js" type="module"></script>
 <script src="../static/js/components/ignitionPoints/ignitionPoints.js" type="module"></script>
 <script src="../static/js/components/domainCenter/domainCenter.js" type="module"></script>
+<script src="../static/js/components/validationErrors/validationErrors.js" type="module"></script>
+<script src="../static/js/components/ignitionButton/ignitionButton.js" type="module"></script>
 <!-- <script src="{{url_for('static', filename='L.Control.MousePosition.js')}}"></script> -->
 <script src="{{url_for('static', filename='build.js')}}"></script>
 

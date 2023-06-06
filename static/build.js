@@ -354,30 +354,30 @@ function createSatelliteMarkers() {
 
 /** ===== FormSubmission block ===== */
 
-$('.form').submit((event) => {
-  event.preventDefault();
-  let formIsValid = isFormValid();
-  let [ignTimes, fcHours] = getTimesOfIgnitionAndDurations();
-  let [lats, lons] = getLatLons();
-  // let ignitionType = $('#ignition-type').val();
-  if(formIsValid) {
-    let formData = {
-      "description": $('#experiment-description').val(),
-      "ignition_type": $('#ignition-type').val(),
-      "ignition_latitude": lats,
-      "ignition_longitude": lons,
-      "ignition_time": ignTimes,
-      "fc_hours": fcHours,
-      "profile": $('#profile').val()
-    }
-    // if (ignitionType == IGNITION_TYPE_AREA) formData["perimeter_time"] = JSON.stringify($('#ign-time-perimeter').val());
-    $.ajax({
-        type:"post",
-        dataType: 'json',
-        data: formData
-      });
-  }
-});
+// $('.form').submit((event) => {
+//   event.preventDefault();
+//   let formIsValid = isFormValid();
+//   let [ignTimes, fcHours] = getTimesOfIgnitionAndDurations();
+//   let [lats, lons] = getLatLons();
+//   // let ignitionType = $('#ignition-type').val();
+//   if(formIsValid) {
+//     let formData = {
+//       "description": $('#experiment-description').val(),
+//       "ignition_type": $('#ignition-type').val(),
+//       "ignition_latitude": lats,
+//       "ignition_longitude": lons,
+//       "ignition_time": ignTimes,
+//       "fc_hours": fcHours,
+//       "profile": $('#profile').val()
+//     }
+//     // if (ignitionType == IGNITION_TYPE_AREA) formData["perimeter_time"] = JSON.stringify($('#ign-time-perimeter').val());
+//     $.ajax({
+//         type:"post",
+//         dataType: 'json',
+//         data: formData
+//       });
+//   }
+// });
 
 function isFormValid() {
   // let ignitionTypeIsValid = isIgnitionTypeValid();

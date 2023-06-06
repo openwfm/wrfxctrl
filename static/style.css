@@ -262,3 +262,7 @@ div .fixed-height-grid {
   display: none;
 }
 
+.two .fields .hidden {
+  display: none!;
+}
+

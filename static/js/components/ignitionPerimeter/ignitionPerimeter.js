@@ -61,6 +61,37 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         markerToRemove.remove();
         this.markerUpdate();
     }
+
+    validateForIgnition() {
+        let perimetersAdded = this.perimeterMarkers.length > 1 || this.lastPerimeterMarker().getLatLon().length == 2;
+        if (!perimetersAdded) {
+            return null;
+        }
+        let ignitionMarkerErrorMessage = this.validateIgnitionMarkers();
+        let numberOfMarkersErrorMessage = this.validateNumberOfMarkers();
+        let errorMessage = `${ignitionMarkerErrorMessage} ${numberOfMarkersErrorMessage}`;
+        if (errorMessage != '') {
+            return {header: "Burn Plot Boundary", message: errorMessage};
+        }
+        return null;
+    }
+
+    validateIgnitionMarkers() {
+        let errorMessage = 'The ignition latitudes must be a number between 36 and 41. The ignition longitudes must be a number between -109 and -102.';
+        for (let ignitionMarker of this.perimeterMarkers) {
+            if (!ignitionMarker.isValid()) {
+                return errorMessage;
+            }
+        }
+        return '';
+    }
+
+    validateNumberOfMarkers() {
+        let errorMessage = 'There must be at least 3 markers to define a Perimeter.';
+        if (this.perimeterMarkers.length < 3) {
+            return errorMessage;
+        }
+    }
 }
 
 window.customElements.define('ignition-perimeter', IgnitionPerimeter);

@@ -1,3 +1,4 @@
+import { appState } from "./js/appState.js";
 export class IgnitionTime extends HTMLElement {
 	constructor(index, timeType) {
 		super();
@@ -55,21 +56,24 @@ export class IgnitionTime extends HTMLElement {
 	}
 
 	isValid() {
-		let ign_time_value = this.querySelector('#ign-time').value;
-		this.querySelector(`#ignition-time-warning`).className = 'not-valid-warning';
-		if(!isValidTime(ign_time_value)) {
-			this.querySelector(`#ignition-time-warning`).className = 'not-valid-warning activate-warning';
-			return false;
-		}
-		return true;
+		let simulationStartTime = appState.simulationStartTimeMoment();
+		let simulationEndTime = appState.simulationEndTimeMoment();
+		let ignTimeMoment = this.ignitionTimeMoment();
+
+		return ignTimeMoment < simulationEndTime && ignTimeMoment > simulationStartTime;
 	}
 
 	getIgnitionTimeAndDuration() {
 		return [this.querySelector('#ign-time').value, parseInt(this.querySelector(`#fc-hours${this.index}`).value)];
 	}
 
+	ignitionTimeMoment() {
+		let ignTime = this.ignitionTime();
+		return moment(ignTime);
+	}
+
 	ignitionTime() {
-		return this.querySelector('#ign-time').value;
+		return this.querySelector(this.dateChooserId).value;
 	}
 }
 window.customElements.define('ignition-time', IgnitionTime);

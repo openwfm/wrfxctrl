@@ -73,6 +73,42 @@ export class IgnitionPoints extends IgnitionPointsUI {
         const ignitionTimeToRemove = this.ignitionTimes.splice(index, 1)[0];
         ignitionTimeToRemove.remove();
     }
+
+    validateForIgnition() {
+        let ignitionPointsAdded = this.pointMarkers.length > 1 || this.lastPointsMarker().getLatLon().length == 2;
+        if (!ignitionPointsAdded) {
+            return null;
+        }
+        let ignitionMarkerErrorMessage = this.validateIgnitionMarkers();
+        let ignitionTimeErrorMessage = this.validateIgnitionTimes();
+        let errorMessage = `${ignitionMarkerErrorMessage} ${ignitionTimeErrorMessage}`;
+        if (errorMessage != '') {
+            return {header: "Ignition Points", message: errorMessage};
+        }
+        return null;
+    }
+
+    validateIgnitionMarkers() {
+        let errorMessage = 'The ignition latitudes must be a number between 36 and 41. The ignition longitudes must be a number between -109 and -102.';
+        for (let ignitionMarker of this.pointMarkers) {
+            if (!ignitionMarker.isValid()) {
+                return errorMessage;
+            }
+        }
+        return '';
+    }
+
+    validateIgnitionTimes() {
+        let simulationStartTime = appState.simulationStartTimeMoment();
+        let simulationEndTime = appState.simulationEndTimeMoment();
+        let errorMessage = `All Ignition Times must be between ${simulationStartTime} and ${simulationEndTime} in the format YYYY-MM-DD_HH:MM:SS`;
+        for (let ignitionTime of this.ignitionTimes) {
+            if (!ignitionTime.isValid()) {
+                return errorMessage;
+            }
+        }
+        return '';
+    }
 }
 
 window.customElements.define('ignition-points', IgnitionPoints);

@@ -123,15 +123,15 @@ export class IgnitionMarker extends HTMLElement {
 	isValid() {
 		let valid = true;
 		let lat = parseFloat(this.querySelector('#ign-lat').value);
-		this.querySelector('#lat-warning').className = "not-valid-warning";
+		// this.querySelector('#lat-warning').className = "not-valid-warning";
 		if (!this.isValidLatitude(lat)) {
-			this.querySelector('#lat-warning').className = "not-valid-warning activate-warning";
+			// this.querySelector('#lat-warning').className = "not-valid-warning activate-warning";
 			valid = false;
 		}
 		let lon = parseFloat(this.querySelector('#ign-lon').value);
-		this.querySelector(`#lon-warning`).className = 'not-valid-warning';
+		// this.querySelector(`#lon-warning`).className = 'not-valid-warning';
 		if (!this.isValidLongitude(lon)) {
-			this.querySelector(`#lon-warning`).className = 'not-valid-warning activate-warning';
+			// this.querySelector(`#lon-warning`).className = 'not-valid-warning activate-warning';
 			valid = false;
 		}
 		return valid;

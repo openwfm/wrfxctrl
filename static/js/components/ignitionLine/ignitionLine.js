@@ -99,4 +99,42 @@ export class IgnitionLine extends IgnitionLineUI {
     validIgnitionTimes() {
         return this.ignitionTimes.length > 1;
     }
+
+    validateForIgnition() {
+        let ignitionPointsAdded = this.lineMarkers.length > 1 || this.lastLineMarker().getLatLon().length == 2;
+        if (!ignitionPointsAdded) {
+            return null;
+        }
+        let ignitionMarkerErrorMessage = this.validateIgnitionMarkers();
+        let ignitionTimeErrorMessage = this.validateIgnitionTimes();
+        let errorMessage = `${ignitionMarkerErrorMessage} ${ignitionTimeErrorMessage}`;
+        if (errorMessage != '') {
+            return {header: "Ignition Line", message: errorMessage};
+        }
+        return null;
+    }
+
+    validateIgnitionMarkers() {
+        let errorMessage = 'The ignition latitudes must be a number between 36 and 41. The ignition longitudes must be a number between -109 and -102.';
+        for (let ignitionMarker of this.lineMarkers) {
+            if (!ignitionMarker.isValid()) {
+                return errorMessage;
+            }
+        }
+        return '';
+    }
+
+    validateIgnitionTimes() {
+        let simulationStartTime = appState.simulationStartTimeMoment();
+        let simulationEndTime = appState.simulationEndTimeMoment();
+        let errorMessage = `All Ignition Times must be between ${simulationStartTime} and ${simulationEndTime} in the format YYYY-MM-DD_HH:MM:SS`;
+        for (let ignitionTime of this.ignitionTimes) {
+            if (!ignitionTime.isValid()) {
+                return errorMessage;
+            }
+        }
+        return '';
+    }
 }
+
+window.customElements.define('ignition-line', IgnitionLine);

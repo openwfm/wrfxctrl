@@ -1,3 +1,4 @@
+import { appState } from '../../../appState.js';
 import { simulationStartAndEndTimesHTML } from './simulationStartAndEndTimesHTML.js';
 
 export class SimulationStartAndEndTimesUI extends HTMLElement {
@@ -14,6 +15,7 @@ export class SimulationStartAndEndTimesUI extends HTMLElement {
 
     connectedCallback() {
         this.setUpStartEndDatePickers();
+        appState.setSimulationStartAndStopTimeComponent(this);
     }
 
     setUpStartEndDatePickers() {

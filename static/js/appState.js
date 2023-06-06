@@ -4,8 +4,7 @@ export const appState = (function makeAppState() {
             this.ignitionType = this.ignitionPerimeter();
             this.subscribers = [];
             this.igniteSubscribers = [];
-            this.startTimeMoment = null;
-            this.endTimeMoment = null;
+            this.simulationStartAndStartTimes = null;
         }
 
         subscribeComponent(component) {
@@ -16,6 +15,18 @@ export const appState = (function makeAppState() {
             if (component.validateForIgnition) {
                 this.igniteSubscribers.push(component);
             }
+        }
+
+        setSimulationStartAndStopTimeComponent(component) {
+            return this.simulationStartAndStartTimes = component;
+        }
+
+        simulationStartTimeMoment() {
+            return this.simulationStartAndStartTimes.startTimeMoment();
+        }
+       
+        simulationEndTimeMoment() {
+            return this.simulationStartAndStartTimes.endTimeMoment();
         }
 
         changeIgnitionType(ignitionType) {

@@ -69,16 +69,28 @@ export class IgnitionMarker extends HTMLElement {
 		return latLon;
 	}
 
+	latLon() {
+		let lat = parseFloat(this.querySelector('#ign-lat').value);
+		let lon = parseFloat(this.querySelector('#ign-lon').value);
+		return [lat, lon];
+	}
+
+	isSet() {
+		let lat = parseFloat(this.querySelector('#ign-lat').value);
+		let lon = parseFloat(this.querySelector('#ign-lon').value);
+		return !isNaN(lat) && !isNaN(lon);
+	}
+
 	/* ===== UI Interaction block ===== */
 
 	addMarkerToMapAtLatLon(lat, lon) {
 		if (this.mapMarker != null) {
 			buildMap.map.removeLayer(this.mapMarker);
 		}
-		if (!this.isValidLatitude(lat) || !this.isValidLongitude(lon)) {
-			updateIgnitionDataOnMap();
-			return;
-		}
+		// if (!this.isValidLatitude(lat) || !this.isValidLongitude(lon)) {
+		// 	updateIgnitionDataOnMap();
+		// 	return;
+		// }
 		this.querySelector('#ign-lat').value = lat;
 		this.querySelector('#ign-lon').value = lon;
 		const mapMarker = this.newMapMarker(lat, lon);

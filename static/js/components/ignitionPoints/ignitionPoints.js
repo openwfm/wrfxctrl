@@ -3,6 +3,7 @@ import { IgnitionMarker } from '../ignitionMarker.js';
 import { buildMap } from '../../buildMap.js';
 import { IgnitionPointsUI } from './ignitionPointsUI/ignitionPointsUI.js';
 import { IgnitionTime } from '../../../ignitionTime.js';
+import { validateIgnitionMarkers, validateIgnitionTimes } from '../validationUtils.js';
 
 export class IgnitionPoints extends IgnitionPointsUI {
     constructor() {
@@ -75,39 +76,17 @@ export class IgnitionPoints extends IgnitionPointsUI {
     }
 
     validateForIgnition() {
-        let ignitionPointsAdded = this.pointMarkers.length > 1 || this.lastPointsMarker().getLatLon().length == 2;
+        let ignitionPointsAdded = this.pointMarkers.length > 1 || this.lastPointsMarker().isSet();
         if (!ignitionPointsAdded) {
             return null;
         }
-        let ignitionMarkerErrorMessage = this.validateIgnitionMarkers();
-        let ignitionTimeErrorMessage = this.validateIgnitionTimes();
+        let ignitionMarkerErrorMessage = validateIgnitionMarkers(this.pointMarkers);
+        let ignitionTimeErrorMessage = validateIgnitionTimes(this.ignitionTimes);
         let errorMessage = `${ignitionMarkerErrorMessage} ${ignitionTimeErrorMessage}`;
         if (errorMessage != '') {
-            return {header: "Ignition Points", message: errorMessage};
+            return {header: "Multiple Ignitions", message: errorMessage};
         }
         return null;
-    }
-
-    validateIgnitionMarkers() {
-        let errorMessage = 'The ignition latitudes must be a number between 36 and 41. The ignition longitudes must be a number between -109 and -102.';
-        for (let ignitionMarker of this.pointMarkers) {
-            if (!ignitionMarker.isValid()) {
-                return errorMessage;
-            }
-        }
-        return '';
-    }
-
-    validateIgnitionTimes() {
-        let simulationStartTime = appState.simulationStartTimeMoment();
-        let simulationEndTime = appState.simulationEndTimeMoment();
-        let errorMessage = `All Ignition Times must be between ${simulationStartTime} and ${simulationEndTime} in the format YYYY-MM-DD_HH:MM:SS`;
-        for (let ignitionTime of this.ignitionTimes) {
-            if (!ignitionTime.isValid()) {
-                return errorMessage;
-            }
-        }
-        return '';
     }
 }
 

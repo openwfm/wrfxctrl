@@ -2,6 +2,7 @@ import { appState } from '../../appState.js';
 import { IgnitionPerimeterUI } from './ignitionPerimiterUI/ignitionPerimeterUI.js';
 import { IgnitionMarker } from '../ignitionMarker.js';
 import { buildMap } from '../../buildMap.js';
+import { validateIgnitionMarkers } from '../validationUtils.js';
 
 export class IgnitionPerimeter extends IgnitionPerimeterUI {
     constructor() {
@@ -63,27 +64,17 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
     }
 
     validateForIgnition() {
-        let perimetersAdded = this.perimeterMarkers.length > 1 || this.lastPerimeterMarker().getLatLon().length == 2;
+        let perimetersAdded = this.perimeterMarkers.length > 1 || this.lastPerimeterMarker().isSet();
         if (!perimetersAdded) {
             return null;
         }
-        let ignitionMarkerErrorMessage = this.validateIgnitionMarkers();
+        let ignitionMarkerErrorMessage = validateIgnitionMarkers(this.perimeterMarkers);
         let numberOfMarkersErrorMessage = this.validateNumberOfMarkers();
         let errorMessage = `${ignitionMarkerErrorMessage} ${numberOfMarkersErrorMessage}`;
         if (errorMessage != '') {
             return {header: "Burn Plot Boundary", message: errorMessage};
         }
         return null;
-    }
-
-    validateIgnitionMarkers() {
-        let errorMessage = 'The ignition latitudes must be a number between 36 and 41. The ignition longitudes must be a number between -109 and -102.';
-        for (let ignitionMarker of this.perimeterMarkers) {
-            if (!ignitionMarker.isValid()) {
-                return errorMessage;
-            }
-        }
-        return '';
     }
 
     validateNumberOfMarkers() {

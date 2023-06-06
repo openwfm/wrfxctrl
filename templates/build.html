@@ -33,12 +33,13 @@
      
     <form id="simulation_form" class="ui form" method="POST">
         
-      <h2>Step 1: Short description</h2>
+      <!-- <h2>Step 1: Short description</h2>
       <div class="field">
         <label>Description</label>
         <input name="description" type="text" id="experiment-description" placeholder="Web initiated run ...">
         <span id="description-warning" class="not-valid-warning">Please enter a description.</span>
-      </div>
+      </div> -->
+      <simulation-description></simulation-description>
 
       <h2 class="ui header">Step 2: Ignition location and time</h2>
        
@@ -161,6 +162,7 @@
 <script src="../static/js/buildMap.js" type="module"></script>
 <script src="../static/js/components/ignitionMarker.js" type="module"></script>
 <script src="../static/ignitionTime.js" type="module"></script>
+<script src="../static/js/components/simulationDescription/simulationDescription.js" type="module"></script>
 <script src="../static/js/components/ignitionTypeSelector/ignitionTypeSelector.js" type="module"></script>
 <script src="../static/js/components/ignitionPerimeter/ignitionPerimeter.js" type="module"></script>
 <script src="../static/js/components/simulationStartAndEndTimes/simulationStartAndEndTimesUI/simulationStartAndEndTimesUI.js" type="module"></script>

@@ -41,23 +41,25 @@ export const errorState = (function makeErrorState() {
             this.validationErrors = [];
             for (let subscriber of this.subscribers) {
                 let componentError = subscriber.validateForIgnition();
-                if (componentError) {
+                if (componentError.messages.length > 0) {
                     this.validationErrors.push(componentError);
                 }
             }
 
             let profileError = this.isProfileValid();
-            if (profileError) {
+            if (profileError.messages.length > 0) {
                 this.validationErrors.push(profileError);
             }
         }
 
         isProfileValid() {
             let profile = $('#profile').val();
+            let errorMessages = [];
             if (profile == "") {
-              return {header:"Simulation Profile", message: "Please select a job profile." };
+                let errorMessage = "Please select a job profile."
+                errorMessages.push(errorMessage);
             }
-            return null;
+            return {header:"Simulation Profile", messages: errorMessages };
         }
     }
     return new ErrorState();

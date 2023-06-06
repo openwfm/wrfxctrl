@@ -6,7 +6,7 @@ export const validationErrorsHTML = `
             <div class="close-button">
                 x
             </div>
-            <ul id="validation-errors-list">
+            <ul id="validation-errors-list" class="validation-errors-list">
             </ul>
         </div>
     </div>

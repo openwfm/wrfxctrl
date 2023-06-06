@@ -15,11 +15,12 @@ export class SimulationDescription extends AppStateSubscriber {
     }
 
     validateForIgnition() {
-        let errorMessage = 'Please enter a description.';
+        let errorMessages = [];
         if (this.descriptionText() == "") {
-            return {header: "Simulation Description", message: errorMessage};
+            let errorMessage = 'Please enter a description.';
+            errorMessages.push(errorMessage);
         }
-        return null;
+        return {header: "Simulation Description", messages: errorMessages};
     }
 
     descriptionText() {

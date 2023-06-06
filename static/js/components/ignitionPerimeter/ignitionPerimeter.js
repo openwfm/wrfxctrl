@@ -65,16 +65,22 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
 
     validateForIgnition() {
         let perimetersAdded = this.perimeterMarkers.length > 1 || this.lastPerimeterMarker().isSet();
+        let errorMessages = [];
         if (!perimetersAdded) {
-            return null;
+            return {header: "Burn Plot Boundary", messages: errorMessages};
         }
+
         let ignitionMarkerErrorMessage = validateIgnitionMarkers(this.perimeterMarkers);
-        let numberOfMarkersErrorMessage = this.validateNumberOfMarkers();
-        let errorMessage = `${ignitionMarkerErrorMessage} ${numberOfMarkersErrorMessage}`;
-        if (errorMessage != '') {
-            return {header: "Burn Plot Boundary", message: errorMessage};
+        if (ignitionMarkerErrorMessage) {
+            errorMessages.push(ignitionMarkerErrorMessage);
         }
-        return null;
+
+        let numberOfMarkersErrorMessage = this.validateNumberOfMarkers();
+        if (numberOfMarkersErrorMessage) {
+            errorMessages.push(numberOfMarkersErrorMessage);
+        }
+
+        return {header: "Burn Plot Boundary", messages: errorMessages};
     }
 
     validateNumberOfMarkers() {

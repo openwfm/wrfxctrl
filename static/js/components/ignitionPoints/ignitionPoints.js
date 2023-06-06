@@ -76,17 +76,21 @@ export class IgnitionPoints extends IgnitionPointsUI {
     }
 
     validateForIgnition() {
+        let errorMessages = [];
         let ignitionPointsAdded = this.pointMarkers.length > 1 || this.lastPointsMarker().isSet();
         if (!ignitionPointsAdded) {
-            return null;
+            return {header: "Multiple Ignitions", messages: errorMessages};
         }
         let ignitionMarkerErrorMessage = validateIgnitionMarkers(this.pointMarkers);
-        let ignitionTimeErrorMessage = validateIgnitionTimes(this.ignitionTimes);
-        let errorMessage = `${ignitionMarkerErrorMessage} ${ignitionTimeErrorMessage}`;
-        if (errorMessage != '') {
-            return {header: "Multiple Ignitions", message: errorMessage};
+        if (ignitionMarkerErrorMessage) {
+            errorMessages.push(ignitionMarkerErrorMessage);
         }
-        return null;
+        let ignitionTimeErrorMessage = validateIgnitionTimes(this.ignitionTimes);
+        if (ignitionTimeErrorMessage) {
+            errorMessages.push(ignitionTimeErrorMessage);
+        }
+
+        return {header: "Multiple Ignitions", messages: errorMessages};
     }
 }
 

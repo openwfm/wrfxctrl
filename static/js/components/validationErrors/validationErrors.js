@@ -30,8 +30,8 @@ export class ValidationErrors extends HTMLElement {
         this.clearErrors();
         for (let errors of errorsArray) {
             let header = errors.header;
-            let message = errors.message;
-            let validationError = new ValidationError(header, message);
+            let errorMessages = errors.messages;
+            let validationError = new ValidationError(header, errorMessages);
             validationErrorsList.append(validationError);
         }
 

@@ -11,11 +11,9 @@ export function validateIgnitionTimes(ignitionTimes) {
         }
     }
 
-    if (invalidIndices.length == 0) {
-        return '';
+    if (invalidIndices.length > 0) {
+        return `Ignition Time at id(s) [${invalidIndices}] must be between ${simulationStartTime} and ${simulationEndTime}.`;
     }
-
-    return `Ignition Time at id(s) [${invalidIndices}] must be between ${simulationStartTime} and ${simulationEndTime}.`;
 }
 
 export function isValidIgnitionTime(ignitionTime) {
@@ -33,14 +31,13 @@ export function validateIgnitionMarkers(ignitionMarkers) {
             invalidMarkers.push(ignitionMarker.index);
         }
     }
-    if (invalidMarkers.length == 0) {
-        return '';
+    if (invalidMarkers.length > 0) {
+        return `Invalid Latitude/Longitude at id(s) [${invalidMarkers}]. The ignition latitudes must be a number between 22 and 51. The ignition longitudes must be a number between -128 and -65.`;
     }
-    return `Invalid Latitude/Longitude at id(s) [${invalidMarkers}]. The ignition latitudes must be a number between 22 and 51. The ignition longitudes must be a number between -128 and -65.`;
 }
 
 export function isValidIgnitionMarker(ignitionMarker) {
-    let lat, lon = ignitionMarker.getLatLon();
+    let [lat, lon] = ignitionMarker.getLatLon();
     return isValidLatitude(lat) && isValidLongitude(lon);
 }
 

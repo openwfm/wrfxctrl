@@ -102,17 +102,24 @@ export class IgnitionLine extends IgnitionLineUI {
     }
 
     validateForIgnition() {
+        let errorMessages = [];
         let ignitionPointsAdded = this.lineMarkers.length > 1 || this.lastLineMarker().isSet();
         if (!ignitionPointsAdded) {
-            return null;
+            return {header: "Ignition Line", messages: errorMessages};
         }
+
         let ignitionMarkerErrorMessage = validateIgnitionMarkers(this.lineMarkers);
-        let ignitionTimeErrorMessage = validateIgnitionTimes(this.ignitionTimes);
-        let errorMessage = `${ignitionMarkerErrorMessage} ${ignitionTimeErrorMessage}`;
-        if (errorMessage != ' ') {
-            return {header: "Ignition Line", message: errorMessage};
+        if (ignitionMarkerErrorMessage) {
+            errorMessages.push(ignitionMarkerErrorMessage);
         }
-        return null;
+
+        let ignitionTimeErrorMessage = validateIgnitionTimes(this.ignitionTimes);
+        if (ignitionTimeErrorMessage) {
+            errorMessages.push(ignitionTimeErrorMessage);
+
+        }
+
+        return {header: "Ignition Line", messages: errorMessages};
     }
 }
 

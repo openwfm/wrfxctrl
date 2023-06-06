@@ -27,6 +27,7 @@ export class ValidationErrors extends HTMLElement {
 
     showErrors(errorsArray) {
         const { validationErrorsList } = this.uiElements;
+        this.clearErrors();
         for (let errors of errorsArray) {
             let header = errors.header;
             let message = errors.message;
@@ -35,6 +36,13 @@ export class ValidationErrors extends HTMLElement {
         }
 
         this.showComponent();
+    }
+
+    clearErrors() {
+        const { validationErrorsList } = this.uiElements;
+        while (validationErrorsList.firstChild) {
+            validationErrorsList.removeChild(validationErrorsList.firstChild);
+        }
     }
 
     showComponent() {

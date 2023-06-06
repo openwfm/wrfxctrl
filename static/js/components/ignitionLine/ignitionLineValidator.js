@@ -10,7 +10,8 @@ export class IgnitionLineValidator extends IgnitionLine {
     }
 
     validateForIgnition() {
-        console.log("in validator");
+        let errorMessage = "Error in seting Ignition Line";
+        return {header: "Ignition Line", message: errorMessage};
     }
 }
 

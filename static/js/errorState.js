@@ -17,24 +17,39 @@ export const errorState = (function makeErrorState() {
         }
 
         igniteSimulation() {
-            this.validationErrors = [];
-            for (let subscriber of this.subscribers) {
-                let errorMessage = subscriber.validateForIgnition();
-                if (errorMessage) {
-                    this.validationErrors.push(errorMessage);
-                }
-            }
-
-            let profileErrorMessage = this.isProfileValid();
-            if (profileErrorMessage) {
-                this.validationErrors.push(profileErrorMessage);
-            }
+            this.validateComponents();
 
             if (this.validationErrors.length > 0) {
                 this.errorUIComponent.showErrors(this.validationErrors);
-                return false;
+            } else {
+                // have each component have a method for its json props that i use in buildJson
+                this.buildJson();
+                // have each component have a generate kml function
+                this.writeKmlFiles();
             }
-            return true;
+        }
+
+        buildJson() {
+
+        }
+
+        writeKmlFiles() {
+
+        }
+
+        validateComponents() {
+            this.validationErrors = [];
+            for (let subscriber of this.subscribers) {
+                let componentError = subscriber.validateForIgnition();
+                if (componentError) {
+                    this.validationErrors.push(componentError);
+                }
+            }
+
+            let profileError = this.isProfileValid();
+            if (profileError) {
+                this.validationErrors.push(profileError);
+            }
         }
 
         isProfileValid() {

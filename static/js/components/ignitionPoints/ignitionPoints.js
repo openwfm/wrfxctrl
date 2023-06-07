@@ -3,7 +3,7 @@ import { IgnitionMarker } from '../ignitionMarker.js';
 import { buildMap } from '../../buildMap.js';
 import { IgnitionPointsUI } from './ignitionPointsUI/ignitionPointsUI.js';
 import { IgnitionTime } from '../../../ignitionTime.js';
-import { validateIgnitionMarkers, validateIgnitionTimes } from '../validationUtils.js';
+import { validateIgnitionMarkers, validateIgnitionTimes, jsonLatLons, jsonIgnitionTimesAndDurations } from '../validationUtils.js';
 
 export class IgnitionPoints extends IgnitionPointsUI {
     constructor() {
@@ -75,10 +75,13 @@ export class IgnitionPoints extends IgnitionPointsUI {
         ignitionTimeToRemove.remove();
     }
 
+    ignitionPointsAdded() {
+        return this.pointMarkers.length > 1 || this.lastPointsMarker().isSet();
+    }
+
     validateForIgnition() {
         let errorMessages = [];
-        let ignitionPointsAdded = this.pointMarkers.length > 1 || this.lastPointsMarker().isSet();
-        if (!ignitionPointsAdded) {
+        if (!this.ignitionPointsAdded()) {
             return {header: "Multiple Ignitions", messages: errorMessages};
         }
         let ignitionMarkerErrorMessage = validateIgnitionMarkers(this.pointMarkers);
@@ -91,6 +94,25 @@ export class IgnitionPoints extends IgnitionPointsUI {
         }
 
         return {header: "Multiple Ignitions", messages: errorMessages};
+    }
+
+    jsonProps() {
+        if (!this.ignitionPointsAdded()) {
+            return {
+                "multiple_ignitions_lats": "[]",
+                "multiple_ignitions_lons": "[]",
+                "multiple_ignitions_ignition_times": "[]",
+                "multiple_ignitions_fc_hours": "[]",
+            };
+        }
+        let [lats, lons] = jsonLatLons(this.pointMarkers);
+        let [ignitionTimes, fcHours] = jsonIgnitionTimesAndDurations(this.ignitionTimes);
+        return {
+            "multiple_ignitions_lats": lats,
+            "multiple_ignitions_lons": lons,
+            "multiple_ignitions_ignition_times": ignitionTimes,
+            "multiple_ignitions_fc_hours": fcHours,
+        };
     }
 }
 

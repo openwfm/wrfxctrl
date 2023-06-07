@@ -2,7 +2,7 @@ import { appState } from '../../appState.js';
 import { IgnitionPerimeterUI } from './ignitionPerimiterUI/ignitionPerimeterUI.js';
 import { IgnitionMarker } from '../ignitionMarker.js';
 import { buildMap } from '../../buildMap.js';
-import { validateIgnitionMarkers } from '../validationUtils.js';
+import { validateIgnitionMarkers, jsonLatLons } from '../validationUtils.js';
 
 export class IgnitionPerimeter extends IgnitionPerimeterUI {
     constructor() {
@@ -64,9 +64,8 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
     }
 
     validateForIgnition() {
-        let perimetersAdded = this.perimeterMarkers.length > 1 || this.lastPerimeterMarker().isSet();
         let errorMessages = [];
-        if (!perimetersAdded) {
+        if (!this.perimeterPointsAdded()) {
             return {header: "Burn Plot Boundary", messages: errorMessages};
         }
 
@@ -87,6 +86,24 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         let errorMessage = 'There must be at least 3 markers to define a Perimeter.';
         if (this.perimeterMarkers.length < 3) {
             return errorMessage;
+        }
+    }
+
+    perimeterPointsAdded() {
+        return this.perimeterMarkers.length > 1 || this.lastPerimeterMarker().isSet();
+    }
+
+    jsonProps() {
+        if (!this.perimeterPointsAdded()) {
+            return {
+                "ignition_perimeter_lats": "[]",
+                "ignition_perimeter_lons": "[]",
+            };
+        }
+        let [lats, lons] = jsonLatLons(this.perimeterMarkers);
+        return {
+            "ignition_perimeter_lats": lats,
+            "ignition_perimeter_lons": lons,
         }
     }
 }

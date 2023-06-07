@@ -48,3 +48,27 @@ export function isValidLatitude(lat) {
 export function isValidLongitude(lng) {
     return !isNaN(lng) && lng >= -128 && lng <= -65;
 }
+
+export function jsonLatLons(ignitionMarkers) {
+    let lats = [];
+    let lons = [];
+    for (let ignitionMarker of ignitionMarkers) {
+        let [lat, lon] = ignitionMarker.latLon();
+        lats.push(lat);
+        lons.push(lon);
+    }
+    
+    return [JSON.stringify(lats), JSON.stringify(lons)];
+}
+
+export function jsonIgnitionTimesAndDurations(ignitionTimes) {
+    let ignTimes = [];
+    let fcHours = [];
+    for (let ignitionTime of ignitionTimes) {
+        let [ignTime, fcHour] = ignitionTime.getIgnitionTimeAndDuration();
+        ignTimes.push(ignTime);
+        fcHours.push(fcHour);
+    }
+
+    return [JSON.stringify(ignTimes), JSON.stringify(fcHours)];
+}

@@ -28,6 +28,11 @@ export class SimulationDescription extends AppStateSubscriber {
 
         return descriptionInput.value;
     }
+
+    jsonProps() {
+        let description = this.descriptionText();
+        return {"description": description};
+    }
 }
 
 window.customElements.define('simulation-description', SimulationDescription);

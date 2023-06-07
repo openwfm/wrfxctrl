@@ -15,7 +15,7 @@ export class IgnitionTime extends HTMLElement {
 	            <span id="ignition-time-warning" class="not-valid-warning">The ignition time must be between 1/1/1979 and now in the format YYYY-MM-DD_HH:MM:SS</span>
 	          </div>
 	          <div class="field">
-	              <select name="fc_hours" class="ui dropdown" id="fc-hours">
+	              <select name="fc_hours" class="ui dropdown" id="fc-hours-${timeType}-${index}">
 	                  <option value="3">3</option>
 	                  <option value="6">6</option>
 	                  <option value="9">9</option>
@@ -30,6 +30,7 @@ export class IgnitionTime extends HTMLElement {
 		this.timeType = timeType;
 		this.index = index;
 		this.dateChooserId = `#ign-time-${this.timeType}-${index}`;
+		this.fcHoursId = `#fc-hours-${this.timeType}-${index}`;
 	}
 	connectedCallback() {
 		// $(`#fc-hours${this.index}`).dropdown();
@@ -64,7 +65,7 @@ export class IgnitionTime extends HTMLElement {
 	}
 
 	getIgnitionTimeAndDuration() {
-		return [this.querySelector('#ign-time').value, parseInt(this.querySelector(`#fc-hours${this.index}`).value)];
+		return [this.ignitionTime(), parseInt(this.fcHours())];
 	}
 
 	ignitionTimeMoment() {
@@ -74,6 +75,10 @@ export class IgnitionTime extends HTMLElement {
 
 	ignitionTime() {
 		return this.querySelector(this.dateChooserId).value;
+	}
+
+	fcHours() {
+		return this.querySelector(this.fcHoursId).value;
 	}
 }
 window.customElements.define('ignition-time', IgnitionTime);

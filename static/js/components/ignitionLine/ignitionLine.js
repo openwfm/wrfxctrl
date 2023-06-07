@@ -3,7 +3,7 @@ import { IgnitionMarker } from '../ignitionMarker.js';
 import { buildMap } from '../../buildMap.js';
 import { IgnitionLineUI } from './ignitionLineUI/ignitionLineUI.js';
 import { IgnitionTime } from '../../../ignitionTime.js';
-import { validateIgnitionTimes, validateIgnitionMarkers } from '../validationUtils.js';
+import { validateIgnitionTimes, validateIgnitionMarkers, jsonLatLons, jsonIgnitionTimesAndDurations} from '../validationUtils.js';
 
 export class IgnitionLine extends IgnitionLineUI {
     constructor() {
@@ -101,10 +101,32 @@ export class IgnitionLine extends IgnitionLineUI {
         return this.ignitionTimes.length > 1;
     }
 
+    ignitionPointsAdded() {
+        return this.lineMarkers.length > 1 || this.lastLineMarker().isSet();
+    }
+
+    jsonProps() {
+        if (!this.ignitionPointsAdded()) {
+            return {
+                "ignition_line_lats": "[]",
+                "ignition_line_lons": "[]",
+                "ignition_line_ignition_times": "[]",
+                "ignition_line_fc_hours": "[]",
+            };
+        }
+        let [lats, lons] = jsonLatLons(this.lineMarkers);
+        let [ignitionTimes, fcHours] = jsonIgnitionTimesAndDurations(this.ignitionTimes);
+        return {
+            "ignition_line_lats": lats,
+            "ignition_line_lons": lons,
+            "ignition_line_ignition_times": ignitionTimes,
+            "ignition_line_fc_hours": fcHours,
+        };
+    }
+
     validateForIgnition() {
         let errorMessages = [];
-        let ignitionPointsAdded = this.lineMarkers.length > 1 || this.lastLineMarker().isSet();
-        if (!ignitionPointsAdded) {
+        if (!this.ignitionPointsAdded()) {
             return {header: "Ignition Line", messages: errorMessages};
         }
 

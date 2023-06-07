@@ -20,6 +20,7 @@ export class DomainCenter extends AppStateSubscriber {
         this.createLineMarker();
     }
 
+
     createLineMarker() {
         let { domainCenterListUI } = this.uiElements;
         this.mapMarker = new IgnitionMarker(null, this, null);
@@ -63,6 +64,11 @@ export class DomainCenter extends AppStateSubscriber {
 
     ignitionTypeChange() {
         this.setVisibilityFromAppState();
+    }
+
+    jsonProps() {
+        let [lat, lon] = this.mapMarker.latLon();
+        return {"domain_center_lat": lat.toString(), "domain_center_lon": lon.toString()};
     }
 }
 

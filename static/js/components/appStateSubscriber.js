@@ -15,4 +15,20 @@ export class AppStateSubscriber extends HTMLElement {
 
     ignitionTypeChange() {
     }
+
+    validateForIgnition() {
+        return {header: "", messages: []};
+    }
+
+    ignitionPointsAdded() {
+        return false;
+    }
+
+    jsonProps() {
+        return {};
+    }
+
+    writeKml() {
+
+    }
 }

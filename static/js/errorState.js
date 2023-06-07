@@ -17,20 +17,27 @@ export const errorState = (function makeErrorState() {
         }
 
         igniteSimulation() {
-            this.validateComponents();
-
-            if (this.validationErrors.length > 0) {
-                this.errorUIComponent.showErrors(this.validationErrors);
-            } else {
-                // have each component have a method for its json props that i use in buildJson
+            if (this.validateComponents()) {
                 this.buildJson();
-                // have each component have a generate kml function
                 this.writeKmlFiles();
+            } else {
+                this.errorUIComponent.showErrors(this.validationErrors);
             }
         }
 
         buildJson() {
-
+            let formData = {
+                "profile": $('#profile').val()
+            }
+            for (let component of this.subscribers) {
+                let componentFormData = component.jsonProps();
+                formData = {...formData, ...componentFormData};
+            }
+            $.ajax({
+                type:"post",
+                dataType: 'json',
+                data: formData
+            });
         }
 
         writeKmlFiles() {
@@ -39,17 +46,26 @@ export const errorState = (function makeErrorState() {
 
         validateComponents() {
             this.validationErrors = [];
+            let ignitionPointsAdded = false;
             for (let subscriber of this.subscribers) {
                 let componentError = subscriber.validateForIgnition();
+                ignitionPointsAdded ||= subscriber.ignitionPointsAdded();
                 if (componentError.messages.length > 0) {
                     this.validationErrors.push(componentError);
                 }
+            }
+
+            if (!ignitionPointsAdded) {
+                let errorMessage = "At least one point of Ignition must be created in either Ignition Line, or Multiple Ignitions";
+                let ignitionError = {header: "Ignitions", messages: [errorMessage]};
+                this.validationErrors.push(ignitionError);
             }
 
             let profileError = this.isProfileValid();
             if (profileError.messages.length > 0) {
                 this.validationErrors.push(profileError);
             }
+            return this.validationErrors.length == 0;
         }
 
         isProfileValid() {

@@ -267,7 +267,6 @@ def create_simulation(info, conf, cluster):
                 'latlon': [ign_line_lat, ign_line_lon],
                 'time_utc': ign_time_esmf,
                 'duration_s': ign_fc_hour,
-                'line_id': 0
             }
             ignitions.append(ignition)
 

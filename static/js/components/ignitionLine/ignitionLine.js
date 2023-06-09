@@ -138,7 +138,6 @@ export class IgnitionLine extends IgnitionLineUI {
         let ignitionTimeErrorMessage = validateIgnitionTimes(this.ignitionTimes);
         if (ignitionTimeErrorMessage) {
             errorMessages.push(ignitionTimeErrorMessage);
-
         }
 
         return {header: "Ignition Line", messages: errorMessages};

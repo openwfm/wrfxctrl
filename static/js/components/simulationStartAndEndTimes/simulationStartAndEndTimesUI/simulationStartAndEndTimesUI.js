@@ -1,7 +1,8 @@
 import { appState } from '../../../appState.js';
 import { simulationStartAndEndTimesHTML } from './simulationStartAndEndTimesHTML.js';
+import { AppStateSubscriber } from '../../appStateSubscriber.js';
 
-export class SimulationStartAndEndTimesUI extends HTMLElement {
+export class SimulationStartAndEndTimesUI extends AppStateSubscriber {
     constructor() {
         super();
         this.innerHTML = simulationStartAndEndTimesHTML;
@@ -44,6 +45,13 @@ export class SimulationStartAndEndTimesUI extends HTMLElement {
     endTime() {
         let { ignitionEndUI } = this.uiElements;
         return ignitionEndUI.value;
+    }
+
+    jsonProps() {
+        return {
+            "start_utc": this.startTime(),
+            "end_utc": this.endTime(),
+        }
     }
 }
 

@@ -2,6 +2,7 @@ import { appState } from '../../appState.js';
 import { AppStateSubscriber } from '../appStateSubscriber.js';
 import { domainCenterHTML } from './domainCenterHTML.js';
 import { IgnitionMarker } from '../ignitionMarker.js';
+import { validateIgnitionMarkers } from '../validationUtils.js';
 
 export class DomainCenter extends AppStateSubscriber {
     constructor() {
@@ -69,6 +70,20 @@ export class DomainCenter extends AppStateSubscriber {
     jsonProps() {
         let [lat, lon] = this.mapMarker.latLon();
         return {"domain_center_lat": lat.toString(), "domain_center_lon": lon.toString()};
+    }
+
+    validateForIgnition() {
+        let errorMessages = [];
+        if (!this.mapMarker.isSet()) {
+            errorMessages = ["Set the domain center."]
+            return {header: "Domain Center", messages: errorMessages};
+        }
+        let ignitionMarkerErrorMessage = validateIgnitionMarkers([this.mapMarker]);
+        if (ignitionMarkerErrorMessage) {
+            errorMessages.push(ignitionMarkerErrorMessage);
+        }
+
+        return {header: "Domain Center", messages: errorMessages};
     }
 }
 

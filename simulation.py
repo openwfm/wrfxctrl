@@ -258,6 +258,19 @@ def create_simulation(info, conf, cluster):
     # cfg['domains']['1']['stand_lon'] = ign_lon
     # cfg['domains']['1']['center_latlon'] = [ign_lat, ign_lon]
 
+    burn_plot_boundary = []
+    if info['ignition_perimeter_lats'] != "[]":
+        ign_line_lats = info['ignition_perimeter_lats'][1:-1].split(',')
+        ign_line_lons = info['ignition_perimeter_lons'][1:-1].split(',')
+        sim_info['ignition_perimeter_lats'] = ign_line_lats
+        sim_info['ignition_perimeter_lons'] = ign_line_lons
+        for i in range(len(ign_line_lats)):
+            ign_line_lat = float(ign_line_lats[i])
+            ign_line_lon = float(ign_line_lons[i])
+            perimeter = [ign_line_lat, ign_line_lon]
+            burn_plot_boundary.append(perimeter)
+    cfg['burn_plot_boundary'] = burn_plot_boundary
+
     ignitions = []
     # setting the ignitions 
     if info['ignition_line_lats'] != "[]": 
@@ -265,9 +278,13 @@ def create_simulation(info, conf, cluster):
         ign_line_lons = info['ignition_line_lons'][1:-1].split(',')
         ign_line_ign_time_esmfs = [to_esmf(datetime.strptime(ign_time, '%b %d, %Y %I:%M %p')) for ign_time in info['ignition_line_ignition_times'][2:-2].split("\",\"")]
         ign_line_fc_hours = [int(fc_hour) for fc_hour in info['ignition_line_fc_hours'][1:-1].split(',')]
+        sim_info['ignition_line_lats'] = ign_line_lats
+        sim_info['ignition_line_lons'] = ign_line_lons
+        sim_info['ignition_line_ignition_times'] = ign_line_ign_time_esmfs
+        sim_info['ign_line_fc_hours'] = ign_line_fc_hours
         for i in range(len(ign_line_lats)):
-            ign_line_lat = ign_line_lats[i]
-            ign_line_lon = ign_line_lons[i]
+            ign_line_lat = float(ign_line_lats[i])
+            ign_line_lon = float(ign_line_lons[i])
             ign_line_ign_time_esmfs = ign_line_ign_time_esmfs[i]
             ign_line_fc_hour = ign_line_fc_hours[i]
             ignition = {
@@ -283,6 +300,10 @@ def create_simulation(info, conf, cluster):
         ign_lons = info['multiple_ignitions_lons'][1:-1].split(',')
         ign_time_esmfs = [to_esmf(datetime.strptime(ign_time, '%b %d, %Y %I:%M %p')) for ign_time in info['multiple_ignitions_ignition_times'][2:-2].split("\",\"")]
         ign_fc_hours = [int(fc_hour) for fc_hour in info['multiple_ignitions_fc_hours'][1:-1].split(',')]
+        sim_info['mulitple_ignition_lats'] = ign_lats
+        sim_info['multiple_ignition_lons'] = ign_lons
+        sim_info['multiple_ignition_ignition_times'] = ign_time_esmfs
+        sim_info['multiple_ignition_fc_hours'] = ign_fc_hours
         for i in range(len(ign_lats)):
             ign_line_lat = ign_lats[i]
             ign_line_lon = ign_lons[i]

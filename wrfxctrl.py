@@ -23,7 +23,7 @@ from __future__ import print_function
 from cluster import Cluster
 from simulation import create_simulation, get_simulation_state, cancel_simulation, delete_simulation, load_simulations
 from utils import Dict, to_esmf, to_utc, load_profiles, load_sys_cfg
-from flask import Flask, render_template, request, redirect, make_response
+from flask import Flask, render_template, request, redirect, make_response, url_for
 import json
 from datetime import datetime, timedelta
 import random
@@ -50,7 +50,11 @@ else:
 host = conf['host']
 debug = conf['debug'] in ['T', 'True', 't', 'true']
 port = conf['port']
-urls = {'submit': root+'submit', 'welcome': root+'start', 'overview': root+'overview'}
+urls = {
+    'submit': osp.join(root, 'submit'), 
+    'welcome': osp.join(root, 'start'), 
+    'overview': osp.join(root, 'overview'),
+}
 print('Welcome page is http://%s:%s%s' % (host, port, urls['welcome']) )
 
 app = Flask(__name__)
@@ -77,9 +81,9 @@ def welcome():
     return render_template('welcome.html', cluster=cluster, urls=urls)
 
 
-@app.route("/submit", methods=['GET', 'POST'])
+@app.route(urls['submit'], methods=['GET', 'POST'])
 def build():
-    print('here');
+    print('here')
     if request.method == 'GET':
         # it's a get so let's build a fire simulation
         return render_template('build.html', profiles=list(profiles.values()), urls=urls)
@@ -95,10 +99,12 @@ def build():
         simulations[sim_id] = sim_info
         print('sim_info:')
         print(json.dumps(sim_info, indent=4, separators=(',', ': ')))
+        f = osp.join(sims_path, sim_id + '.json')
+        json.dump(sim_info, open(f, 'w'), indent=4, separators=(',', ': '))
         return redirect("/monitor/%s" % sim_id)
 
 
-@app.route(urls['submit'] + '/sat_data', methods=['GET'])
+@app.route(osp.join(urls['submit'],'sat_data'), methods=['GET'])
 def getSatData():
     if request.method == 'GET':
         with open('./sat_data/filteredSatData.json', 'r') as read_file:
@@ -106,9 +112,11 @@ def getSatData():
             sat_data = json.load(read_file)
         return sat_data
 
+
 @app.route("/monitor/<sim_id>")
 @nocache
 def monitor(sim_id=None):
+    print('monitor {}'.format(sim_id))
     return render_template('monitor.html', sim=simulations.get(sim_id, None), urls=urls)
 
 
@@ -128,7 +136,7 @@ def overview():
                 if last_upd < deadline:
                     sim['state'] = get_simulation_state(sim['log_file'])
                     sim['last_updated'] = to_esmf(datetime.now())
-                    f = sims_path + '/' + sim_id + '.json'
+                    f = osp.join(sims_path, sim_id + '.json')
                     if osp.isfile(f):
                         json.dump(sim, open(f,'w'), indent=4, separators=(',', ': '))
                         simulations[sim_id] = sim
@@ -152,6 +160,7 @@ def overview():
                     print('Error-No button push detected: box checked= %s' % (sim_id))
         simulations = load_simulations(sims_path)
         return render_template('overview.html', simulations = simulations, urls=urls)
+
 
 # JSON access to state
 @app.route("/retrieve_log/<sim_id>")
@@ -181,7 +190,8 @@ def get_state(sim_id=None):
             sim_state = get_simulation_state(sim_info['log_file'])
             sim_info['state'] = sim_state
             sim_info['last_updated'] = to_esmf(datetime.now())
-            json.dump(sim_info, open('simulations/' + sim_id + '.json', 'w'), indent=1, separators=(',', ':'))
+            f = osp.join('simulations', sim_id + '.json')
+            json.dump(sim_info, open(f, 'w'), indent=4, separators=(',', ': '))
         return json.dumps(sim_state)
 
 

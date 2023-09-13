@@ -19,8 +19,8 @@ export class IgnitionMarker extends HTMLElement {
 			</div>
 		`;
 		let markerMap = {
-			"orange":'static/square_icon_orange.png',
-			"red": 'static/square_icon_filled.png'
+			"orange":'/static/square_icon_orange.png',
+			"red": '/static/square_icon_filled.png'
 		}
 		this.iconUrl = iconColor == null ? null : markerMap[iconColor];
 		this.index = index;

@@ -50,7 +50,7 @@ def simulation_paths(sim_id, conf):
             'json_path' : conf['jobs_path'] + '/' + sim_id + '.json',
             'state_path' : conf['sims_path'] + '/' + sim_id + '.json',
             'run_script' : conf['jobs_path'] + '/' + sim_id + '.sh',
-            'kml_path': conf['kml_path'] + '/' + sim_id + '.kml'}
+            'kml_path': conf['jobs_path'] + '/' + sim_id + '.kml'}
 
 def cancel_simulation(sim_info,conf):
     """
@@ -163,7 +163,7 @@ def create_simulation(info, conf, cluster):
 
     # store simulation configuration
     profile = info['profile']
-    print('profile = %s' % json.dumps(profile,indent=1, separators=(',',':')))
+    print('profile = %s' % json.dumps(profile, indent=4, separators=(',',': ')))
     sim_descr = info['description']
     sim_info = {
       'id' : sim_id,
@@ -183,7 +183,7 @@ def create_simulation(info, conf, cluster):
     cfg['template'] = template
     cfg['profile'] = profile
     cfg['grid_code'] = sim_id
-    cfg['num_nodes'] = 6
+    cfg['num_nodes'] = profile
     cfg['ppn'] = cluster.ppn
     sim_start = to_esmf(datetime.strptime(info['start_utc'], '%b %d, %Y %I:%M %p'))
     start_utc = to_utc(to_esmf(datetime.strptime(info['start_utc'], '%b %d, %Y %I:%M %p')))
@@ -202,13 +202,13 @@ def create_simulation(info, conf, cluster):
     # build wrfpy_id and the visualization link
     job_id = 'wfc-%s-%s-%s' % (sim_id, to_esmf(start_utc), to_esmf(end_utc))
     sim_info['job_id']=job_id
-    sim_info['visualization_link'] = [conf['wrfxweb_url'] + '/#/view1?sim_id=' + job_ids for job_ids in job_id]
+    sim_info['visualization_link'] = osp.join(conf['wrfxweb_url'], '#/view1?sim_id=' + job_id)
     cfg['job_id']=job_id
 
     # place top-level domain
-    domain_lat = info['domain_center_lat']
-    domain_lon = info['domain_center_lon']
-    cfg['domains']['1']['truelats'] = [domain_lat, domain_lon]
+    domain_lat = float(info['domain_center_lat'])
+    domain_lon = float(info['domain_center_lon'])
+    cfg['domains']['1']['truelats'] = [domain_lat, domain_lat]
     cfg['domains']['1']['stand_lon'] = domain_lon
     cfg['domains']['1']['center_latlon'] = [domain_lat, domain_lon]
 
@@ -239,11 +239,11 @@ def create_simulation(info, conf, cluster):
         for i in range(len(ign_line_lats)):
             ign_line_lat = float(ign_line_lats[i])
             ign_line_lon = float(ign_line_lons[i])
-            ign_line_ign_time_esmfs = ign_line_ign_time_esmfs[i]
+            ign_line_ign_time_esmf = ign_line_ign_time_esmfs[i]
             ign_line_fc_hour = ign_line_fc_hours[i]
             ignition = {
                 'latlon': [ign_line_lat, ign_line_lon],
-                'time_utc': ign_line_ign_time_esmfs,
+                'time_utc': ign_line_ign_time_esmf,
                 'duration_s': ign_line_fc_hour,
                 'line_id': 1
             }
@@ -259,8 +259,8 @@ def create_simulation(info, conf, cluster):
         sim_info['multiple_ignition_ignition_times'] = ign_time_esmfs
         sim_info['multiple_ignition_fc_hours'] = ign_fc_hours
         for i in range(len(ign_lats)):
-            ign_line_lat = ign_lats[i]
-            ign_line_lon = ign_lons[i]
+            ign_line_lat = float(ign_lats[i])
+            ign_line_lon = float(ign_lons[i])
             ign_time_esmf = ign_time_esmfs[i]
             ign_fc_hour = ign_fc_hours[i]
             ignition = {
@@ -277,7 +277,7 @@ def create_simulation(info, conf, cluster):
     cfg['postproc']['shuttle'] = 'incremental'
     cfg['postproc']['description'] = sim_descr
 
-    json.dump(cfg, open(json_path, 'w'),indent=1, separators=(',',':'))
+    json.dump(cfg, open(json_path, 'w'), indent=4, separators=(',',': '))
 
     print('Job configuration %s:' % json_path)
     print(json.dumps(cfg, indent=4, separators=(',', ': ')))

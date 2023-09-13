@@ -33,6 +33,7 @@
       "history_interval" : 15
     }
   },
+  "use_tign_ignition": true,
   "ignitions" : {
      "2" : [ {
       "start_delay_s" : 600,
@@ -42,7 +43,7 @@
   },
   "postproc" : {
       "1" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "SMOKE_INT" ],
-      "2" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "FIRE_AREA", "FGRNHFX", "SMOKE_INT" ]
+      "2" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "SMOKE_INT", "FIRE_AREA", "FGRNHFX" ]
   }
 }
 

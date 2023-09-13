@@ -21,6 +21,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from utils import to_esmf, to_utc, rm
 from datetime import datetime, timedelta
+import numpy as np
 import pytz
 import json
 import os
@@ -183,7 +184,7 @@ def create_simulation(info, conf, cluster):
     cfg['template'] = template
     cfg['profile'] = profile
     cfg['grid_code'] = sim_id
-    cfg['num_nodes'] = profile
+    cfg['num_nodes'] = np.floor(profile['num_nodes']*profile['ppn']/cluster.ppn)
     cfg['ppn'] = cluster.ppn
     sim_start = to_esmf(datetime.strptime(info['start_utc'], '%b %d, %Y %I:%M %p'))
     start_utc = to_utc(to_esmf(datetime.strptime(info['start_utc'], '%b %d, %Y %I:%M %p')))

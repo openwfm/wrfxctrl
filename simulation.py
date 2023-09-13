@@ -203,7 +203,7 @@ def create_simulation(info, conf, cluster):
     # build wrfpy_id and the visualization link
     job_id = 'wfc-%s-%s-%s' % (sim_id, to_esmf(start_utc), to_esmf(end_utc))
     sim_info['job_id']=job_id
-    sim_info['visualization_link'] = osp.join(conf['wrfxweb_url'], '#/view1?sim_id=' + job_id)
+    sim_info['visualization_link'] = osp.join(conf['wrfxweb_url'], '?job_id=' + job_id)
     cfg['job_id']=job_id
 
     # place top-level domain
@@ -237,6 +237,7 @@ def create_simulation(info, conf, cluster):
         sim_info['ignition_line_lons'] = ign_line_lons
         sim_info['ignition_line_ignition_times'] = ign_line_ign_time_esmfs
         sim_info['ign_line_fc_hours'] = ign_line_fc_hours
+        sim_info['ignition_line_info'] = [[float(lat), float(lon), time] for lat,lon,time in zip(ign_line_lats, ign_line_lons, ign_line_ign_time_esmfs)]
         for i in range(len(ign_line_lats)):
             ign_line_lat = float(ign_line_lats[i])
             ign_line_lon = float(ign_line_lons[i])
@@ -255,10 +256,11 @@ def create_simulation(info, conf, cluster):
         ign_lons = info['multiple_ignitions_lons'][1:-1].split(',')
         ign_time_esmfs = [to_esmf(datetime.strptime(ign_time, '%b %d, %Y %I:%M %p')) for ign_time in info['multiple_ignitions_ignition_times'][2:-2].split("\",\"")]
         ign_fc_hours = [int(fc_hour) for fc_hour in info['multiple_ignitions_fc_hours'][1:-1].split(',')]
-        sim_info['mulitple_ignition_lats'] = ign_lats
+        sim_info['multiple_ignition_lats'] = ign_lats
         sim_info['multiple_ignition_lons'] = ign_lons
         sim_info['multiple_ignition_ignition_times'] = ign_time_esmfs
         sim_info['multiple_ignition_fc_hours'] = ign_fc_hours
+        sim_info['multiple_ignition_info'] = [[float(lat), float(lon), time] for lat,lon,time in zip(ign_lats, ign_lons, ign_time_esmfs)]
         for i in range(len(ign_lats)):
             ign_line_lat = float(ign_lats[i])
             ign_line_lon = float(ign_lons[i])

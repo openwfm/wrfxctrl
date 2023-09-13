@@ -21,24 +21,24 @@
             </tr>
              <tr>
               <td> <div class="ui label">WRF state</div> </td>
-              <td><p>{{ sim['state']['wrf'] }}</p></td>
+              <td><p> {{ sim['state']['wrf'] }} </p></td>
             </tr>
             <tr>
               <td> <div class="ui label">Simulation started </div> </td>
               <td><p id="run-time"></p></td>
             </tr>
+            <!--
             <tr>
-              <td> <div class="ui label">Ignition coordinates</div> </td>
-              <td> {{ sim['ign_latitude'] }}, {{ sim['ign_longitude' ]}} </td>
+              <td> <div class="ui label">Ignition Points</div> </td>
+              <td> {{ sim.get('multiple_ignition_info', 'none') }} </td>
             </tr>
+            -->
+            <!--
             <tr>
-              <td ><div class="ui label">Ignition time</div></td>
-              <td> {{ sim['ign_time_esmf'] }} UTC</td>
+              <td ><div class="ui label">Ignition Lines</div></td>
+              <td> {{ sim.get('ignition_line_info', 'none') }} </td>
             </tr>
-            <tr>
-              <td ><div class="ui label">Forecast length</div></td>
-              <td> {{ sim['fc_hours'] }} hours</td>
-            </tr>
+            -->
             <tr>
               <td><div class="ui label">Short description</div></td>
               <td> {{ sim['description'] }} </td>

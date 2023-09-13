@@ -184,7 +184,7 @@ def create_simulation(info, conf, cluster):
     cfg['template'] = template
     cfg['profile'] = profile
     cfg['grid_code'] = sim_id
-    cfg['num_nodes'] = np.floor(profile['num_nodes']*profile['ppn']/cluster.ppn)
+    cfg['num_nodes'] = np.floor(cfg['num_nodes']*cfg['ppn']/cluster.ppn)
     cfg['ppn'] = cluster.ppn
     sim_start = to_esmf(datetime.strptime(info['start_utc'], '%b %d, %Y %I:%M %p'))
     start_utc = to_utc(to_esmf(datetime.strptime(info['start_utc'], '%b %d, %Y %I:%M %p')))

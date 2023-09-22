@@ -23,8 +23,8 @@ export class SimulationStartAndEndTimesUI extends AppStateSubscriber {
         let now = moment();
         let oneHourFromNow = moment().add(1, 'h');
 
-        $(this.startTimeId).datetimepicker({ value: now.utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15, maxDate: oneHourFromNow.utc()});
-        $(this.endTimeId).datetimepicker({ value: oneHourFromNow.utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15, minDate: now.utc() });
+        $(this.startTimeId).datetimepicker({ value: now.utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15, });
+        $(this.endTimeId).datetimepicker({ value: oneHourFromNow.utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
     }
 
     startTimeMoment() {
@@ -45,6 +45,13 @@ export class SimulationStartAndEndTimesUI extends AppStateSubscriber {
     endTime() {
         let { ignitionEndUI } = this.uiElements;
         return ignitionEndUI.value;
+    }
+
+    validateForIgnition() {
+      if(this.startTimeMoment() > this.endTimeMoment()) { 
+        return {header: "Start and End Time", messages: ["Ignition Start Time must be before End Time"]};
+      }
+        return {header: "", messages: []};
     }
 
     jsonProps() {

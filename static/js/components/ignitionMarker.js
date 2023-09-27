@@ -28,6 +28,10 @@ export class IgnitionMarker extends HTMLElement {
 		this.mapMarker = null;
 		this.ignitionMapMarker = null;
 		this.popup = null;
+    this.uiComponents = {
+      latComponent: this.querySelector('#ign-lat'),
+      lonComponent: this.querySelector('#ign-lon'),
+    };
 	}
 
 	connectedCallback() {
@@ -50,6 +54,13 @@ export class IgnitionMarker extends HTMLElement {
 
 		this.querySelector('#marker-id').innerText = this.index;
 	}
+
+  clearLatLon() {
+    const { latComponent, lonComponent } = this.uiComponents;
+    latComponent.value = '';
+    lonComponent.value = '';
+    this.removeMarkerFromMap();
+  }
 
 	hideComponent(component) {
         if (this.isVisible(component)) {
@@ -82,12 +93,18 @@ export class IgnitionMarker extends HTMLElement {
 	}
 
 	/* ===== UI Interaction block ===== */
+  removeMarkerFromMap() {
+    if (this.mapMarker != null) {
+      buildMap.map.removeLayer(this.mapMarker);
+    }
+  }
 
 	addMarkerToMapAtLatLon(lat, lon) {
-		if (this.mapMarker != null) {
-			buildMap.map.removeLayer(this.mapMarker);
-		}
-		// if (!this.isValidLatitude(lat) || !this.isValidLongitude(lon)) {
+    this.removeMarkerFromMap();
+    if (lat == undefined || lon == undefined) {
+      return;
+    }
+				// if (!this.isValidLatitude(lat) || !this.isValidLongitude(lon)) {
 		// 	updateIgnitionDataOnMap();
 		// 	return;
 		// }

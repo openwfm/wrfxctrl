@@ -3,6 +3,7 @@ import { AppStateSubscriber } from '../appStateSubscriber.js';
 import { domainCenterHTML } from './domainCenterHTML.js';
 import { IgnitionMarker } from '../ignitionMarker.js';
 import { validateIgnitionMarkers } from '../validationUtils.js';
+import { buildMap } from '../../buildMap.js';
 
 export class DomainCenter extends AppStateSubscriber {
     constructor() {
@@ -36,6 +37,16 @@ export class DomainCenter extends AppStateSubscriber {
     }
 
     markerUpdate() {
+    }
+
+  removeMarker() {
+    this.clearLastMarker();
+  }
+
+clearLastMarker() {
+  if (this.mapMarker == null) return;
+            buildMap.map.removeLayer(this.mapMarker);
+      this.mapMarker.clearLatLon();
     }
 
     setVisibilityFromAppState() {

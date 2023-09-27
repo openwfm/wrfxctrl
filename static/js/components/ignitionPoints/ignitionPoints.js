@@ -47,11 +47,20 @@ export class IgnitionPoints extends IgnitionPointsUI {
         return this.pointMarkers.slice(-1)[0];
     }
 
+    clearLastMarker() {
+      const lastMarker = this.lastPointsMarker();
+      if (lastMarker.mapMarker) {
+            buildMap.map.removeLayer(lastMarker.mapMarker);
+        }
+      lastMarker.clearLatLon();
+    }
+
     markerUpdate() {
     }
 
     removeMarker(index) {
-        if (this.pointMarkers.length < 2) {
+        if (this.pointMarkers.length == 1) {
+          this.clearLastMarker();
             return;
         }
         for (let i = index + 1; i < this.pointMarkers.length; i++ ) {
@@ -68,8 +77,8 @@ export class IgnitionPoints extends IgnitionPointsUI {
     }
 
     removeIgnitionTime(index) {
-        if (this.ignitionTimes.length < 2) {
-            return
+        if (this.ignitionTimes.length == 0) {
+            return;
         }
         const ignitionTimeToRemove = this.ignitionTimes.splice(index, 1)[0];
         ignitionTimeToRemove.remove();

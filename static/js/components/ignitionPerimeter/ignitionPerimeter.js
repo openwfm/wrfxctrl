@@ -47,8 +47,24 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         buildMap.drawArea(latLons);
     }
 
+    clearLastMarker() {
+      const lastMarker = this.lastPointsMarker();
+      if (lastMarker.mapMarker) {
+            buildMap.map.removeLayer(lastMarker.mapMarker);
+        }
+      lastMarker.clearLatLon();
+    }
+
+    lastPointsMarker() {
+        return this.perimeterMarkers.slice(-1)[0];
+    }
+
     removeMarker(index) {
-        if (this.perimeterMarkers.length < 2) {
+        if (this.perimeterMarkers.length == 0) {
+            return;
+        }
+        if (this.perimeterMarkers.length == 1) {
+            this.clearLastMarker();
             return;
         }
         const markerToRemove = this.perimeterMarkers[index];

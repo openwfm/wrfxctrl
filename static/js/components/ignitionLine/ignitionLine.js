@@ -29,6 +29,18 @@ export class IgnitionLine extends IgnitionLineUI {
         }
     }
 
+    clearLastMarker() {
+      const lastMarker = this.lastPointsMarker();
+      if (lastMarker.mapMarker) {
+            buildMap.map.removeLayer(lastMarker.mapMarker);
+        }
+      lastMarker.clearLatLon();
+    }
+
+    lastPointsMarker() {
+        return this.lineMarkers.slice(-1)[0];
+    }
+
     createAndAddMarker(lat, lon) {
         if (!appState.isLine()) { 
             return 
@@ -57,7 +69,11 @@ export class IgnitionLine extends IgnitionLineUI {
     }
 
     removeMarker(index) {
-        if (this.lineMarkers.length < 2) {
+        if (this.lineMarkers.length == 0) {
+          return;
+        }
+        if (this.lineMarkers.length == 1) {
+            this.clearLastMarker();
             return;
         }
         for (let i = index + 1; i < this.lineMarkers.length; i++ ) {
@@ -77,8 +93,8 @@ export class IgnitionLine extends IgnitionLineUI {
     }
 
     removeIgnitionTime(index) {
-        if (this.ignitionTimes.length < 2) {
-            return
+        if (this.ignitionTimes.length == 0) {
+          return;
         }
         const ignitionTimeToRemove = this.ignitionTimes.splice(index, 1)[0];
         ignitionTimeToRemove.remove();

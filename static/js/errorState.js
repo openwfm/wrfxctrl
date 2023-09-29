@@ -55,11 +55,11 @@ export const errorState = (function makeErrorState() {
                 }
             }
 
-            if (!ignitionPointsAdded) {
-                let errorMessage = "At least one point of Ignition must be created in either Ignition Line, or Multiple Ignitions";
-                let ignitionError = {header: "Ignitions", messages: [errorMessage]};
-                this.validationErrors.push(ignitionError);
-            }
+            // if (!ignitionPointsAdded) {
+            //     let errorMessage = "At least one point of Ignition must be created in either Ignition Line, or Multiple Ignitions";
+            //     let ignitionError = {header: "Ignitions", messages: [errorMessage]};
+            //     this.validationErrors.push(ignitionError);
+            // }
 
             let profileError = this.isProfileValid();
             if (profileError.messages.length > 0) {

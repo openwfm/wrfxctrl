@@ -273,8 +273,11 @@ def create_simulation(info, conf, cluster):
             }
             ignitions.append(ignition)
 
-    domain = list(cfg['ignitions'].keys())[0]
-    cfg['ignitions'][domain] = ignitions
+    if len(ignitions):
+        domain = list(cfg['ignitions'].keys())[0]
+        cfg['ignitions'][domain] = ignitions
+    else:
+        cfg['ignitions'] = {}
 
     # switch on sending results to visualization server
     cfg['postproc']['shuttle'] = 'incremental'

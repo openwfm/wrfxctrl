@@ -73,7 +73,6 @@ def nocache(view):
         
     return update_wrapper(no_cache, view)
 
-
 # @app.route(root)
 @app.route(urls['welcome'])
 @nocache
@@ -83,7 +82,6 @@ def welcome():
 
 @app.route(urls['submit'], methods=['GET', 'POST'])
 def build():
-    print('here')
     if request.method == 'GET':
         # it's a get so let's build a fire simulation
         return render_template('build.html', profiles=list(profiles.values()), urls=urls)
@@ -102,7 +100,6 @@ def build():
         f = osp.join(sims_path, sim_id + '.json')
         json.dump(sim_info, open(f, 'w'), indent=4, separators=(',', ': '))
         return redirect("/monitor/%s" % sim_id)
-
 
 @app.route(osp.join(urls['submit'],'sat_data'), methods=['GET'])
 def getSatData():

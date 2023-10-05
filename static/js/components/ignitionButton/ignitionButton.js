@@ -6,35 +6,26 @@ export class IgnitionButton extends HTMLElement {
         super();
         this.innerHTML = ignitionButtonHTML;
         this.uiElements = {
+          igniteButton: this.querySelector('#ignite-button'),
+          form: document.getElementById('simulation_form'),
         };
+      this.count = 0;
     }
 
     connectedCallback() {
-        $('.form').submit((event) => {
-            event.preventDefault();
-            let formIsValid = errorState.igniteSimulation();
-            // let formIsValid = isFormValid();
-            // let [ignTimes, fcHours] = getTimesOfIgnitionAndDurations();
-            // let [lats, lons] = getLatLons();
-            // // let ignitionType = $('#ignition-type').val();
-            // if(formIsValid) {
-            //   let formData = {
-            //     "description": $('#experiment-description').val(),
-            //     "ignition_type": $('#ignition-type').val(),
-            //     "ignition_latitude": lats,
-            //     "ignition_longitude": lons,
-            //     "ignition_time": ignTimes,
-            //     "fc_hours": fcHours,
-            //     "profile": $('#profile').val()
-            //   }
-            //   // if (ignitionType == IGNITION_TYPE_AREA) formData["perimeter_time"] = JSON.stringify($('#ign-time-perimeter').val());
-            //   $.ajax({
-            //       type:"post",
-            //       dataType: 'json',
-            //       data: formData
-            //     });
-            // }
-          });
+      const { form, igniteButton } = this.uiElements;
+      igniteButton.onclick = (event) => {
+        event.preventDefault();
+        let formIsValid = errorState.validateComponents();
+        if (!formIsValid) return;
+        form.submit();
+      }
+      form.addEventListener('formdata', ({formData}) => {
+        let formJson = errorState.buildJson();
+        for (let key of Object.keys(formJson)) {
+          formData.append(key, formJson[key]);
+        }
+      });
     }
 }
 

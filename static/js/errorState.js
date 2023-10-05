@@ -33,11 +33,8 @@ export const errorState = (function makeErrorState() {
                 let componentFormData = component.jsonProps();
                 formData = {...formData, ...componentFormData};
             }
-            $.ajax({
-                type:"post",
-                dataType: 'json',
-                data: formData
-            });
+            return formData;
+            
         }
 
         writeKmlFiles() {
@@ -65,7 +62,11 @@ export const errorState = (function makeErrorState() {
             if (profileError.messages.length > 0) {
                 this.validationErrors.push(profileError);
             }
-            return this.validationErrors.length == 0;
+            let componentsValid = this.validationErrors.length == 0;
+            if (!componentsValid) {
+               this.errorUIComponent.showErrors(this.validationErrors);
+            }
+            return componentsValid;
         }
 
         isProfileValid() {

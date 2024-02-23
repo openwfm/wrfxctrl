@@ -210,6 +210,12 @@ def get_all_sims():
     print(json.dumps(simulations, indent=4, separators=(',', ': ')))
     return json.dumps(simulations, indent=4, separators=(',', ': '))
 
+@app.route("/upload", methods=['POST'])
+def upload_file(fileData):
+    print("================ uploading files =======================")
+    print(fileData)
+    return
+
 
 if __name__ == '__main__':
     profiles = load_profiles()

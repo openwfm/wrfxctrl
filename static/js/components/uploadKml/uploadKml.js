@@ -1,5 +1,7 @@
 import { AppStateSubscriber } from '../appStateSubscriber.js';
 import { uploadKmlHTML } from './uploadKmlHTML.js';
+import { fetchKMLData } from '../../services/services.js';
+import { appState } from '../../appState.js';
 
 export class UploadKml extends AppStateSubscriber {
     constructor() {
@@ -17,34 +19,24 @@ export class UploadKml extends AppStateSubscriber {
     }
 
     setupButton() {
-      const { kmlButton, fileInput } = this.uiElements;
+      const { kmlButton } = this.uiElements;
       kmlButton.onclick = (e) => {
         e.preventDefault();
-
-        const file = fileInput.files[0];
-
-        // Create a FormData object to store the file.
-        const formData = new FormData();
-        formData.append('file', file);
-
-        // Send the AJAX request using XMLHttpRequest.
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '/upload');
-        xhr.send(formData);
-
-        // Handle the response.
-        xhr.onload = () => {
-          if (xhr.status === 200) {
-            console.log('success!');
-            // Success!
-          } else {
-            console.log('error!');
-            // Error!
-          }
-        };
-        console.log('hello chase!');
+        this.uploadKML();
+      }
     }
-  }
+
+    async uploadKML() {
+      const { fileInput } = this.uiElements;
+      const file = fileInput.files[0];
+
+      // Create a FormData object to store the file.
+      const formData = new FormData();
+      formData.append('file', file);
+      let kmlBoundaryPoints = await fetchKMLData(formData);
+      appState.processKml(kmlBoundaryPoints);
+      // console.log("kmlPoints: ", kmlBoundaryPoints);
+    }
 }
 
 window.customElements.define('upload-kml', UploadKml);

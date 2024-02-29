@@ -5,6 +5,7 @@ export const appState = (function makeAppState() {
             this.subscribers = [];
             this.igniteSubscribers = [];
             this.simulationStartAndStartTimes = null;
+            this.kmlPoints = {};
         }
 
         subscribeComponent(component) {
@@ -34,6 +35,15 @@ export const appState = (function makeAppState() {
             for (let subscriber of this.subscribers) {
                 subscriber.ignitionTypeChange();
             }
+        }
+
+        processKml(kmlPoints) {
+          this.kmlPoints = kmlPoints;
+          for (let subscriber of this.subscribers) {
+            if (subscriber.addKmlPoints) {
+              subscriber.addKmlPoints();
+            }
+          }
         }
 
         igniteSimulation() {

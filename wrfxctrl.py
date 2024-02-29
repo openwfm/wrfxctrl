@@ -211,11 +211,11 @@ def get_all_sims():
     return json.dumps(simulations, indent=4, separators=(',', ': '))
 
 @app.route("/upload", methods=['POST'])
-def upload_file(fileData):
+def upload_file():
     print("================ uploading files =======================")
-    print(fileData)
-    return
-
+    print(request.files['file'])
+    result = {'data': [{'lat': 20, 'lon': 120, 'ign_time': '10'}]}
+    return json.dumps(result, indent=4, separators=(',', ':'))
 
 if __name__ == '__main__':
     profiles = load_profiles()

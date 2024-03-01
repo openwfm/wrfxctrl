@@ -22,7 +22,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from cluster import Cluster
 from simulation import create_simulation, get_simulation_state, cancel_simulation, delete_simulation, load_simulations
-from utils import Dict, to_esmf, to_utc, load_profiles, load_sys_cfg
+from utils import Dict, to_esmf, to_utc, load_profiles, load_sys_cfg, parse_kml
 from flask import Flask, render_template, request, redirect, make_response, url_for
 import json
 from datetime import datetime, timedelta
@@ -212,13 +212,8 @@ def get_all_sims():
 
 @app.route("/upload", methods=['POST'])
 def upload_file():
-    print("================ uploading files =======================")
-    print(request.files['file'])
-    data = [
-            {'lat': 40, 'lon': -110, 'ign_time': '10'},
-            {'lat': 41, 'lon': -120, 'ign_time': '10'}, 
-            {'lat': 42, 'lon': -120, 'ign_time': '10'}, 
-           ]
+    kml_content = request.files['file'].read()
+    data = parse_kml(kml_content)
     result = { 'data': data }
     return json.dumps(result, indent=4, separators=(',', ':'))
 
@@ -227,4 +222,4 @@ if __name__ == '__main__':
     cluster = Cluster(json.load(open('etc/cluster.json')))
     sys.stdout.flush()
     app.run(host=host, port=port, debug=debug)
-
+    

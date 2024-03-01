@@ -17,14 +17,13 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-from __future__ import absolute_import
 import json
 from datetime import datetime
 import pytz
 import logging 
 import os
 import os.path as osp
-import six
+from lxml import etree
 
 class Dict(dict):
     """
@@ -51,7 +50,7 @@ def load_profiles():
     :return: a dict keyed by profile id containing Dicts with profile info
     """
     profs = json.load(open('etc/profiles.json'))
-    return {name:Dict(p) for name,p in six.iteritems(profs)}
+    return {name:Dict(p) for name,p in profs.items()}
 
 def to_esmf(ts):
     """
@@ -106,3 +105,32 @@ def load_sys_cfg():
 
     return sys_cfg
 
+def parse_kml(kml_data):
+    # create XML parser
+    parser = etree.XMLParser(recover=True, remove_blank_text=True)
+    # parse the file as a tree element
+    root = etree.fromstring(kml_data, parser=parser)
+    # get namespace map that each tag is going to contain
+    nsmap = root.nsmap.get('kml', root.nsmap.get(None))
+    # create xpath lambda function to generate paths to elements with the namespace map
+    xpath = lambda tag: './/{{{}}}{}'.format(nsmap, tag) if nsmap else './/{}'.format(tag)
+    # get all the Placemarks
+    results = []
+    # loop all the placemarks
+    for pm in root.iterfind(xpath('Placemark')):
+        # loop all the polygons
+        for pp in pm.iterfind(xpath('Polygon')):
+            # TODO: add multiple outer boundaries (JS only allows one boundary for now)
+            # get the outer boundary coordinates
+            out_elem = pp.find(xpath('outerBoundaryIs')).find(xpath('coordinates'))
+            # append outer boundaries to general array cleaning blank spaces
+            results += [
+                {
+                    'lat': float(coord.strip().split(',')[1].strip()),
+                    'lon': float(coord.strip().split(',')[0].strip()),
+                    'ign_time': None
+                }
+                for coord in out_elem.text.strip().split(' ') if coord.strip() != ''
+            ]
+            # TODO: add inner boundaries (JS only allows one boundary for now)
+    return results

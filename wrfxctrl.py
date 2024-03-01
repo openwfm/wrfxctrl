@@ -214,7 +214,12 @@ def get_all_sims():
 def upload_file():
     print("================ uploading files =======================")
     print(request.files['file'])
-    result = {'data': [{'lat': 20, 'lon': 120, 'ign_time': '10'}]}
+    data = [
+            {'lat': 40, 'lon': -110, 'ign_time': '10'},
+            {'lat': 41, 'lon': -120, 'ign_time': '10'}, 
+            {'lat': 42, 'lon': -120, 'ign_time': '10'}, 
+           ]
+    result = { 'data': data }
     return json.dumps(result, indent=4, separators=(',', ':'))
 
 if __name__ == '__main__':

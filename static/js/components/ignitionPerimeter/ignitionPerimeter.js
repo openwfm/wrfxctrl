@@ -18,7 +18,6 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
 
     addKmlPoints() {
       const { kmlPoints } = appState;
-      console.log('appState kmlpoints: ', kmlPoints);
       for (let kmlPoint of kmlPoints) {
         let { lat, lon } = kmlPoint;
         this.createAndAddMarker(lat, lon);

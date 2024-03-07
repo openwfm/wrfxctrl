@@ -8,6 +8,8 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
     constructor() {
         super();
         this.perimeterMarkers = [];
+        this.perimeterPolygon = null;
+        this.perimeterLine = null;
     }
 
     connectedCallback() {
@@ -46,15 +48,53 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         return this.perimeterMarkers.slice(-1)[0];
     }
 
-    markerUpdate() {
-        let latLons = [];
-        for (let perimeterMarker of this.perimeterMarkers) {
-          let latLon = perimeterMarker.getLatLon();
-          if (latLon.length != 0) {
-            latLons.push(latLon);
-          }
+    doubleClickMarker(marker) {
+      let firstMarker = this.perimeterMarkers[0];
+      if (marker == firstMarker && this.perimeterLine) {
+        this.addPolygon();
+      }
+    }
+  
+    markerLatLons() {
+      let latLons = [];
+      for (let perimeterMarker of this.perimeterMarkers) {
+        let latLon = perimeterMarker.getLatLon();
+        if (latLon.length != 0) {
+          latLons.push(latLon);
         }
-        buildMap.drawArea(latLons);
+      }
+      return latLons;
+    }
+
+    addPolygon() {
+      if (this.perimeterLine) {
+        buildMap.map.removeLayer(this.perimeterLine);
+        this.perimeterLine = null;
+      }
+      if (this.perimeterPolygon) {
+        buildMap.map.removeLayer(this.perimeterPolygon);
+      }
+      this.perimeterPolygon = buildMap.drawArea(this.markerLatLons(), 'orange');
+    }
+
+
+    addPerimeterLine() {
+      if (this.perimeterPolygon) {
+        buildMap.map.removeLayer(this.perimeterPolygon);
+        this.perimeterPolygon = null;
+      }
+      if (this.perimeterLine) {
+        buildMap.map.removeLayer(this.perimeterLine);
+      }
+      this.perimeterLine = buildMap.drawLine(this.markerLatLons(), 'orange');
+    }
+
+    markerUpdate() {
+      if (this.perimeterPolygon) {
+        this.addPolygon();
+      } else {
+        this.addPerimeterLine();
+      }
     }
 
     clearLastMarker() {

@@ -65,7 +65,10 @@ export class IgnitionLine extends IgnitionLineUI {
     markerUpdate() {
         let latLons = this.lineMarkers.map(marker => 
             marker.getLatLon()).filter(l => l.length > 0);
-        buildMap.drawLine(latLons);
+        if (this.line) {
+          buildMap.map.removeLayer(this.line);
+        }
+        this.line = buildMap.drawLine(latLons);
     }
 
     removeMarker(index) {

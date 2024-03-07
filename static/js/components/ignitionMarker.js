@@ -116,9 +116,18 @@ export class IgnitionMarker extends HTMLElement {
         this.popup.setContent(this.ignitionMapMarker);
         mapMarker.bindPopup(this.popup);
 		this.mapMarker = mapMarker;
-		mapMarker.on("click", () => {
+		mapMarker.on("click", (e) => {
+      if (e.originalEvent.detail > 1) {
+        return;
+      }
 			mapMarker.openPopup();
 		});
+
+    mapMarker.on("dblclick", () => {
+      if (this.context.doubleClickMarker) {
+        this.context.doubleClickMarker(this);
+      }
+    });
 
 		mapMarker.on("move", (e) => {
 			let latLon = e.target._latlng;

@@ -24,6 +24,9 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         let { lat, lon } = kmlPoint;
         this.createAndAddMarker(lat, lon);
       }
+      this.addPolygon();
+      let centroid = this.perimeterPolygon.getBounds().getCenter();
+      buildMap.map.setView(new L.LatLng(centroid.lat, centroid.lng), 12);
     }
 
 

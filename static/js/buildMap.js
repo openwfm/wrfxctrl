@@ -62,9 +62,8 @@ export const buildMap = (function makeSimState() {
         drawArea(latLons, color= 'red') {
           let polygon = null;
             if (latLons.length > 2) {
-                ignitionArea = L.polygon(latLons);
-                let centroid = ignitionArea.getBounds().getCenter();
-                // this.map.setView([centroid[0], centroid[1]]);
+                // ignitionArea = L.polygon(latLons);
+                // let centroid = ignitionArea.getBounds().getCenter();
                 // latLons.sort((a, b) => {
                 //     let thetaA = Math.atan2((a[1] - centroid.lng) , (a[0] - centroid.lat));
                 //     let thetaB = Math.atan2((b[1] - centroid.lng) , (b[0] - centroid.lat));

@@ -74,16 +74,18 @@ export class IgnitionMarker extends HTMLElement {
 
 	getLatLon() {
 		var latLon = []
-		var lat = parseFloat(this.querySelector('#ign-lat').value);
-		var lon = parseFloat(this.querySelector('#ign-lon').value);
+    let lat = this.lat;
+    let lon = this.lng;
 		if (this.isValidLatitude(lat) && this.isValidLongitude(lon)) latLon = [lat, lon];
 		return latLon;
 	}
 
 	latLon() {
-		let lat = parseFloat(this.querySelector('#ign-lat').value);
-		let lon = parseFloat(this.querySelector('#ign-lon').value);
-		return [lat, lon];
+    var latLon = []
+    let lat = this.lat;
+    let lon = this.lng;
+		if (this.isValidLatitude(lat) && this.isValidLongitude(lon)) latLon = [lat, lon];
+		return latLon;
 	}
 
 	isSet() {
@@ -110,6 +112,8 @@ export class IgnitionMarker extends HTMLElement {
 		// }
 		this.querySelector('#ign-lat').value = lat;
 		this.querySelector('#ign-lon').value = lon;
+    this.lat = lat;
+    this.lng = lon;
 		const mapMarker = this.newMapMarker(lat, lon);
 		this.ignitionMapMarker = new IgnitionMapMarker(lat, lon, this.index, this.context);
         this.popup = L.popup({lat: lat, lng: lon},{closeOnClick: false, autoClose: false, autoPan: false});
@@ -133,6 +137,8 @@ export class IgnitionMarker extends HTMLElement {
 			let latLon = e.target._latlng;
 			this.querySelector('#ign-lat').value = Math.floor(latLon.lat*10000)/10000;
 			this.querySelector('#ign-lon').value = Math.floor(latLon.lng*10000)/10000;
+      this.lat = latLon.lat;
+      this.lng = latLon.lng;
 			this.ignitionMapMarker.updateLatLon(latLon.lat, latLon.lng);
 			this.context.markerUpdate();
 		});

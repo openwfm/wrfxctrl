@@ -18,10 +18,11 @@ export class IgnitionMarker extends HTMLElement {
 			    </div>
 			</div>
 		`;
-		let markerMap = {
+		const markerMap = {
 			"orange":'/static/square_icon_orange.png',
 			"red": '/static/square_icon_filled.png'
 		}
+    this.iconColor = iconColor
 		this.iconUrl = iconColor == null ? null : markerMap[iconColor];
 		this.index = index;
 		this.context = context;
@@ -143,6 +144,7 @@ export class IgnitionMarker extends HTMLElement {
 			this.context.markerUpdate();
 		});
 		this.context.markerUpdate();
+    return this;
 	}
 
 	newMapMarker(lat, lon) {
@@ -152,8 +154,17 @@ export class IgnitionMarker extends HTMLElement {
 			markerOptions["icon"] = satIcon;
 		}
 		
-		return L.marker([lat, lon], markerOptions).addTo(buildMap.map);
+		let marker = L.marker([lat, lon], markerOptions).addTo(buildMap.map);
+    return marker;
 	}
+
+  setMarkerBlack() {
+    this.marker.valueOf()._icon.style.filter = "brightness(0) saturate(100%)";
+  }
+
+  setMarkerOriginalColor() {
+    this.marker.valueOf()._icon.style.filter = "";
+  }
 
 	updateIndex(newIndex) {
 		this.index = newIndex;

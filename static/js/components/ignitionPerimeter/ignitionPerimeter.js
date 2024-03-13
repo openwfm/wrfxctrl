@@ -17,6 +17,12 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
     connectedCallback() {
         super.connectedCallback();
         this.createPerimeterMarker();
+        document.addEventListener("keydown", (event) => {
+          if (event.key == "Backspace") {
+            let index = this.perimeterMarkers.indexOf(this.currentMarker);
+            this.removeMarker(index);
+          }
+        });
     }
 
 

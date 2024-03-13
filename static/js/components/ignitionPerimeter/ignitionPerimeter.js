@@ -34,23 +34,33 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
 
     createPerimeterMarker() {
         let { perimeterMarkersListUI } = this.uiElements;
-        let newFieldId = this.perimeterMarkers.length;
+        let newFieldId = 0;
+        if ( this.currentMarker ) {
+            newFieldId = this.perimeterMarkers.indexOf(this.currentMarker) + 1;
+        }
         const newMarkerField = new IgnitionMarker(newFieldId, this, "orange");
         this.currentMarker = newMarkerField;
         perimeterMarkersListUI.append(newMarkerField)
-        this.perimeterMarkers.push(newMarkerField);
+        this.perimeterMarkers.splice(this.currentMarker.index, 0, newMarkerField);
+        console.log(this.perimeterMarkers.length)
     }
 
     createAndAddMarker(lat, lon) {
         if (!appState.isPerimeter()) { 
             return 
         } else if (this.lastPerimeterMarker().getLatLon().length == 2) {
+            this.lastMarker = this.currentMarker;
+            this.lastMarker.setMarkerOriginalColor();
             this.createPerimeterMarker();
         }
-        this.lastMarker = this.currentMarker;
-        this.lastMarker.setMarkerOriginalColor();
         this.currentMarker = this.lastPerimeterMarker().addMarkerToMapAtLatLon(lat, lon);
         this.currentMarker.setMarkerBlack();
+    }
+
+    clickMarker(marker) {
+        this.currentMarker.setMarkerOriginalColor();
+        this.currentMarker = marker;
+        marker.setMarkerBlack();
     }
 
     lastPerimeterMarker() {
@@ -99,7 +109,6 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
     }
 
     markerUpdate() {
-      console.log(this.perimeterMarkers.length)
       if (this.perimeterMarkers.length > 2) {
         this.addPolygon();
       } else {

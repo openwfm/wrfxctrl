@@ -103,18 +103,18 @@ export class IgnitionMarker extends HTMLElement {
   }
 
 	addMarkerToMapAtLatLon(lat, lon) {
-    this.removeMarkerFromMap();
-    if (lat == undefined || lon == undefined) {
-      return;
-    }
-				// if (!this.isValidLatitude(lat) || !this.isValidLongitude(lon)) {
+		this.removeMarkerFromMap();
+		if (lat == undefined || lon == undefined) {
+			return;
+		}
+		// if (!this.isValidLatitude(lat) || !this.isValidLongitude(lon)) {
 		// 	updateIgnitionDataOnMap();
 		// 	return;
 		// }
 		this.querySelector('#ign-lat').value = lat;
 		this.querySelector('#ign-lon').value = lon;
-    this.lat = lat;
-    this.lng = lon;
+		this.lat = lat;
+		this.lng = lon;
 		const mapMarker = this.newMapMarker(lat, lon);
 		this.ignitionMapMarker = new IgnitionMapMarker(lat, lon, this.index, this.context);
         this.popup = L.popup({lat: lat, lng: lon},{closeOnClick: false, autoClose: false, autoPan: false});
@@ -122,29 +122,32 @@ export class IgnitionMarker extends HTMLElement {
         mapMarker.bindPopup(this.popup);
 		this.mapMarker = mapMarker;
 		mapMarker.on("click", (e) => {
-      if (e.originalEvent.detail > 1) {
-        return;
-      }
+			if (e.originalEvent.detail > 1) {
+				return;
+			}
+			if (this.context.clickMarker) {
+				this.context.clickMarker(this);
+			}
 			mapMarker.openPopup();
 		});
 
-    mapMarker.on("dblclick", () => {
-      if (this.context.doubleClickMarker) {
-        this.context.doubleClickMarker(this);
-      }
-    });
+		mapMarker.on("dblclick", () => {
+			if (this.context.doubleClickMarker) {
+				this.context.doubleClickMarker(this);
+			}
+		});
 
 		mapMarker.on("move", (e) => {
 			let latLon = e.target._latlng;
 			this.querySelector('#ign-lat').value = Math.floor(latLon.lat*10000)/10000;
 			this.querySelector('#ign-lon').value = Math.floor(latLon.lng*10000)/10000;
-      this.lat = latLon.lat;
-      this.lng = latLon.lng;
+			this.lat = latLon.lat;
+			this.lng = latLon.lng;
 			this.ignitionMapMarker.updateLatLon(latLon.lat, latLon.lng);
 			this.context.markerUpdate();
 		});
 		this.context.markerUpdate();
-    return this;
+    	return this;
 	}
 
 	newMapMarker(lat, lon) {
@@ -159,11 +162,15 @@ export class IgnitionMarker extends HTMLElement {
 	}
 
   setMarkerBlack() {
-    this.marker.valueOf()._icon.style.filter = "brightness(0) saturate(100%)";
+	if ( this.mapMarker ) {
+    	this.mapMarker.valueOf()._icon.style.filter = "brightness(0) saturate(100%)";
+	}
   }
 
   setMarkerOriginalColor() {
-    this.marker.valueOf()._icon.style.filter = "";
+	if ( this.mapMarker ) {
+		this.mapMarker.valueOf()._icon.style.filter = "";
+	}
   }
 
 	updateIndex(newIndex) {

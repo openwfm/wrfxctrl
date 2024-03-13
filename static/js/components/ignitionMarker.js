@@ -60,6 +60,8 @@ export class IgnitionMarker extends HTMLElement {
     const { latComponent, lonComponent } = this.uiComponents;
     latComponent.value = '';
     lonComponent.value = '';
+    this.lat = null;
+    this.lon = null;
     this.removeMarkerFromMap();
   }
 
@@ -162,15 +164,15 @@ export class IgnitionMarker extends HTMLElement {
 	}
 
   setMarkerBlack() {
-	if ( this.mapMarker ) {
-    	this.mapMarker.valueOf()._icon.style.filter = "brightness(0) saturate(100%)";
-	}
+    if ( this.mapMarker ) {
+        this.mapMarker.valueOf()._icon.style.filter = "brightness(0) saturate(100%)";
+    }
   }
 
   setMarkerOriginalColor() {
-	if ( this.mapMarker ) {
-		this.mapMarker.valueOf()._icon.style.filter = "";
-	}
+    if ( this.mapMarker ) {
+      this.mapMarker.valueOf()._icon.style.filter = "";
+    }
   }
 
 	updateIndex(newIndex) {

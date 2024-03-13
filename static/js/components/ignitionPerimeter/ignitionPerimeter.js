@@ -33,38 +33,53 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
 
 
     createPerimeterMarker() {
-        let { perimeterMarkersListUI } = this.uiElements;
         let newFieldId = 0;
         if ( this.currentMarker ) {
             newFieldId = this.perimeterMarkers.indexOf(this.currentMarker) + 1;
         }
         const newMarkerField = new IgnitionMarker(newFieldId, this, "orange");
         this.currentMarker = newMarkerField;
-        perimeterMarkersListUI.append(newMarkerField)
         this.perimeterMarkers.splice(this.currentMarker.index, 0, newMarkerField);
-        console.log(this.perimeterMarkers.length)
     }
 
     createAndAddMarker(lat, lon) {
         if (!appState.isPerimeter()) { 
             return 
-        } else if (this.lastPerimeterMarker().getLatLon().length == 2) {
+        } else if (this.currentMarker.getLatLon().length == 2) {
             this.lastMarker = this.currentMarker;
             this.lastMarker.setMarkerOriginalColor();
             this.createPerimeterMarker();
         }
-        this.currentMarker = this.lastPerimeterMarker().addMarkerToMapAtLatLon(lat, lon);
+        this.currentMarker.addMarkerToMapAtLatLon(lat, lon);
         this.currentMarker.setMarkerBlack();
+        this.updateIndices();
+    }
+
+    updateIndices() {
+      const { perimeterMarkersListUI } = this.uiElements;
+      this.clearMarkerList();
+      let i = 0;
+      for (let marker of this.perimeterMarkers) {
+        marker.updateIndex(i);
+        i++;
+        perimeterMarkersListUI.append(marker);
+      }
+    }
+
+    clearMarkerList() {
+      const { perimeterMarkersListUI } = this.uiElements;
+      while (perimeterMarkersListUI.firstChild) {
+        perimeterMarkersListUI.removeChild(perimeterMarkersListUI.firstChild);
+      }
     }
 
     clickMarker(marker) {
-        this.currentMarker.setMarkerOriginalColor();
-        this.currentMarker = marker;
-        marker.setMarkerBlack();
-    }
-
-    lastPerimeterMarker() {
-        return this.perimeterMarkers.slice(-1)[0];
+        if (this.currentMarker != marker) {
+          this.currentMarker.setMarkerOriginalColor();
+          this.lastMarker = this.currentMarker;
+          this.currentMarker = marker;
+          marker.setMarkerBlack();
+        }
     }
 
     doubleClickMarker(marker) {
@@ -148,7 +163,14 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         if (markerToRemove.mapMarker) {
             buildMap.map.removeLayer(markerToRemove.mapMarker);
         }
+        if (index == 0) {
+          this.currentMarker = this.perimeterMarkers[this.perimeterMarkers.length - 1];
+        } else {
+          this.currentMarker = this.perimeterMarkers[index - 1];
+        }
+        this.currentMarker.setMarkerBlack();
         markerToRemove.remove();
+        markerToRemove.clearLatLon();
         this.markerUpdate();
     }
 
@@ -179,7 +201,7 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
     }
 
     perimeterPointsAdded() {
-        return this.perimeterMarkers.length > 1 || this.lastPerimeterMarker().isSet();
+        return this.perimeterMarkers.length > 1 || this.currentMarker.isSet();
     }
 
     jsonProps() {

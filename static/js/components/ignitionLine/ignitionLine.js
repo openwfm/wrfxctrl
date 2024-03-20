@@ -10,39 +10,85 @@ export class IgnitionLine extends IgnitionLineUI {
         super();
         this.lineMarkers = [];
         this.ignitionTimes = [];
+        this.currentMarker = null;
+        this.lastMarker = null;
     }
 
     connectedCallback() {
         super.connectedCallback();
         this.createLineMarker();
+        document.addEventListener("keydown", (event) => {
+          if (appState.isLine() && event.key == "Backspace") {
+            let index = this.lineMarkers.indexOf(this.currentMarker);
+            this.removeMarker(index);
+          }
+        });
     }
 
     addKmlPoints() {
         if ( !appState.isLine() ) {
           return;
         }
-        // this.removeAllMarkers();
+        this.removeAllMarkers();
         const { kmlPoints } = appState;
         console.log(kmlPoints)
-        // for (let kmlPoint of kmlPoints) {
-        //   let { lat, lon } = kmlPoint;
-        //   this.createAndAddMarker(lat, lon, true);
-        // }
-        // this.addPolygon();
-        // let centroid = this.perimeterPolygon.getBounds().getCenter();
-        // buildMap.map.setView(new L.LatLng(centroid.lat, centroid.lng), 12);
-      }
+        for (let kmlPoint of kmlPoints) {
+          let { lat, lon } = kmlPoint;
+          this.createAndAddMarker(lat, lon, true);
+        }
+        this.updateMapLayer();
+        let centroid = this.line.getBounds().getCenter();
+        buildMap.map.setView(new L.LatLng(centroid.lat, centroid.lng), 12);
+    }
 
     createLineMarker() {
         let { ignitionLineMarkersListUI } = this.uiElements;
-        let newFieldId = this.lineMarkers.length;
-        const newMarkerField = new IgnitionMarker(newFieldId, this, "red");
-        ignitionLineMarkersListUI.append(newMarkerField)
-        this.lineMarkers.push(newMarkerField);
-        this.createIgnitionTime();
-        if (this.evenSplitCheck()) {
-            this.evenlySplitDateTimes();
+        let newFieldId = 0;
+        if (this.currentMarker) {
+          newFieldId = this.lineMarkers.indexOf(this.currentMarker) + 1;
         }
+
+        const newMarkerField = new IgnitionMarker(newFieldId, this, "red");
+        // ignitionLineMarkersListUI.append(newMarkerField)
+        // this.lineMarkers.push(newMarkerField);
+        this.currentMarker = newMarkerField;
+        this.lineMarkers.splice(this.currentMarker.index, 0, newMarkerField);
+        this.createIgnitionTime();
+    }
+
+    createIgnitionTime() {
+        let newFieldId = 0;
+        if (this.currentMarker) {
+          newFieldId = this.lineMarkers.indexOf(this.currentMarker) + 1;
+        }
+
+        let ignitionField = new IgnitionTime(newFieldId, "ignitionLine");
+        
+        this.ignitionTimes.push(ignitionField);
+    }
+
+    updateIndices() {
+      const { ignitionLineMarkersListUI } = this.uiElements;
+      this.clearMarkerList();
+      let i = 0;
+      for (let marker of this.lineMarkers) {
+        let ignitionTime = this.ignitionTimes[i];
+        marker.updateIndex(i);
+        i++;
+        ignitionLineMarkersListUI.append(marker);
+        ignitionLineMarkersListUI.append(ignitionTime);
+      }
+
+      if (this.evenSplitCheck()) {
+          this.evenlySplitDateTimes();
+      }
+    }
+
+    clearMarkerList() {
+      const { ignitionLineMarkersListUI } = this.uiElements;
+      while (ignitionLineMarkersListUI.firstChild) {
+        ignitionLineMarkersListUI.removeChild(ignitionLineMarkersListUI.firstChild);
+      }
     }
 
     clearLastMarker() {
@@ -57,34 +103,49 @@ export class IgnitionLine extends IgnitionLineUI {
         return this.lineMarkers.slice(-1)[0];
     }
 
-    createAndAddMarker(lat, lon) {
+    createAndAddMarker(lat, lon, kml=false) {
         if (!appState.isLine()) { 
             return 
-        } else if (this.lastLineMarker().getLatLon().length == 2) {
+        } else if (this.currentMarker.getLatLon().length == 2) {
+            this.lastMarker = this.currentMarker;
+            this.lastMarker.setMarkerOriginalColor();
             this.createLineMarker();
         }
-        this.lastLineMarker().addMarkerToMapAtLatLon(lat, lon);
+        this.currentMarker.addMarkerToMapAtLatLon(lat, lon);
+        this.currentMarker.setMarkerBlack();
+        this.updateIndices();
+        if ( !kml ) {
+          this.updateMapLayer();
+        }
     }
 
-    createIgnitionTime() {
-        let { ignitionLineMarkersListUI } = this.uiElements;
-        let newFieldId = this.ignitionTimes.length;
-        let ignitionField = new IgnitionTime(newFieldId, "ignitionLine");
-        this.ignitionTimes.push(ignitionField);
-        ignitionLineMarkersListUI.append(ignitionField);
+    clickMarker(marker) {
+        if (this.currentMarker != marker) {
+          this.currentMarker.setMarkerOriginalColor();
+          this.lastMarker = this.currentMarker;
+          this.currentMarker = marker;
+          marker.setMarkerBlack();
+        }
     }
+
+    
 
     lastLineMarker() {
         return this.lineMarkers.slice(-1)[0];
     }
 
+
+    updateMapLayer() {
+      let latLons = this.lineMarkers.map(marker => 
+          marker.getLatLon()).filter(l => l.length > 0);
+      if (this.line) {
+        buildMap.map.removeLayer(this.line);
+      }
+      this.line = buildMap.drawLine(latLons);
+    }
+    
     markerUpdate() {
-        let latLons = this.lineMarkers.map(marker => 
-            marker.getLatLon()).filter(l => l.length > 0);
-        if (this.line) {
-          buildMap.map.removeLayer(this.line);
-        }
-        this.line = buildMap.drawLine(latLons);
+      this.updateMapLayer();
     }
 
     removeMarker(index) {
@@ -102,6 +163,13 @@ export class IgnitionLine extends IgnitionLineUI {
         if (markerToRemove.mapMarker) {
             buildMap.map.removeLayer(markerToRemove.mapMarker);
         }
+        if (index == 0) {
+          this.currentMarker = this.lineMarkers[this.perimeterMarkers.length - 1];
+        } else {
+          this.currentMarker = this.lineMarkers[index - 1];
+        }
+
+        this.currentMarker.setMarkerBlack();
         markerToRemove.remove();
         this.markerUpdate();
 
@@ -110,6 +178,14 @@ export class IgnitionLine extends IgnitionLineUI {
             this.evenlySplitDateTimes();
         }
     }
+
+    removeAllMarkers() {
+      while (this.lineMarkers.length > 1) {
+        this.removeMarker(0);
+      }
+      this.removeMarker(0);
+    }
+
 
     removeIgnitionTime(index) {
         if (this.ignitionTimes.length == 0) {

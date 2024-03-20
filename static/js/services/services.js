@@ -15,7 +15,8 @@ export async function fetchPerimeterKML(formData) {
 }
 
 export async function fetchLineKML(formData) {
-  const FETCH_URL = '/upload_line';
+  // const FETCH_URL = '/upload_line';
+  const FETCH_URL = '/upload';
 
   let kmlData = [];
   try {

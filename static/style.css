@@ -10,6 +10,10 @@ body {
   text-align: left;
 }
 
+body.wait * {
+  cursor: wait !important;
+}
+
 .leaflet-container.pointer-cursor-enabled {
     cursor:pointer;
 }

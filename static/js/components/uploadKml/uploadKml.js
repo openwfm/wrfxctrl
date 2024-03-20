@@ -1,6 +1,6 @@
 import { AppStateSubscriber } from '../appStateSubscriber.js';
 import { uploadKmlHTML } from './uploadKmlHTML.js';
-import { fetchKMLData } from '../../services/services.js';
+import { fetchPerimeterKML, fetchLineKML } from '../../services/services.js';
 import { appState } from '../../appState.js';
 
 export class UploadKml extends AppStateSubscriber {
@@ -29,13 +29,19 @@ export class UploadKml extends AppStateSubscriber {
     async uploadKML() {
       const { fileInput } = this.uiElements;
       const file = fileInput.files[0];
-
+      document.body.classList.add('wait');
       // Create a FormData object to store the file.
       const formData = new FormData();
       formData.append('file', file);
-      let kmlBoundaryPoints = await fetchKMLData(formData);
+      let kmlPoints = [];
+      if ( appState.isPerimeter() ) {
+        kmlPoints = await fetchPerimeterKML(formData);
+      } else if ( appState.isLine() ) {
+        kmlPoints = await fetchLineKML(formData);
+      }
       appState.processKml(kmlBoundaryPoints);
       // console.log("kmlPoints: ", kmlBoundaryPoints);
+      document.body.classList.remove('wait');
     }
 }
 

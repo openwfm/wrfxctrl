@@ -25,18 +25,20 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         });
     }
 
-
     addKmlPoints() {
+      if ( !appState.isPerimeter() ) {
+        return;
+      }
+      this.removeAllMarkers();
       const { kmlPoints } = appState;
       for (let kmlPoint of kmlPoints) {
         let { lat, lon } = kmlPoint;
-        this.createAndAddMarker(lat, lon);
+        this.createAndAddMarker(lat, lon, true);
       }
       this.addPolygon();
       let centroid = this.perimeterPolygon.getBounds().getCenter();
       buildMap.map.setView(new L.LatLng(centroid.lat, centroid.lng), 12);
     }
-
 
     createPerimeterMarker() {
         let newFieldId = 0;
@@ -48,7 +50,7 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         this.perimeterMarkers.splice(this.currentMarker.index, 0, newMarkerField);
     }
 
-    createAndAddMarker(lat, lon) {
+    createAndAddMarker(lat, lon, kml=false) {
         if (!appState.isPerimeter()) { 
             return 
         } else if (this.currentMarker.getLatLon().length == 2) {
@@ -59,6 +61,17 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         this.currentMarker.addMarkerToMapAtLatLon(lat, lon);
         this.currentMarker.setMarkerBlack();
         this.updateIndices();
+        if ( !kml ) {
+          this.updateMapLayer();
+        }
+    }
+
+    updateMapLayer() {
+      if (this.perimeterMarkers.length > 2) {
+        this.addPolygon();
+      } else {
+        this.addPerimeterLine();
+      }
     }
 
     updateIndices() {
@@ -117,7 +130,6 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
       this.perimeterPolygon = buildMap.drawArea(this.markerLatLons(), 'orange');
     }
 
-
     addPerimeterLine() {
       if (this.perimeterPolygon) {
         buildMap.map.removeLayer(this.perimeterPolygon);
@@ -130,11 +142,7 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
     }
 
     markerUpdate() {
-      if (this.perimeterMarkers.length > 2) {
-        this.addPolygon();
-      } else {
-        this.addPerimeterLine();
-      }
+      this.updateMapLayer();
     }
 
     markerClicked(marker) {
@@ -178,6 +186,13 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         markerToRemove.remove();
         markerToRemove.clearLatLon();
         this.markerUpdate();
+    }
+
+    removeAllMarkers() {
+      while ( this.perimeterMarkers.length > 1 ) {
+        this.removeMarker(0)
+      }
+      this.removeMarker(0)
     }
 
     validateForIgnition() {

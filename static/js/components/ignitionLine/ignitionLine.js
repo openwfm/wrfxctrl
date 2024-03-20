@@ -17,6 +17,22 @@ export class IgnitionLine extends IgnitionLineUI {
         this.createLineMarker();
     }
 
+    addKmlPoints() {
+        if ( !appState.isLine() ) {
+          return;
+        }
+        // this.removeAllMarkers();
+        const { kmlPoints } = appState;
+        console.log(kmlPoints)
+        // for (let kmlPoint of kmlPoints) {
+        //   let { lat, lon } = kmlPoint;
+        //   this.createAndAddMarker(lat, lon, true);
+        // }
+        // this.addPolygon();
+        // let centroid = this.perimeterPolygon.getBounds().getCenter();
+        // buildMap.map.setView(new L.LatLng(centroid.lat, centroid.lng), 12);
+      }
+
     createLineMarker() {
         let { ignitionLineMarkersListUI } = this.uiElements;
         let newFieldId = this.lineMarkers.length;

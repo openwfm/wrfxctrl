@@ -148,7 +148,7 @@ export class IgnitionMarker extends HTMLElement {
 			this.ignitionMapMarker.updateLatLon(latLon.lat, latLon.lng);
 			this.context.markerUpdate();
 		});
-		this.context.markerUpdate();
+		//this.context.markerUpdate();
     	return this;
 	}
 

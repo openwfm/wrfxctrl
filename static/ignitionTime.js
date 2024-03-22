@@ -2,35 +2,24 @@ import { appState } from "./js/appState.js";
 export class IgnitionTime extends HTMLElement {
 	constructor(index, timeType) {
 		super();
+		this.uniqueId = moment().valueOf();
 		this.innerHTML = `
 			<div class="two fields" style="margin-bottom: 15px">
-	     <!--     <div class="ignition-id" id="id-container">
+	          <!-- <div class="ignition-id" id="id-container">
 			  <span id="ignition-time-id">${index}</span>
-	          </div>-->
+	          </div> -->
 	          <div class="field">
 	            <div class="ui input left icon">
 	              <i class="calendar icon"></i>
-	              <input name="ignition_time" id="ign-time-${timeType}-${index}" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
+	              <input name="ignition_time" id="ign-time-${this.uniqueId}" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
 	            </div>
 	            <span id="ignition-time-warning" class="not-valid-warning">The ignition time must be between 1/1/1979 and now in the format YYYY-MM-DD_HH:MM:SS</span>
-	          </div>
-	          <div class="field">
-	              <select name="fc_hours" class="ui dropdown" id="fc-hours-${timeType}-${index}">
-	                  <option value="3">3</option>
-	                  <option value="6">6</option>
-	                  <option value="9">9</option>
-	                  <option value="12">12</option>
-	                  <option value="18">18</option>
-	                  <option value="24">24</option>
-	                  <option value="48">48</option>
-	              </select>
 	          </div>
 	        </div>
 		`;
 		this.timeType = timeType;
 		this.index = index;
-		this.dateChooserId = `#ign-time-${this.timeType}-${index}`;
-		this.fcHoursId = `#fc-hours-${this.timeType}-${index}`;
+		this.dateChooserId = `#ign-time-${this.uniqueId}`;
 	}
 	connectedCallback() {
 		// $(`#fc-hours${this.index}`).dropdown();
@@ -45,7 +34,7 @@ export class IgnitionTime extends HTMLElement {
 
 	updateIndex(newIndex) {
 		this.index = newIndex;
-		this.querySelector('#ignition-time-id').innerText = newIndex;
+		//this.querySelector('#ignition-time-id').innerText = newIndex;
 	}
 
 	hideIndex() {
@@ -65,7 +54,7 @@ export class IgnitionTime extends HTMLElement {
 	}
 
 	getIgnitionTimeAndDuration() {
-		return [this.ignitionTime(), parseInt(this.fcHours())];
+		return [this.ignitionTime(), 0];
 	}
 
 	ignitionTimeMoment() {
@@ -78,7 +67,7 @@ export class IgnitionTime extends HTMLElement {
 	}
 
 	fcHours() {
-		return this.querySelector(this.fcHoursId).value;
+		return 0;
 	}
 }
 window.customElements.define('ignition-time', IgnitionTime);

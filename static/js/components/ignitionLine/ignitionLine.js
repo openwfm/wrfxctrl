@@ -59,12 +59,12 @@ export class IgnitionLine extends IgnitionLineUI {
     createIgnitionTime() {
         let newFieldId = 0;
         if (this.currentMarker) {
-          newFieldId = this.lineMarkers.indexOf(this.currentMarker) + 1;
+          newFieldId = this.lineMarkers.indexOf(this.currentMarker);
         }
 
         let ignitionField = new IgnitionTime(newFieldId, "ignitionLine");
         
-        this.ignitionTimes.push(ignitionField);
+        this.ignitionTimes.splice(this.currentMarker.index, 0, ignitionField);
     }
 
     updateIndices() {
@@ -74,6 +74,7 @@ export class IgnitionLine extends IgnitionLineUI {
       for (let marker of this.lineMarkers) {
         let ignitionTime = this.ignitionTimes[i];
         marker.updateIndex(i);
+        ignitionTime.updateIndex(i);
         i++;
         ignitionLineMarkersListUI.append(marker);
         ignitionLineMarkersListUI.append(ignitionTime);
@@ -126,9 +127,7 @@ export class IgnitionLine extends IgnitionLineUI {
           this.currentMarker = marker;
           marker.setMarkerBlack();
         }
-    }
-
-    
+    }  
 
     lastLineMarker() {
         return this.lineMarkers.slice(-1)[0];

@@ -64,7 +64,8 @@ export class IgnitionLine extends IgnitionLineUI {
 
         let ignitionField = new IgnitionTime(newFieldId, "ignitionLine");
         
-        this.ignitionTimes.push(ignitionField);
+        this.ignitionTimes.splice(newFieldId, 0, ignitionField);
+        // this.ignitionTimes.push(ignitionField);
     }
 
     updateIndices() {

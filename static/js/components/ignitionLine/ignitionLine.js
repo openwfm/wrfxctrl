@@ -31,7 +31,9 @@ export class IgnitionLine extends IgnitionLineUI {
         }
         this.removeAllMarkers();
         const { kmlPoints } = appState;
-        console.log(kmlPoints)
+        if ( kmlPoints.length == 0 ) {
+          return;
+        } 
         for (let kmlPoint of kmlPoints) {
           let { lat, lon } = kmlPoint;
           this.createAndAddMarker(lat, lon, true);

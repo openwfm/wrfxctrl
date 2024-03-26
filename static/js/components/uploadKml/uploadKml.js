@@ -39,7 +39,7 @@ export class UploadKml extends AppStateSubscriber {
       } else if ( appState.isLine() ) {
         kmlPoints = await fetchLineKML(formData);
       }
-      appState.processKml(kmlBoundaryPoints);
+      appState.processKml(kmlPoints);
       // console.log("kmlPoints: ", kmlBoundaryPoints);
       document.body.classList.remove('wait');
     }

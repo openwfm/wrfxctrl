@@ -105,7 +105,7 @@ def load_sys_cfg():
 
     return sys_cfg
 
-def parse_kml(kml_data):
+def parse_kml(kml_data, kml_object):
     # create XML parser
     parser = etree.XMLParser(recover=True, remove_blank_text=True)
     # parse the file as a tree element
@@ -119,10 +119,13 @@ def parse_kml(kml_data):
     # loop all the placemarks
     for pm in root.iterfind(xpath('Placemark')):
         # loop all the polygons
-        for pp in pm.iterfind(xpath('Polygon')):
+        for pp in pm.iterfind(xpath(kml_object)):
             # TODO: add multiple outer boundaries (JS only allows one boundary for now)
             # get the outer boundary coordinates
-            out_elem = pp.find(xpath('outerBoundaryIs')).find(xpath('coordinates'))
+            try:
+                out_elem = pp.find(xpath('outerBoundaryIs')).find(xpath('coordinates'))
+            except:
+                out_elem = pp.find(xpath('coordinates'))
             # append outer boundaries to general array cleaning blank spaces
             results += [
                 {

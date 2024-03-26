@@ -210,10 +210,17 @@ def get_all_sims():
     print(json.dumps(simulations, indent=4, separators=(',', ': ')))
     return json.dumps(simulations, indent=4, separators=(',', ': '))
 
-@app.route("/upload", methods=['POST'])
-def upload_file():
+@app.route("/upload_perimeter", methods=['POST'])
+def upload_perimeter_file():
     kml_content = request.files['file'].read()
-    data = parse_kml(kml_content)
+    data = parse_kml(kml_content, 'Polygon')
+    result = { 'data': data }
+    return json.dumps(result, indent=4, separators=(',', ':'))
+
+@app.route("/upload_line", methods=['POST'])
+def upload_line_file():
+    kml_content = request.files['file'].read()
+    data = parse_kml(kml_content, 'LineString')
     result = { 'data': data }
     return json.dumps(result, indent=4, separators=(',', ':'))
 

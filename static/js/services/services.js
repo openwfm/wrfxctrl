@@ -1,10 +1,9 @@
 export async function fetchPerimeterKML(formData) {
-  const FETCH_URL = '/upload';
+  const FETCH_URL = '/upload_perimeter';
 
   let kmlData = [];
   try {
     const fetchBody = { method: 'POST', body: formData }
-    const response = await fetch(FETCH_URL, fetchBody);
     await fetch(FETCH_URL, fetchBody).then(response => response.json()).then(function(response_json) {
       kmlData = response_json.data;
     });
@@ -15,13 +14,11 @@ export async function fetchPerimeterKML(formData) {
 }
 
 export async function fetchLineKML(formData) {
-  // const FETCH_URL = '/upload_line';
-  const FETCH_URL = '/upload';
+  const FETCH_URL = '/upload_line';
 
   let kmlData = [];
   try {
     const fetchBody = { method: 'POST', body: formData }
-    const response = await fetch(FETCH_URL, fetchBody);
     await fetch(FETCH_URL, fetchBody).then(response => response.json()).then(function(response_json) {
       kmlData = response_json.data;
     });

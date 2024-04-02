@@ -6,9 +6,9 @@ var start_time = null;
 
 $.getJSON("/sim_info/" + sim_id, function(data) {
   sim_info = data;
-  console.log(sim_info['started_at']);
+  //console.log(sim_info['started_at']);
   start_time = moment(sim_info['started_at'], "YYYY-MM-DD_HH:mm:ss");
-  console.log(start_time);
+  //console.log(start_time);
   update_time_since_start();
   if(start_time < moment().subtract(1, 'minutes')) {
     get_job_state();

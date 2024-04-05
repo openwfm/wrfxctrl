@@ -6,9 +6,10 @@ export class PolygonTabs extends AppStateSubscriber {
         super();
         this.innerHTML = `
           <div class="polygon-tab">
+            <h3 class="polygon-title"></h3>
             <div class="tab-header">
               <ul class="tab-list">
-                <li id="add-new-tab">+</li>
+                <li id="add-new-tab" class="tab-header-list-item">+</li>
               </ul>
             </div>
             <div class="tab-body">
@@ -18,6 +19,7 @@ export class PolygonTabs extends AppStateSubscriber {
 
         this.tabUi = {
             polygonTab: this.querySelector('.polygon-tab'),
+            polygonTitle: this.querySelector('.polygon-title'),
             tabHeader: this.querySelector('.tab-header'),
             tabList: this.querySelector('.tab-list'),
             addNewTab: this.querySelector('#add-new-tab'),
@@ -33,6 +35,7 @@ export class PolygonTabs extends AppStateSubscriber {
         this.createNewTab();
       }
       this.createNewTab();
+      this.ignitionTypeChange();
     }
 
     ignitionTypeChange() {
@@ -72,30 +75,33 @@ export class PolygonTabs extends AppStateSubscriber {
 
       let index = this.tabs.length;
 			let newTabHeader = this.createTabHeader(index);
-			let newTabBody = this.createTabBody();
-      newTabHeader.onClick = () => {
+			let newTabBody = this.createTabBody(index);
+      newTabHeader.addEventListener('click', () => {
+        this.updateAppIndex(index);
         this.hideComponent(this.currentTab);
-        this.showComponent(tabBody);
-        this.currentTab = tabBody;
-      }
+        this.showComponent(newTabBody);
+        this.currentTab = newTabBody;
+      });
       let newTab = {
         "header": newTabHeader,
         "body": newTabBody,
       }
       tabList.appendChild(newTabHeader);
       tabBody.appendChild(newTabBody);
+      this.updateAppIndex(index);
       this.tabs.push(newTab);
       this.hideComponent(this.currentTab);
       this.showComponent(newTabBody);
       this.currentTab = newTabBody;
     }
 
-    createTabBody() {
+    createTabBody(index) {
 			return document.createElement('div');
     }
 
     createTabHeader(index) {
 			let header = document.createElement('li');
+      header.classList.add('tab-header-list-item');
       header.textContent = `${index}`;
       return header;
     }

@@ -270,3 +270,14 @@ div .fixed-height-grid {
   display: none!;
 }
 
+.polygon-tab {
+  border-color: #cccccc;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: .3rem;
+  background-color: white;   
+}
+
+.tab-header-list-item {
+  display: inline-block;
+}

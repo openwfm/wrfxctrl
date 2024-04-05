@@ -1,11 +1,13 @@
 import { appState } from '../../appState.js';
 import { AppStateSubscriber } from '../appStateSubscriber.js';
 import { IgnitionLine } from './ignitionLine.js';
-import { PolygonTabs } from '../polygonTabs/PolygonTabs.js';
+import { PolygonTabs } from '../polygonTabs/polygonTabs.js';
 
 export class IgnitionLineTabs extends PolygonTabs {
     constructor() {
         super();
+        const {polygonTitle} = this.tabUi;
+        polygonTitle.innerText = 'Ignition Line';
     }
 
     ignitionTypeChange() {
@@ -17,12 +19,16 @@ export class IgnitionLineTabs extends PolygonTabs {
         }
     }
 
+    updateAppIndex(index) {
+        appState.lineTabIndex = index;
+    }
+
     shouldShow() {
       return appState.isLine();
     }
 
-    createTabBody() {
-			return new IgnitionLine();
+    createTabBody(index) {
+		return new IgnitionLine(index);
     }
 }
 

@@ -6,12 +6,13 @@ import { IgnitionTime } from '../../../ignitionTime.js';
 import { validateIgnitionTimes, validateIgnitionMarkers, jsonLatLons, jsonIgnitionTimesAndDurations} from '../validationUtils.js';
 
 export class IgnitionLine extends IgnitionLineUI {
-    constructor() {
+    constructor(index) {
         super();
         this.lineMarkers = [];
         this.ignitionTimes = [];
         this.currentMarker = null;
         this.lastMarker = null;
+        this.index = index;
     }
 
     connectedCallback() {
@@ -108,7 +109,7 @@ export class IgnitionLine extends IgnitionLineUI {
     }
 
     createAndAddMarker(lat, lon, kml=false) {
-        if (!appState.isLine()) { 
+        if ( !appState.isLine() || appState.lineTabIndex != this.index) { 
             return 
         } else if (this.currentMarker.getLatLon().length == 2) {
             this.lastMarker = this.currentMarker;

@@ -270,14 +270,42 @@ div .fixed-height-grid {
   display: none!;
 }
 
+.field {
+}
+
 .polygon-tab {
   border-color: #cccccc;
   border-style: solid;
   border-width: 1px;
   border-radius: .3rem;
   background-color: white;   
+  padding: 10px;
+}
+
+
+.tab-list {
+  margin-bottom: -1px;
 }
 
 .tab-header-list-item {
   display: inline-block;
+  cursor: pointer;
+  width: 50px;
+  border-color: #cccccc;
+  border-style: solid;
+  border-width: 1px 1px 0px 1px;
+  border-radius: .3rem .3rem .0rem .0rem;
+  background-color: #D3D3D3;
 }
+
+.tab-header-list-item.active { 
+  background-color: #F5F5F5;
+}
+
+.tab-body {
+  background-color: #F5F5F5;
+  border-color: #cccccc;
+  border-style: solid;
+  border-width: 1px;
+}
+

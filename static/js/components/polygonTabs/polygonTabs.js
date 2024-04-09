@@ -76,24 +76,32 @@ export class PolygonTabs extends AppStateSubscriber {
       let index = this.tabs.length;
 			let newTabHeader = this.createTabHeader(index);
 			let newTabBody = this.createTabBody(index);
-      newTabHeader.addEventListener('click', () => {
-        this.updateAppIndex(index);
-        this.hideComponent(this.currentTab);
-        this.showComponent(newTabBody);
-        this.currentTab = newTabBody;
-      });
       let newTab = {
-        "header": newTabHeader,
-        "body": newTabBody,
+        header: newTabHeader,
+        body: newTabBody,
+        index: index,
       }
+      newTabHeader.addEventListener('click', () => {
+        this.updateCurrentTab(newTab);
+      });
+      
       tabList.appendChild(newTabHeader);
       tabBody.appendChild(newTabBody);
-      this.updateAppIndex(index);
+      this.updateCurrentTab(newTab);
       this.tabs.push(newTab);
-      this.hideComponent(this.currentTab);
-      this.showComponent(newTabBody);
-      this.currentTab = newTabBody;
     }
+
+  updateCurrentTab(newTab) {
+    let { header, body, index } = newTab;
+    this.updateAppIndex(index);
+    if (this.currentTab) {
+      this.hideComponent(this.currentTab.body);
+      this.currentTab.header.classList.remove("active");
+    }
+    this.showComponent(body);
+    header.classList.add("active");
+    this.currentTab = newTab;
+  }
 
     createTabBody(index) {
 			return document.createElement('div');

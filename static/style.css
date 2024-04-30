@@ -309,3 +309,8 @@ div .fixed-height-grid {
   border-width: 1px;
 }
 
+
+.markerDiv {
+  display: inline-block;
+}
+

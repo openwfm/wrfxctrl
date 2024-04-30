@@ -4,15 +4,15 @@ export class IgnitionMarker extends HTMLElement {
 	constructor(index, context, iconColor) {
 		super();
 		this.innerHTML = `
-			<div class="two fields ignition-marker" style="margin-bottom: 15px">
+			<div class="ignition-marker">
 			    <div id='ignition-id-container' class="ignition-id">
-			      <span id="marker-id"></span>
+			      <span id="marker-id" type="text"></span>
 			    </div>
-			    <div class="field">
+			    <div class="latlon-field">
 			      <input name="ignition_latitude" id="ign-lat" type="text" placeholder="Latitude ...">
 			      <span id="lat-warning" class="not-valid-warning">The ignition latitude must be a number between 36 and 41.</span>
 			    </div>
-			    <div class="field">
+			    <div class="latlon-field">
 			      <input name="ignition_longitude" id="ign-lon" type="text" placeholder="Longitude ...">
 			      <span id="lon-warning" class="not-valid-warning">The ignition longitude must be a number between -109 and -102.</span>
 			    </div>

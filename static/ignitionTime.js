@@ -4,11 +4,11 @@ export class IgnitionTime extends HTMLElement {
 		super();
 		this.uniqueId = moment().valueOf();
 		this.innerHTML = `
-			<div class="two fields" style="margin-bottom: 15px">
+			<div class="ignition-time" style="margin-bottom: 15px">
 	          <!-- <div class="ignition-id" id="id-container">
 			  <span id="ignition-time-id">${index}</span>
 	          </div> -->
-	          <div class="field">
+	          <div class="time-field">
 	            <div class="ui input left icon">
 	              <i class="calendar icon"></i>
 	              <input name="ignition_time" id="ign-time-${this.uniqueId}" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">

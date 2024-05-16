@@ -5,24 +5,29 @@ import { buildMap } from '../../buildMap.js';
 import { validateIgnitionMarkers, jsonLatLons } from '../validationUtils.js';
 
 export class IgnitionPerimeter extends IgnitionPerimeterUI {
-    constructor() {
+    constructor(index) {
         super();
         this.perimeterMarkers = [];
         this.perimeterPolygon = null;
         this.perimeterLine = null;
         this.currentMarker = null;
         this.lastMarker = null;
+        this.index = index;
     }
 
     connectedCallback() {
         super.connectedCallback();
         this.createPerimeterMarker();
         document.addEventListener("keydown", (event) => {
-          if (appState.isPerimeter() && event.key == "Backspace") {
+          if (this.perimeterIsActive() && event.key == "Backspace") {
             let index = this.perimeterMarkers.indexOf(this.currentMarker);
             this.removeMarker(index);
           }
         });
+    }
+
+    perimeterIsActive() {
+      return appState.isPerimeter() && appState.perimeterTabIndex == this.index;
     }
 
     addKmlPoints() {
@@ -51,7 +56,7 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
     }
 
     createAndAddMarker(lat, lon, kml=false) {
-        if (!appState.isPerimeter()) { 
+        if (!this.perimeterIsActive()) { 
             return 
         } else if (this.currentMarker.getLatLon().length == 2) {
             this.lastMarker = this.currentMarker;

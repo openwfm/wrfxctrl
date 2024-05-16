@@ -19,13 +19,13 @@ export class IgnitionLine extends IgnitionLineUI {
         super.connectedCallback();
         this.createLineMarker();
         document.addEventListener("keydown", (event) => {
-          if (appState.isLine() && event.key == "Backspace") {
+          if (this.lineIsActive() && event.key == "Backspace") {
             let index = this.lineMarkers.indexOf(this.currentMarker);
             this.removeMarker(index);
           }
         });
     }
-
+  
     addKmlPoints() {
         if ( !appState.isLine() ) {
           return;
@@ -111,8 +111,12 @@ export class IgnitionLine extends IgnitionLineUI {
         return this.lineMarkers.slice(-1)[0];
     }
 
+    lineIsActive() {
+      return appState.isLine() && appState.lineTabIndex == this.index;
+    }
+
     createAndAddMarker(lat, lon, kml=false) {
-        if ( !appState.isLine() || appState.lineTabIndex != this.index) { 
+        if ( !this.lineIsActive() ) { 
             return 
         } else if (this.currentMarker.getLatLon().length == 2) {
             this.lastMarker = this.currentMarker;
@@ -139,7 +143,6 @@ export class IgnitionLine extends IgnitionLineUI {
     lastLineMarker() {
         return this.lineMarkers.slice(-1)[0];
     }
-
 
     updateMapLayer() {
       let latLons = this.lineMarkers.map(marker => 

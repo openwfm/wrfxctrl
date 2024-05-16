@@ -19,6 +19,10 @@ export class IgnitionLineTabs extends PolygonTabs {
         }
     }
 
+    // uniqueId() {
+    //   return 'ignitionLine';
+    // }
+
     updateAppIndex(index) {
         appState.lineTabIndex = index;
     }

@@ -3,6 +3,7 @@ export const appState = (function makeAppState() {
         constructor() {
             this.ignitionType = this.ignitionPerimeter();
             this.lineTabIndex = 0;
+            this.perimeterTabIndex = 0;
             this.subscribers = [];
             this.igniteSubscribers = [];
             this.simulationStartAndStartTimes = null;

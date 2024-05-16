@@ -33,12 +33,6 @@
      
     <form id="simulation_form" class="ui form" method="POST">
         
-      <!-- <h2>Step 1: Short description</h2>
-      <div class="field">
-        <label>Description</label>
-        <input name="description" type="text" id="experiment-description" placeholder="Web initiated run ...">
-        <span id="description-warning" class="not-valid-warning">Please enter a description.</span>
-      </div> -->
       <simulation-description></simulation-description>
 
       <h2 class="ui header">Step 2: Ignition location and time</h2>
@@ -50,64 +44,12 @@
       <ignition-type-selector></ignition-type-selector>
       <simulation-start-and-end-times></simulation-start-and-end-times>
          
-      <!-- <h3>Ignition Markers</h3>
-      <div id="markers"></div> -->
-
-      <!-- <h3>Ignition Perimeters</h3>
-      <div id="perimeter-markers"></div> -->
-      <ignition-perimeter></ignition-perimeter>
+      <ignition-perimeter-tabs></ignition-perimeter-tabs>
       <ignition-line-tabs></ignition-line-tabs>
       <ignition-points></ignition-points>
       <domain-center></domain-center>
       <validation-errors></validation-errors>
       <upload-kml></upload-kml>
-
-<!--       <div class="marker-buttons">
-        <div id="additional-buffer" class="marker-button"><span>+</span></div>
-        <div id="remove-buffer" class="marker-button"><span>-</span></div>
-        <div id="buffer-type-field" class="field">
-          <label>Buffer Type</label>
-          <select name="buffer_type" id="buffer-type">
-            <option value="buffer-area">Buffer Area</option>
-            <option value="buffer-line">Buffer Line</option>
-          </select>
-        </div>
-        <div class="field" style="display: inline-block;">
-          <label>Enable Buffer Editing</label>
-          <input type="checkbox" id="add-buffer-line" value="add-buffer-line">
-        </div>
-      </div>
-      <div id="buffer-markers"></div>
-  -->           
-      <!-- <h2>Step 3: Ignition time and forecast length</h2>
-      <p>The simulation will start at least 30 mins before the ignition time.  The maximum forecast length is 48 hrs.</p>
-      <div id="ignition-times-count-field" class="field">
-        <label>Single or Multiple Ignition Times</label>
-        <select name="ignition_times_count" id="ignition-times-count" style="width: 200px; margin: auto">
-          <option value="single">Single Ignition Time</option>
-          <option value="multiple">Multiple Ignition Times</option>
-        </select>
-      </div>
-      <div id="ignition-times">
-        <div class="ui two column grid" style="height:50px">
-          <div class="column ignition-times-labels">
-            <span style="margin-left: 50px">Ignition time [UTC]</span>
-          </div>
-          <div class="column ignition-times-labels">
-            <span style="margin-left: 50px">Forecast length [hours]</span>
-          </div>
-        </div>
-      </div>
-      <div class="two fields" id="ignition-perimeter-time">
-        <div class="field" style="width: 375.2px; margin-left: 7px">
-          <label style="margin-left: -150px">Time reached perimeter</label>
-          <div class="ui input left icon">
-            <i class="calendar icon"></i>
-            <input name="ignition_time_perimeter" id="ign-time-perimeter" type="text" placeholder="YYYY-MM-DD_HH:MM:SS">
-          </div>
-          <span id="ignition-time-warning-perimeter" class="not-valid-warning">The ignition time must be between 1/1/1979 and now in the format YYYY-MM-DD_HH:MM:SS</span>
-        </div>
-      </div> -->
         <h2>Step 3: Simulation profile</h2>
         
         <div class="ui two column grid">
@@ -143,11 +85,6 @@
         <br />
         
         <ignition-button></ignition-button>
-        <!-- <div class="column">
-          <button class="ui massive negative button" style="margin-bottom: 20px;" type="submit">
-            <i class="fire icon"></i>Ignite
-          </button>
-        </div> -->
       </form>
       <a href="{{ urls['welcome'] }}" class="ui right floated blue button">Home</a>
       
@@ -165,17 +102,15 @@
 <script src="../static/ignitionTime.js" type="module"></script>
 <script src="../static/js/components/simulationDescription/simulationDescription.js" type="module"></script>
 <script src="../static/js/components/ignitionTypeSelector/ignitionTypeSelector.js" type="module"></script>
-<script src="../static/js/components/ignitionPerimeter/ignitionPerimeter.js" type="module"></script>
 <script src="../static/js/components/simulationStartAndEndTimes/simulationStartAndEndTimesUI/simulationStartAndEndTimesUI.js" type="module"></script>
-<script src="../static/js/components/polygonTabs/polygonTabs.js" type="module"></script>
-<!-- <script src="../static/js/components/ignitionLine/ignitionLine.js" type="module"></script> -->
-<script src="../static/js/components/ignitionLine/ignitionLineTabs.js" type="module"></script>
 <script src="../static/js/components/ignitionPoints/ignitionPoints.js" type="module"></script>
+<script src="../static/js/components/polygonTabs/polygonTabs.js" type="module"></script>
+<script src="../static/js/components/ignitionLine/ignitionLineTabs.js" type="module"></script>
+<script src="../static/js/components/ignitionPerimeter/ignitionPerimeterTabs.js" type="module"></script>
 <script src="../static/js/components/domainCenter/domainCenter.js" type="module"></script>
 <script src="../static/js/components/validationErrors/validationErrors.js" type="module"></script>
 <script src="../static/js/components/ignitionButton/ignitionButton.js" type="module"></script>
 <script src="../static/js/components/uploadKml/uploadKml.js" type="module"></script>
-<!-- <script src="{{url_for('static', filename='L.Control.MousePosition.js')}}"></script> -->
 <script src="{{url_for('static', filename='build.js')}}"></script>
 
 </body>

@@ -12,7 +12,8 @@ export class IgnitionLineUI extends AppStateSubscriber {
             startEndCheckboxUI: this.querySelector('#start-end-checkbox'),
             ignitionTimesUI: this.querySelector('#ignition-times'),
             ignitionStartUI: this.querySelector('#start-ignition-input'),
-            ignitionEndUI: this.querySelector('#end-ignition-input')
+            ignitionEndUI: this.querySelector('#end-ignition-input'),
+            kmlButtonContainer: this.querySelector('#kml-button-container'),
         };
         this.startTimeId = '#start-ignition-input';
         this.endTimeId = '#end-ignition-input';

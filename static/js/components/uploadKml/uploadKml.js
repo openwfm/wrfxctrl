@@ -3,9 +3,10 @@ import { uploadKmlHTML } from './uploadKmlHTML.js';
 import { fetchPerimeterKML, fetchLineKML } from '../../services/services.js';
 import { appState } from '../../appState.js';
 
-export class UploadKml extends AppStateSubscriber {
-    constructor() {
-        super();
+export class UploadKml extends HTMLElement {
+    constructor(context) {
+      super();
+        this.context = context;
         this.innerHTML = uploadKmlHTML;
         this.uiElements = {
             kmlButton: this.querySelector('#upload-kml-button'),
@@ -14,7 +15,6 @@ export class UploadKml extends AppStateSubscriber {
     }
 
     connectedCallback() {
-        super.connectedCallback();
       this.setupButton();
     }
 
@@ -39,7 +39,8 @@ export class UploadKml extends AppStateSubscriber {
       } else if ( appState.isLine() ) {
         kmlPoints = await fetchLineKML(formData);
       }
-      appState.processKml(kmlPoints);
+      this.context.addKmlPoints(kmlPoints);
+      // appState.processKml(kmlPoints);
       // console.log("kmlPoints: ", kmlBoundaryPoints);
       document.body.classList.remove('wait');
     }

@@ -4,6 +4,7 @@ import { buildMap } from '../../buildMap.js';
 import { IgnitionLineUI } from './ignitionLineUI/ignitionLineUI.js';
 import { IgnitionTime } from '../../../ignitionTime.js';
 import { validateIgnitionTimes, validateIgnitionMarkers, jsonLatLons, jsonIgnitionTimesAndDurations} from '../validationUtils.js';
+import { UploadKml } from '../uploadKml/uploadKml.js';
 
 export class IgnitionLine extends IgnitionLineUI {
     constructor(index) {
@@ -17,6 +18,11 @@ export class IgnitionLine extends IgnitionLineUI {
 
     connectedCallback() {
         super.connectedCallback();
+
+        const { kmlButtonContainer } = this.uiElements;
+        const kmlButton = new UploadKml(this);
+        kmlButtonContainer.appendChild(kmlButton);
+
         this.createLineMarker();
         document.addEventListener("keydown", (event) => {
           if (this.lineIsActive() && event.key == "Backspace") {
@@ -26,12 +32,11 @@ export class IgnitionLine extends IgnitionLineUI {
         });
     }
   
-    addKmlPoints() {
+    addKmlPoints(kmlPoints) {
         if ( !appState.isLine() ) {
           return;
         }
         this.removeAllMarkers();
-        const { kmlPoints } = appState;
         if ( kmlPoints.length == 0 ) {
           return;
         } 
@@ -83,8 +88,6 @@ export class IgnitionLine extends IgnitionLineUI {
         markerDiv.append(marker);
         markerDiv.append(ignitionTime);
         ignitionLineMarkersListUI.append(markerDiv);
-        // ignitionLineMarkersListUI.append(marker);
-        // ignitionLineMarkersListUI.append(ignitionTime);
       }
 
       if (this.evenSplitCheck()) {

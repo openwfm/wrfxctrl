@@ -9,6 +9,7 @@ export class IgnitionPerimeterUI extends AppStateSubscriber {
         this.uiElements = {
             perimeterComponentUI: this.querySelector('#ignition-perimeter-component'),
             perimeterMarkersListUI: this.querySelector('#perimeter-markers'),
+            kmlButtonContainer: this.querySelector('#kml-button-container'),
         };
     }
 

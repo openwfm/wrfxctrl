@@ -26,5 +26,6 @@ export const ignitionLineHTML = `
           </div>
         </div>
         <div id="ignition-line-markers" class="ignition-markers"></div> 
+        <div id="kml-button-container"></div>
     </div>
 `;

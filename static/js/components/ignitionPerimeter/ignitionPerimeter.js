@@ -3,6 +3,7 @@ import { IgnitionPerimeterUI } from './ignitionPerimiterUI/ignitionPerimeterUI.j
 import { IgnitionMarker } from '../ignitionMarker.js';
 import { buildMap } from '../../buildMap.js';
 import { validateIgnitionMarkers, jsonLatLons } from '../validationUtils.js';
+import { UploadKml } from '../uploadKml/uploadKml.js';
 
 export class IgnitionPerimeter extends IgnitionPerimeterUI {
     constructor(index) {
@@ -17,6 +18,11 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
 
     connectedCallback() {
         super.connectedCallback();
+
+        const { kmlButtonContainer } = this.uiElements;
+        const kmlButton = new UploadKml(this);
+        kmlButtonContainer.appendChild(kmlButton);
+
         this.createPerimeterMarker();
         document.addEventListener("keydown", (event) => {
           if (this.perimeterIsActive() && event.key == "Backspace") {
@@ -30,12 +36,11 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
       return appState.isPerimeter() && appState.perimeterTabIndex == this.index;
     }
 
-    addKmlPoints() {
+    addKmlPoints(kmlPoints) {
       if ( !appState.isPerimeter() ) {
         return;
       }
       this.removeAllMarkers();
-      const { kmlPoints } = appState;
       for (let kmlPoint of kmlPoints) {
         let { lat, lon } = kmlPoint;
         this.createAndAddMarker(lat, lon, true);

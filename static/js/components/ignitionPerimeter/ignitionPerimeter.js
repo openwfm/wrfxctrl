@@ -86,7 +86,10 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
       for (let marker of this.perimeterMarkers) {
         marker.updateIndex(i);
         i++;
-        perimeterMarkersListUI.append(marker);
+        let markerDiv = document.createElement('div');
+        markerDiv.classList.add('markerDiv');
+        markerDiv.append(marker);
+        perimeterMarkersListUI.append(markerDiv);
       }
     }
 

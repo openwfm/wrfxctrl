@@ -14,6 +14,7 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         this.currentMarker = null;
         this.lastMarker = null;
         this.index = index;
+        this.color = 'orange';
     }
 
     connectedCallback() {
@@ -24,16 +25,19 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         kmlButtonContainer.appendChild(kmlButton);
 
         this.createPerimeterMarker();
-        document.addEventListener("keydown", (event) => {
-          if (this.perimeterIsActive() && event.key == "Backspace") {
-            let index = this.perimeterMarkers.indexOf(this.currentMarker);
-            this.removeMarker(index);
-          }
-        });
     }
 
-    perimeterIsActive() {
-      return appState.isPerimeter() && appState.perimeterTabIndex == this.index;
+    removeLastMarker() {
+        let index = this.perimeterMarkers.indexOf(this.currentMarker);
+        this.removeMarker(index);
+    }
+
+    activePolygonColor() {
+      console.log('perimeter activePolygonColor', this.index);
+    }
+
+    passivePolygonColor() {
+      console.log('perimeter passivePolygonColor', this.index);
     }
 
     addKmlPoints(kmlPoints) {
@@ -43,7 +47,7 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
       this.removeAllMarkers();
       for (let kmlPoint of kmlPoints) {
         let { lat, lon } = kmlPoint;
-        this.createAndAddMarker(lat, lon, true);
+        this.addMarker(lat, lon, true);
       }
       this.addPolygon();
       let centroid = this.perimeterPolygon.getBounds().getCenter();
@@ -60,10 +64,8 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         this.perimeterMarkers.splice(this.currentMarker.index, 0, newMarkerField);
     }
 
-    createAndAddMarker(lat, lon, kml=false) {
-        if (!this.perimeterIsActive()) { 
-            return 
-        } else if (this.currentMarker.getLatLon().length == 2) {
+    addMarker(lat, lon, kml=false) {
+        if (this.currentMarker.getLatLon().length == 2) {
             this.lastMarker = this.currentMarker;
             this.lastMarker.setMarkerOriginalColor();
             this.createPerimeterMarker();

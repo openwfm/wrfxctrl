@@ -36,6 +36,13 @@ export class PolygonTabs extends AppStateSubscriber {
       }
       this.createNewTab();
       this.ignitionTypeChange();
+
+      document.addEventListener("keydown", (event) => {
+          if (this.shouldShow() && event.key == "Backspace") {
+            const { body } = this.currentTab;
+            body.removeLastMarker();
+          }
+      });
     }
 
     ignitionTypeChange() {
@@ -91,15 +98,26 @@ export class PolygonTabs extends AppStateSubscriber {
       this.tabs.push(newTab);
     }
 
+  createAndAddMarker(lat, lon) {
+    if (!this.shouldShow()) {
+      return;
+    }
+    let { body } = this.currentTab;
+    body.addMarker(lat, lon);
+  }
+
   updateCurrentTab(newTab) {
-    let { header, body, index } = newTab;
-    this.updateAppIndex(index);
+    if (this.currentTab == newTab) {
+      return;
+    }
     if (this.currentTab) {
+      this.currentTab.body.passivePolygonColor();
       this.hideComponent(this.currentTab.body);
       this.currentTab.header.classList.remove("active");
     }
-    this.showComponent(body);
-    header.classList.add("active");
+    this.showComponent(newTab.body);
+    newTab.header.classList.add("active");
+    newTab.body.activePolygonColor();
     this.currentTab = newTab;
   }
 

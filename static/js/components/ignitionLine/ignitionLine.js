@@ -24,12 +24,19 @@ export class IgnitionLine extends IgnitionLineUI {
         kmlButtonContainer.appendChild(kmlButton);
 
         this.createLineMarker();
-        document.addEventListener("keydown", (event) => {
-          if (this.lineIsActive() && event.key == "Backspace") {
-            let index = this.lineMarkers.indexOf(this.currentMarker);
-            this.removeMarker(index);
-          }
-        });
+    }
+
+    activePolygonColor() {
+      console.log('Line activePolygonColor', this.index);
+    }
+
+    passivePolygonColor() {
+      console.log('Line passivePolygonColor', this.index);
+    }
+
+    removeLastMarker() {
+        let index = this.lineMarkers.indexOf(this.currentMarker);
+        this.removeMarker(index);
     }
   
     addKmlPoints(kmlPoints) {
@@ -42,7 +49,7 @@ export class IgnitionLine extends IgnitionLineUI {
         } 
         for (let kmlPoint of kmlPoints) {
           let { lat, lon } = kmlPoint;
-          this.createAndAddMarker(lat, lon, true);
+          this.addMarker(lat, lon, true);
         }
         this.updateMapLayer();
         let centroid = this.line.getBounds().getCenter();
@@ -114,14 +121,9 @@ export class IgnitionLine extends IgnitionLineUI {
         return this.lineMarkers.slice(-1)[0];
     }
 
-    lineIsActive() {
-      return appState.isLine() && appState.lineTabIndex == this.index;
-    }
 
-    createAndAddMarker(lat, lon, kml=false) {
-        if ( !this.lineIsActive() ) { 
-            return 
-        } else if (this.currentMarker.getLatLon().length == 2) {
+    addMarker(lat, lon, kml=false) {
+        if (this.currentMarker.getLatLon().length == 2) {
             this.lastMarker = this.currentMarker;
             this.lastMarker.setMarkerOriginalColor();
             this.createLineMarker();

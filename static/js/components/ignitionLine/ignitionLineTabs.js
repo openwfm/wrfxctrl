@@ -10,23 +10,6 @@ export class IgnitionLineTabs extends PolygonTabs {
         polygonTitle.innerText = 'Ignition Line';
     }
 
-    ignitionTypeChange() {
-        let { polygonTab } = this.tabUi;
-        if (appState.isLine()) {
-            this.showComponent(polygonTab);
-        } else {
-            this.hideComponent(polygonTab);
-        }
-    }
-
-    // uniqueId() {
-    //   return 'ignitionLine';
-    // }
-
-    updateAppIndex(index) {
-        appState.lineTabIndex = index;
-    }
-
     shouldShow() {
       return appState.isLine();
     }

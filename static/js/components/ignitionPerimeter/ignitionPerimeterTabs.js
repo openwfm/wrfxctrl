@@ -9,14 +9,6 @@ export class IgnitionPerimeterTabs extends PolygonTabs {
         polygonTitle.innerText = 'Ignition Perimeter';
     }
 
-    // uniqueId() {
-    //   return 'ignition-perimeter-tabs';
-    // }
-
-    updateAppIndex(index) {
-        appState.perimeterTabIndex = index;
-    }
-
     shouldShow() {
       return appState.isPerimeter();
     }

@@ -40,8 +40,6 @@ export class UploadKml extends HTMLElement {
         kmlPoints = await fetchLineKML(formData);
       }
       this.context.addKmlPoints(kmlPoints);
-      // appState.processKml(kmlPoints);
-      // console.log("kmlPoints: ", kmlBoundaryPoints);
       document.body.classList.remove('wait');
     }
 }

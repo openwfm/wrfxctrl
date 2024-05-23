@@ -47,9 +47,16 @@ export class PolygonTabs extends AppStateSubscriber {
 
     ignitionTypeChange() {
         let { polygonTab } = this.tabUi;
+
         if (this.shouldShow()) {
+            if (this.currentTab) {
+              this.currentTab.body.activePolygonColor();
+            }
             this.showComponent(polygonTab);
         } else {
+            if (this.currentTab) {
+              this.currentTab.body.passivePolygonColor();
+            }
             this.hideComponent(polygonTab);
         }
     }

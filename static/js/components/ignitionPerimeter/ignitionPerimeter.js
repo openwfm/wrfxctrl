@@ -5,6 +5,9 @@ import { buildMap } from '../../buildMap.js';
 import { validateIgnitionMarkers, jsonLatLons } from '../validationUtils.js';
 import { UploadKml } from '../uploadKml/uploadKml.js';
 
+const activePolygonColor = 'orange';
+const passivePolygonColor =  '#fac873';
+
 export class IgnitionPerimeter extends IgnitionPerimeterUI {
     constructor(index) {
         super();
@@ -14,7 +17,7 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         this.currentMarker = null;
         this.lastMarker = null;
         this.index = index;
-        this.color = 'orange';
+        this.color = activePolygonColor;
     }
 
     connectedCallback() {
@@ -33,11 +36,13 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
     }
 
     activePolygonColor() {
-      console.log('perimeter activePolygonColor', this.index);
+      this.color = activePolygonColor;
+      this.updateMapLayer();
     }
 
     passivePolygonColor() {
-      console.log('perimeter passivePolygonColor', this.index);
+      this.color = passivePolygonColor;
+      this.updateMapLayer();
     }
 
     addKmlPoints(kmlPoints) {
@@ -59,7 +64,7 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         if ( this.currentMarker ) {
             newFieldId = this.perimeterMarkers.indexOf(this.currentMarker) + 1;
         }
-        const newMarkerField = new IgnitionMarker(newFieldId, this, "orange");
+        const newMarkerField = new IgnitionMarker(newFieldId, this, activePolygonColor); 
         this.currentMarker = newMarkerField;
         this.perimeterMarkers.splice(this.currentMarker.index, 0, newMarkerField);
     }
@@ -142,7 +147,7 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
       if (this.perimeterPolygon) {
         buildMap.map.removeLayer(this.perimeterPolygon);
       }
-      this.perimeterPolygon = buildMap.drawArea(this.markerLatLons(), 'orange');
+      this.perimeterPolygon = buildMap.drawArea(this.markerLatLons(), this.color);
     }
 
     addPerimeterLine() {
@@ -153,7 +158,7 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
       if (this.perimeterLine) {
         buildMap.map.removeLayer(this.perimeterLine);
       }
-      this.perimeterLine = buildMap.drawLine(this.markerLatLons(), 'orange');
+      this.perimeterLine = buildMap.drawLine(this.markerLatLons(), this.color);
     }
 
     markerUpdate() {

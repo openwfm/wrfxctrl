@@ -6,6 +6,10 @@ import { IgnitionTime } from '../../../ignitionTime.js';
 import { validateIgnitionTimes, validateIgnitionMarkers, jsonLatLons, jsonIgnitionTimesAndDurations} from '../validationUtils.js';
 import { UploadKml } from '../uploadKml/uploadKml.js';
 
+const activePolygonColor = 'red';
+// const passivePolygonColor = '#ff6e6e';
+const passivePolygonColor = '#ff7a7a';
+
 export class IgnitionLine extends IgnitionLineUI {
     constructor(index) {
         super();
@@ -14,6 +18,7 @@ export class IgnitionLine extends IgnitionLineUI {
         this.currentMarker = null;
         this.lastMarker = null;
         this.index = index;
+        this.color = activePolygonColor;
     }
 
     connectedCallback() {
@@ -27,11 +32,13 @@ export class IgnitionLine extends IgnitionLineUI {
     }
 
     activePolygonColor() {
-      console.log('Line activePolygonColor', this.index);
+      this.color = activePolygonColor;
+      this.updateMapLayer();
     }
 
     passivePolygonColor() {
-      console.log('Line passivePolygonColor', this.index);
+      this.color = passivePolygonColor;
+      this.updateMapLayer();
     }
 
     removeLastMarker() {
@@ -63,7 +70,7 @@ export class IgnitionLine extends IgnitionLineUI {
           newFieldId = this.lineMarkers.indexOf(this.currentMarker) + 1;
         }
 
-        const newMarkerField = new IgnitionMarker(newFieldId, this, "red");
+        const newMarkerField = new IgnitionMarker(newFieldId, this, activePolygonColor);
         this.currentMarker = newMarkerField;
         this.lineMarkers.splice(this.currentMarker.index, 0, newMarkerField);
         this.createIgnitionTime();
@@ -155,7 +162,7 @@ export class IgnitionLine extends IgnitionLineUI {
       if (this.line) {
         buildMap.map.removeLayer(this.line);
       }
-      this.line = buildMap.drawLine(latLons);
+      this.line = buildMap.drawLine(latLons, this.color);
     }
     
     markerUpdate() {

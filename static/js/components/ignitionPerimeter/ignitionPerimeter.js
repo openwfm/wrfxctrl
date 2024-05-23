@@ -9,7 +9,7 @@ const activePolygonColor = 'orange';
 const passivePolygonColor =  '#fac873';
 
 export class IgnitionPerimeter extends IgnitionPerimeterUI {
-    constructor(index) {
+    constructor(index, context) {
         super();
         this.perimeterMarkers = [];
         this.perimeterPolygon = null;
@@ -18,6 +18,7 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         this.lastMarker = null;
         this.index = index;
         this.color = activePolygonColor;
+        this.context = context;
     }
 
     connectedCallback() {
@@ -148,6 +149,12 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         buildMap.map.removeLayer(this.perimeterPolygon);
       }
       this.perimeterPolygon = buildMap.drawArea(this.markerLatLons(), this.color);
+      if (this.perimeterPolygon) {
+        this.perimeterPolygon.on('click', () => {
+          console.log('polygon clicked');
+          this.context.updateTabIndex(this.index);
+        });
+      }
     }
 
     addPerimeterLine() {
@@ -159,6 +166,11 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         buildMap.map.removeLayer(this.perimeterLine);
       }
       this.perimeterLine = buildMap.drawLine(this.markerLatLons(), this.color);
+      if (this.perimeterLine) {
+        this.perimeterLine.onclick = () => {
+          this.context.updateTabIndex(this.index);
+        }
+      }
     }
 
     markerUpdate() {

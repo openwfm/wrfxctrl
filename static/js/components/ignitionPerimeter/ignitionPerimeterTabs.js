@@ -14,7 +14,7 @@ export class IgnitionPerimeterTabs extends PolygonTabs {
     }
 
     createTabBody(index) {
-      return new IgnitionPerimeter(index);
+      return new IgnitionPerimeter(index, this);
     }
 }
 

@@ -113,6 +113,14 @@ export class PolygonTabs extends AppStateSubscriber {
     body.addMarker(lat, lon);
   }
 
+  updateTabIndex(index) {
+    if (!this.shouldShow()) {
+      return;
+    }
+    let tab = this.tabs[index];
+    this.updateCurrentTab(tab);
+  }
+
   updateCurrentTab(newTab) {
     if (this.currentTab == newTab) {
       return;

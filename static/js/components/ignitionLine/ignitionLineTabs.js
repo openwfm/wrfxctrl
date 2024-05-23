@@ -15,7 +15,7 @@ export class IgnitionLineTabs extends PolygonTabs {
     }
 
     createTabBody(index) {
-		return new IgnitionLine(index);
+      return new IgnitionLine(index, this);
     }
 }
 

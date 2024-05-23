@@ -11,7 +11,7 @@ const activePolygonColor = 'red';
 const passivePolygonColor = '#ff7a7a';
 
 export class IgnitionLine extends IgnitionLineUI {
-    constructor(index) {
+    constructor(index, context) {
         super();
         this.lineMarkers = [];
         this.ignitionTimes = [];
@@ -19,6 +19,7 @@ export class IgnitionLine extends IgnitionLineUI {
         this.lastMarker = null;
         this.index = index;
         this.color = activePolygonColor;
+        this.context = context;
     }
 
     connectedCallback() {
@@ -163,6 +164,11 @@ export class IgnitionLine extends IgnitionLineUI {
         buildMap.map.removeLayer(this.line);
       }
       this.line = buildMap.drawLine(latLons, this.color);
+      if (this.line) {
+        this.line.onclick = () => {
+          this.context.updateTabIndex(this.index);
+        }
+      }
     }
     
     markerUpdate() {

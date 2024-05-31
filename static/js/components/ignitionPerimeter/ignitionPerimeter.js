@@ -4,6 +4,7 @@ import { IgnitionMarker } from '../ignitionMarker.js';
 import { buildMap } from '../../buildMap.js';
 import { validateIgnitionMarkers, jsonLatLons } from '../validationUtils.js';
 import { UploadKml } from '../uploadKml/uploadKml.js';
+import { debounce } from '../../utils.js';
 
 const activePolygonColor = 'orange';
 const passivePolygonColor =  '#fac873';
@@ -150,9 +151,14 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
       }
       this.perimeterPolygon = buildMap.drawArea(this.markerLatLons(), this.color);
       if (this.perimeterPolygon) {
-        this.perimeterPolygon.on('click', () => {
-          console.log('polygon clicked');
+        const onClickCallback = () => {
           this.context.updateTabIndex(this.index);
+        }
+        const debouncedCallback = debounce(onClickCallback);
+
+        this.perimeterPolygon.on('click', () => {
+          debouncedCallback();
+          // this.context.updateTabIndex(this.index);
         });
       }
     }
@@ -167,8 +173,14 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
       }
       this.perimeterLine = buildMap.drawLine(this.markerLatLons(), this.color);
       if (this.perimeterLine) {
-        this.perimeterLine.onclick = () => {
+        const onClickCallback = () => {
           this.context.updateTabIndex(this.index);
+        }
+        const debouncedCallback = debounce(onClickCallback);
+
+        this.perimeterLine.onclick = () => {
+          debouncedCallback();
+          // this.context.updateTabIndex(this.index);
         }
       }
     }

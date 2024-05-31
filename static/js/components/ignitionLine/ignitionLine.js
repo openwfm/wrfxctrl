@@ -164,11 +164,6 @@ export class IgnitionLine extends IgnitionLineUI {
         buildMap.map.removeLayer(this.line);
       }
       this.line = buildMap.drawLine(latLons, this.color);
-      if (this.line) {
-        this.line.onclick = () => {
-          this.context.updateTabIndex(this.index);
-        }
-      }
     }
     
     markerUpdate() {

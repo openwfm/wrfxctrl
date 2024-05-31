@@ -158,7 +158,6 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
 
         this.perimeterPolygon.on('click', () => {
           debouncedCallback();
-          // this.context.updateTabIndex(this.index);
         });
       }
     }
@@ -172,17 +171,6 @@ export class IgnitionPerimeter extends IgnitionPerimeterUI {
         buildMap.map.removeLayer(this.perimeterLine);
       }
       this.perimeterLine = buildMap.drawLine(this.markerLatLons(), this.color);
-      if (this.perimeterLine) {
-        const onClickCallback = () => {
-          this.context.updateTabIndex(this.index);
-        }
-        const debouncedCallback = debounce(onClickCallback);
-
-        this.perimeterLine.onclick = () => {
-          debouncedCallback();
-          // this.context.updateTabIndex(this.index);
-        }
-      }
     }
 
     markerUpdate() {

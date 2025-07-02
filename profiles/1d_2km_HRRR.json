@@ -1,5 +1,5 @@
 {
-  "grid_code": "2d-333m-HRRR",
+  "grid_code": "1d-2km-HRRR",
   "grib_source": "HRRR",
   "use_wgrib2": true,
   "wps_namelist_path": "etc/nlists/default.wps",
@@ -13,48 +13,32 @@
   "end_utc": "T+600",
   "domains" : {
     "1" : { 
-      "cell_size" : [1000, 1000],
-      "domain_size" : [73, 73],
+      "cell_size" : [2000, 2000],
+      "domain_size" : [51, 51],
       "center_latlon" : [39.894264, -103.903222],
       "truelats" : [39, 40.8],
       "stand_lon" : -103.9,
-      "time_step" : 5,
-      "history_interval" : 30,
-      "geog_res" : "30s",
-      "subgrid_ratio" : [0, 0]
-    },
-    "2" : {
-      "parent_id" : 1,
-      "parent_cell_size_ratio" : 3,
-      "parent_time_step_ratio" : 3,
-      "geog_res" : ".3s",
-      "subgrid_ratio" : [10, 10],
-      "parent_start" : [25, 25],
-      "parent_end" : [48, 48],
-      "history_interval" : 15
+      "time_step" : 10,
+      "history_interval" : 15,
+      "geog_res" : "0.3s",
+      "subgrid_ratio" : [50, 50]
     }
   },
-  "use_tign_ignition": true,
   "ignitions" : {
-     "2" : [ {
-      "start_delay_s" : 600,
+     "1" : [ {
+      "time_utc" : "T+10",
       "duration_s" : 240,
       "latlon" : [39.894264, -103.903222]
      } ]
   },
   "postproc" : {
       "1" : [ 
-        "T2", "PSFC", "WINDSPD", "WINDVEC", 
-        "PM25_INT", "PM25_SFC_D", "PLUME_HEIGHT" 
-      ],
-      "2" : [ 
         "T2", "PSFC", "WINDSPD", "WINDVEC",  
         "NFUEL_CAT", "1HR_FM", "10HR_FM", "100HR_FM", 
         "PM25_INT", "PM25_SFC_D", "PLUME_HEIGHT",
         "FIRE_AREA", "FGRNHFX"
       ],
       "shuttle" : "incremental",
-      "description" : "Two domains HRRR 333m"
+      "description" : "Single domain HRRR 2km"
   }
 }
-

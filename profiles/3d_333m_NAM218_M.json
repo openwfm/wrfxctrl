@@ -1,13 +1,13 @@
 {
-  "grid_code": "3d-333m-NAM218M",
+  "grid_code": "3d-333m-NAM218-M",
   "grib_source": "NAM218",
   "wps_namelist_path": "etc/nlists/default.wps",
   "wrf_namelist_path": "etc/nlists/default.input",
   "fire_namelist_path": "etc/nlists/default.fire",
   "emissions_namelist_path": "etc/nlists/default.fire_emissions",
-  "num_nodes": 7,
-  "ppn": 28,
-  "wall_time_hrs": 6,
+  "num_nodes": 4,
+  "ppn": 64,
+  "wall_time_hrs": 12,
   "start_utc": "T-30",
   "end_utc": "T+300",
   "domains" : {
@@ -38,8 +38,8 @@
       "parent_time_step_ratio" : 3,
       "geog_res" : ".3s",
       "subgrid_ratio" : [10, 10],
-      "parent_start" : [24, 24],
-      "parent_end" : [66, 66],
+      "parent_start" : [33, 33],
+      "parent_end" : [64, 64],
       "history_interval" : 15
     }
   },
@@ -51,9 +51,22 @@
      } ]
   },
   "postproc" : {
-      "1" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "SMOKE_INT", "PM25_INT","PLUME_HEIGHT", "SMOKETO10M", "PM25_SFC_D" ],
-      "2" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "SMOKE_INT", "PM25_INT","PLUME_HEIGHT", "SMOKETO10M", "PM25_SFC_D" ],
-      "3" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "FIRE_AREA", "FGRNHFX", "SMOKE_INT","PLUME_HEIGHT", "PM25_INT", "SMOKETO10M", "10HR_FM", "RH_FIRE", "PM25_SFC_D","FGRNHFX" ]
+    "1" : [ 
+      "T2", "PSFC", "WINDSPD", "WINDVEC", 
+      "PM25_INT", "PM25_SFC_D", "PLUME_HEIGHT" 
+    ],
+    "2" : [ 
+      "T2", "PSFC", "WINDSPD", "WINDVEC", 
+      "PM25_INT", "PM25_SFC_D", "PLUME_HEIGHT" 
+    ],
+    "3" : [ 
+      "T2", "PSFC", "WINDSPD", "WINDVEC",  
+      "NFUEL_CAT", "1HR_FM", "10HR_FM", "100HR_FM", 
+      "PM25_INT", "PM25_SFC_D", "PLUME_HEIGHT",
+      "FIRE_AREA", "FGRNHFX"
+    ],
+    "shuttle" : "incremental",
+    "description" : "Three domains NAM218 M 333m"
   }
 }
 

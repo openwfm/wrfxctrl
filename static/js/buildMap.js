@@ -28,8 +28,8 @@ export const buildMap = (function makeSimState() {
                 }
             // initialize map
             map = L.map('map', {
-                center: [39, -106],
-                zoom: 7,
+                center: [37.5, -119.5],
+                zoom: 5,
                 layers: [baseLayerDict['OSM']],
                 zoomControl: true,
                 minZoom: 3

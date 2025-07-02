@@ -1,7 +1,7 @@
 export const appState = (function makeAppState() {
     class appState {
         constructor() {
-            this.ignitionType = this.ignitionPerimeter();
+            this.ignitionType = this.domainCenter();
             this.subscribers = [];
             this.igniteSubscribers = [];
             this.simulationStartAndStartTimes = null;
@@ -52,7 +52,7 @@ export const appState = (function makeAppState() {
             }
         }
 
-        ignitionPerimeter() {
+        domainCenter() {
             return "0";
         }
         ignitionPoints() {
@@ -61,25 +61,26 @@ export const appState = (function makeAppState() {
         ignitionLine() {
             return "2";
         }
-        domainCenter() {
+        ignitionPerimeter() {
             return "3";
         }
 
-        isPerimeter() {
-            return this.ignitionType == this.ignitionPerimeter();
-        }
-
-        isLine() {
-            return this.ignitionType == this.ignitionLine();
+        isDomain() {
+            return this.ignitionType == this.domainCenter();
         }
 
         isPoints() {
             return this.ignitionType == this.ignitionPoints();
         }
 
-        isDomain() {
-            return this.ignitionType == this.domainCenter();
+        isLine() {
+            return this.ignitionType == this.ignitionLine();
         }
+
+        isPerimeter() {
+            return this.ignitionType == this.ignitionPerimeter();
+        }
+
     }
     return new appState();
 })();

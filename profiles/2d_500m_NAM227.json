@@ -1,6 +1,7 @@
 {
   "grid_code": "2d-500m-NAM227",
   "grib_source": "NAM227",
+  "use_wgrib2": true,
   "wps_namelist_path": "etc/nlists/default.wps",
   "wrf_namelist_path": "etc/nlists/default.input",
   "fire_namelist_path": "etc/nlists/default.fire",

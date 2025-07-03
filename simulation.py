@@ -282,6 +282,14 @@ def create_simulation(info, conf, cluster):
     # switch on sending results to visualization server
     cfg['postproc']['shuttle'] = 'incremental'
     cfg['postproc']['description'] = sim_descr
+    
+    # add fuel moisture if available
+    fmda_path = osp.join(
+        conf['wrfxpy_path'], 'wksp_fmda/CONUS',
+        start_utc.strftime('%Y%m/fmda-CONUS-%Y%m%d-%H.geo')
+    )
+    if osp.exists(fmda_path):
+        cfg['fmda_geogrid_path'] = fmda_path
 
     json.dump(cfg, open(json_path, 'w'), indent=4, separators=(',',': '))
 

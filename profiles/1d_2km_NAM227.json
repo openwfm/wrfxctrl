@@ -1,12 +1,13 @@
 {
   "grid_code": "1d-2km-NAM227",
   "grib_source": "NAM227",
+  "use_wgrib2": true,
   "wps_namelist_path": "etc/nlists/default.wps",
   "wrf_namelist_path": "etc/nlists/default.input",
   "fire_namelist_path": "etc/nlists/default.fire",
   "emissions_namelist_path": "etc/nlists/default.fire_emissions",
-  "num_nodes": 3,
-  "ppn": 28,
+  "num_nodes": 1,
+  "ppn": 64,
   "wall_time_hrs": 12,
   "start_utc": "T-30",
   "end_utc": "T+600",
@@ -31,7 +32,12 @@
      } ]
   },
   "postproc" : {
-      "1" : [ "T2", "PSFC", "WINDSPD", "WINDVEC", "FIRE_AREA", "FGRNHFX", "SMOKE_INT" ],
+      "1" : [ 
+        "T2", "PSFC", "WINDSPD", "WINDVEC",  
+        "NFUEL_CAT", "1HR_FM", "10HR_FM", "100HR_FM", 
+        "PM25_INT", "PM25_SFC_D", "PLUME_HEIGHT",
+        "FIRE_AREA", "FGRNHFX"
+      ],
       "shuttle" : "incremental",
       "description" : "Single domain NAM227 2km"
   }

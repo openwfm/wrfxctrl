@@ -5,7 +5,7 @@
   "wrf_namelist_path": "etc/nlists/default.input",
   "fire_namelist_path": "etc/nlists/default.fire",
   "emissions_namelist_path": "etc/nlists/default.fire_emissions",
-  "num_nodes": 16,
+  "num_nodes": 8,
   "ppn": 64,
   "wall_time_hrs": 24,
   "start_utc": "T-30",

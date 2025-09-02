@@ -1,0 +1,100 @@
+import { ignitionProfileHTML } from "./ignitionProfileHTML.js";
+
+export class IgnitionProfile extends HTMLElement {
+  constructor() {
+    super();
+    this.innerHTML = ignitionProfileHTML;
+    this.uiElements = {
+      domainDropdown: this.querySelector("#domain-dropdown"),
+      profileInput: this.querySelector("#profile-menu"),
+    };
+    this.profiles = [];
+    this.domains = new Set();
+  }
+
+  async connectedCallback() {
+    const { domainDropdown } = this.uiElements;
+    this.profiles = await this.loadProfiles();
+    this.populateDomains();
+    domainDropdown.onchange = () => {
+      this.filterProfiles(domainDropdown.value);
+    };
+    if (this.domains.size > 0) {
+      let domain = [...this.domains][0];
+      this.filterProfiles(domain);
+    }
+    $(".ui.menu").on("click", ".item", function() {
+      $(this).addClass("active").siblings(".item").removeClass("active");
+    });
+  }
+
+  async loadProfiles() {
+    let response_json = {};
+    const request_url = "/profiles";
+
+    try {
+      const response = await fetch(request_url);
+      if (response.status !== 200) {
+        throw new Error(response_json.message);
+      }
+      response_json = await response.json();
+      return response_json.profiles;
+    } catch (error) {
+      console.error("Error:", error);
+      return {};
+    }
+  }
+  populateDomains() {
+    const { domainDropdown } = this.uiElements;
+    domainDropdown.innerHTML = "";
+    this.domains.clear();
+    for (let profile of this.profiles) {
+      let domain = profile.title.split(",", 1)[0];
+      if (!this.domains.has(domain)) {
+        this.domains.add(domain);
+
+        let option = document.createElement("option");
+        option.value = domain;
+        option.innerText = domain;
+        domainDropdown.appendChild(option);
+      }
+    }
+  }
+
+  filterProfiles(domain) {
+    let profiles = this.profiles.filter((profile) => {
+      return profile.title.includes(domain);
+    });
+    this.populateProfiles(profiles);
+  }
+
+  populateProfiles(profiles) {
+    const { profileInput } = this.uiElements;
+    profileInput.innerHTML = "";
+    for (let profile of profiles) {
+      let profileElement = this.buildProfile(profile);
+      profileInput.appendChild(profileElement);
+    }
+  }
+
+  buildProfile(profile) {
+    let profileElement = document.createElement("a");
+
+    profileElement.className = "item";
+    profileElement.data_value = profile.identifier;
+    profileElement.onmouseover = () => {
+      this.setProfileText(profile.info);
+    };
+    profileElement.onclick = () => {
+      $("#profile").val(profile.identifier);
+    };
+    profileElement.innerHTML = profile.title;
+    return profileElement;
+  }
+
+  setProfileText(profileDescription) {
+    $("#profile-info-text").text(profileDescription);
+  }
+}
+
+window.customElements.define("ignition-profile", IgnitionProfile);

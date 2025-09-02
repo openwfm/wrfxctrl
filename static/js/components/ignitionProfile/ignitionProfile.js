@@ -1,12 +1,14 @@
 import { ignitionProfileHTML } from "./ignitionProfileHTML.js";
+import { AppStateSubscriber } from "../appStateSubscriber.js";
 
-export class IgnitionProfile extends HTMLElement {
+export class IgnitionProfile extends AppStateSubscriber {
   constructor() {
     super();
     this.innerHTML = ignitionProfileHTML;
     this.uiElements = {
       domainDropdown: this.querySelector("#domain-dropdown"),
-      profileInput: this.querySelector("#profile-menu"),
+      profileMenu: this.querySelector("#profile-menu"),
+      profileInput: this.querySelector("#profile"),
     };
     this.profiles = [];
     this.domains = new Set();
@@ -26,6 +28,22 @@ export class IgnitionProfile extends HTMLElement {
     $(".ui.menu").on("click", ".item", function() {
       $(this).addClass("active").siblings(".item").removeClass("active");
     });
+  }
+
+  validateForIgnition() {
+    const { profileInput } = this.uiElements;
+    let errorMessages = [];
+    if (profileInput.value == "") {
+      let errorMessage = "Please select a profile.";
+      errorMessages.push(errorMessage);
+    }
+    return { header: "Simulation Profile", messages: errorMessages };
+  }
+
+  jsonProps() {
+    const { profileInput } = this.uiElements;
+    let profile = profileInput.value;
+    return { profile: profile };
   }
 
   async loadProfiles() {
@@ -69,15 +87,16 @@ export class IgnitionProfile extends HTMLElement {
   }
 
   populateProfiles(profiles) {
-    const { profileInput } = this.uiElements;
-    profileInput.innerHTML = "";
+    const { profileMenu } = this.uiElements;
+    profileMenu.innerHTML = "";
     for (let profile of profiles) {
       let profileElement = this.buildProfile(profile);
-      profileInput.appendChild(profileElement);
+      profileMenu.appendChild(profileElement);
     }
   }
 
   buildProfile(profile) {
+    const { profileInput } = this.uiElements;
     let profileElement = document.createElement("a");
 
     profileElement.className = "item";
@@ -86,7 +105,7 @@ export class IgnitionProfile extends HTMLElement {
       this.setProfileText(profile.info);
     };
     profileElement.onclick = () => {
-      $("#profile").val(profile.identifier);
+      profileInput.value = profile.identifier;
     };
     profileElement.innerHTML = profile.title;
     return profileElement;

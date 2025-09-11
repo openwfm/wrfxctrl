@@ -8,10 +8,10 @@
   */
 
 /** ===== Initialization block ===== */
-const MULTIPLE_IGNITION_TIMES = 'multiple';
-const IGNITION_TYPE_AREA = 'ignition-area';
-const IGNITION_TYPE_LINE = 'ignition-line';
-const IGNITION_TYPE_MULTIPLE = 'multiple-ignitions';
+const MULTIPLE_IGNITION_TIMES = "multiple";
+const IGNITION_TYPE_AREA = "ignition-area";
+const IGNITION_TYPE_LINE = "ignition-line";
+const IGNITION_TYPE_MULTIPLE = "multiple-ignitions";
 const SATELLITE_DATA_BATCH_SIZE = 50;
 const TIMEOUT_MS = 80;
 
@@ -61,31 +61,33 @@ var addingSatData = false;
 // }
 
 function set_profile_text(txt) {
-  $('#profile-info-text').text(txt);
+  $("#profile-info-text").text(txt);
 }
 
 // initialize Semantic elements
-$('#profile-dropdown').dropdown({on: 'hover'});
+$("#profile-dropdown").dropdown({ on: "hover" });
 // $('#ign-time-0-').datepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
 // $('#additional-marker').click(createIgnitionMarker);
 // $('#remove-marker').click(() => removeIgnitionMarker());
 // $('#ignition-type').change(updateUIToIgnitionType)
 // $('#ignition-times-count').change(updateTimesOfIgnition);
-$('#show-sat-data').prop('checked', false);
+$("#show-sat-data").prop("checked", false);
 // $('#add-buffer-line').prop('checked', false);
-$('#show-sat-data').click(showSatData);
+$("#show-sat-data").click(showSatData);
 // $('#ignition-type').dropdown();
 // $('#ignition-times-count').dropdown();
-$('#buffer-type').dropdown();
+$("#buffer-type").dropdown();
 // $(`#ign-time-perimeter`).datetimepicker({ value: moment().utc(), formatTime: 'h:mm a', formatDate: 'm.d.Y', step:15 });
 // createIgnitionMarker();
 // createPerimeterMarker();
 // updateUIToIgnitionType();
-$('.ui.menu').on('click', '.item', function() {
-  $(this).addClass('active').siblings('.item').removeClass('active');
+$(".ui.menu").on("click", ".item", function() {
+  $(this).addClass("active").siblings(".item").removeClass("active");
 });
 // Fill in a 'unique description'
-$('#experiment-description').text('Web initiated forecast at ' + moment().format());
+$("#experiment-description").text(
+  "Web initiated forecast at " + moment().format(),
+);
 
 // function ignitionType() {
 //   return $('#ignition-type').val();
@@ -187,9 +189,9 @@ $('#experiment-description').text('Web initiated forecast at ' + moment().format
 // function updateIgnitionDataOnMap() {
 //   let ignitionType = $('#ignition-type').val();
 //   removeDrawnFeatures();
-//   if (ignitionType == IGNITION_TYPE_LINE) { 
+//   if (ignitionType == IGNITION_TYPE_LINE) {
 //     updateIgnitionLine();
-//   } else if (ignitionType == IGNITION_TYPE_AREA) { 
+//   } else if (ignitionType == IGNITION_TYPE_AREA) {
 //     // updateIgnitionArea();
 //   }
 // }
@@ -198,7 +200,7 @@ $('#experiment-description').text('Web initiated forecast at ' + moment().format
 //   if ($('#ignition-type').val() != IGNITION_TYPE_LINE) {
 //     return;
 //   }
-//   let latLons = ignitionMarkers.map(marker => 
+//   let latLons = ignitionMarkers.map(marker =>
 //     marker.getLatLon()).filter(l => l.length > 0);
 //   if (latLons.length > 1) {
 //     ignitionLine = L.polyline(latLons, {color: 'orange'}).addTo(map);
@@ -229,7 +231,7 @@ $('#experiment-description').text('Web initiated forecast at ' + moment().format
 //     });
 //     map.removeLayer(ignitionArea);
 //     ignitionArea = L.polygon(latLons, {color: 'orange'}).addTo(map);
-//   } 
+//   }
 // }
 
 // function updateUIToIgnitionType() {
@@ -247,7 +249,7 @@ $('#experiment-description').text('Web initiated forecast at ' + moment().format
 //     $('#ignition-times-count-field').show();
 //     ignitionTimes[0].showIndex();
 //     updateTimesOfIgnition();
-//   } 
+//   }
 //   if(ignitionType == IGNITION_TYPE_LINE) {
 //     while (ignitionMarkers.length > 1) removeIgnitionMarker();
 //   }
@@ -269,7 +271,6 @@ $('#experiment-description').text('Web initiated forecast at ' + moment().format
 //   }
 // }
 
-
 // function removeDrawnFeatures() {
 //   if (ignitionArea != null) {
 //     map.removeLayer(ignitionArea);
@@ -287,7 +288,7 @@ async function showSatData() {
     await getSatelliteData();
     createSatelliteMarkers();
   }
-  if ($('#show-sat-data').prop('checked')) {
+  if ($("#show-sat-data").prop("checked")) {
     addingSatData = true;
     addSatelliteMarkersInBatches();
   } else {
@@ -297,7 +298,10 @@ async function showSatData() {
   }
 }
 
-function addSatelliteMarkersInBatches(index = 0, batchSize = SATELLITE_DATA_BATCH_SIZE) {
+function addSatelliteMarkersInBatches(
+  index = 0,
+  batchSize = SATELLITE_DATA_BATCH_SIZE,
+) {
   if (!addingSatData) {
     return;
   }
@@ -314,7 +318,10 @@ function addSatelliteMarkersInBatches(index = 0, batchSize = SATELLITE_DATA_BATC
   }
 }
 
-function removeSatelliteMarkersInBatches(index = 0, batchSize = SATELLITE_DATA_BATCH_SIZE) {
+function removeSatelliteMarkersInBatches(
+  index = 0,
+  batchSize = SATELLITE_DATA_BATCH_SIZE,
+) {
   if (addingSatData) {
     return;
   }
@@ -331,7 +338,7 @@ function removeSatelliteMarkersInBatches(index = 0, batchSize = SATELLITE_DATA_B
 
 async function getSatelliteData() {
   try {
-    const response = await fetch('/submit/sat_data');
+    const response = await fetch("/submit/sat_data");
     satelliteJSON = await response.json();
   } catch (error) {
     console.error("Error fetching satellite data: " + error);
@@ -339,13 +346,19 @@ async function getSatelliteData() {
 }
 
 function createSatelliteMarkers() {
-  let satIcon = L.icon({iconUrl: 'static/square_icon_filled.png',
-                  iconSize: [7,7], opacity: .8});
-  satelliteJSON['coordinates'].map((coordinates) => {
-    let lat = coordinates['lat'];
-    let lon = coordinates['lon'];
+  let satIcon = L.icon({
+    iconUrl: "static/square_icon_filled.png",
+    iconSize: [7, 7],
+    opacity: 0.8,
+  });
+  satelliteJSON["coordinates"].map((coordinates) => {
+    let lat = coordinates["lat"];
+    let lon = coordinates["lon"];
     let popUpString = "lat: " + lat + " lon: " + lon;
-    let newMarker = L.marker([lat, lon], {icon: satIcon}).bindPopup(popUpString, {closeButton: false});
+    let newMarker = L.marker([lat, lon], { icon: satIcon }).bindPopup(
+      popUpString,
+      { closeButton: false },
+    );
     newMarker.on("mouseover", () => newMarker.openPopup());
     newMarker.on("mouseout", () => newMarker.closePopup());
     satelliteMarkers.push(newMarker);
@@ -386,7 +399,12 @@ function isFormValid() {
   let profileIsValid = isProfileValid();
   let timesOfIgnitionAreValid = areTimesOfIgnitionValid();
   // return ignitionTypeIsValid && latLonsAreValid && descriptionIsValid && profileIsValid && timesOfIgnitionAreValid;
-  return latLonsAreValid && descriptionIsValid && profileIsValid && timesOfIgnitionAreValid;
+  return (
+    latLonsAreValid &&
+    descriptionIsValid &&
+    profileIsValid &&
+    timesOfIgnitionAreValid
+  );
 }
 
 // function isIgnitionTypeValid() {
@@ -404,53 +422,53 @@ function isFormValid() {
 function areLatLonsValid() {
   for (let ignitionMarker of ignitionMarkers) {
     if (!ignitionMarker.isValid()) {
-      return false
+      return false;
     }
   }
   return true;
 }
 
 function isDescriptionValid() {
-  let description = $('#experiment-description').val();
+  let description = $("#experiment-description").val();
   if (description == "") {
-    $('#description-warning').addClass("activate-warning");
+    $("#description-warning").addClass("activate-warning");
     return false;
   }
-  $('#description-warning').removeClass("activate-warning");
+  $("#description-warning").removeClass("activate-warning");
   return true;
 }
 
 function isProfileValid() {
-  let profile = $('#profile').val();
+  let profile = $("#profile").val();
   if (profile == "") {
-    $('#profile-warning').addClass("activate-warning");
+    $("#profile-warning").addClass("activate-warning");
     return false;
   }
-  $('#profile-warning').removeClass("activate-warning");
+  $("#profile-warning").removeClass("activate-warning");
   return true;
 }
 
 function areTimesOfIgnitionValid() {
   let areValid = true;
   for (let ignitionTime of ignitionTimes) {
-    if(!ignitionTime.isValid()) {
+    if (!ignitionTime.isValid()) {
       areValid = false;
     }
   }
-  if ($('#ignition-type').val() == IGNITION_TYPE_AREA) {
-    if(!isValidTime($('#ign-time-perimeter').val())) {
+  if ($("#ignition-type").val() == IGNITION_TYPE_AREA) {
+    if (!isValidTime($("#ign-time-perimeter").val())) {
       areValid = false;
-      $(`#ignition-time-warning-perimeter`).addClass('activate-warning');
+      $(`#ignition-time-warning-perimeter`).addClass("activate-warning");
     } else {
-      $(`#ignition-time-warning-perimeter`).removeClass('activate-warning');
+      $(`#ignition-time-warning-perimeter`).removeClass("activate-warning");
     }
   }
   return areValid;
 }
 
 function isValidTime(ign_time_value) {
-  let ignTime = moment.utc(ign_time_value, 'MMM D,YYYY h:mm a');
-  if(!ignTime.isValid() || ignTime.year() <  1979) {
+  let ignTime = moment.utc(ign_time_value, "MMM D,YYYY h:mm a");
+  if (!ignTime.isValid() || ignTime.year() < 1979) {
     return false;
   }
   return true;

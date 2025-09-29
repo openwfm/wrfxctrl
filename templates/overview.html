@@ -26,6 +26,7 @@
             <th id="sim-started-at">Started at</th>
             <th>Description</th>
             <th>Visualization</th>
+            <th>Rerun Simulation</th>
           </tr>
         </thead>
         <tbody>
@@ -42,6 +43,13 @@
                  {% else %}
                    no visualization
                  {% endif %}
+            </td>
+            <td>
+              {% if sim['state']['output'] =='failed' %}
+                <a class="ui blue button" href="/resubmit/{{sim_id}}">Rerun</a>
+              {% else %}
+                <a class="ui blue button disabled" href="/resubmit/{{sim_id}}">Rerun</a>
+              {% endif %}
             </td>
           </tr>
           {% endfor %}

@@ -45,7 +45,7 @@
                  {% endif %}
             </td>
             <td>
-              {% if sim['state']['output'] =='failed' %}
+              {% if sim['state']['output'] =='failed' or sim['state']['output'] == 'available' %}
                 <a class="ui blue button" href="/resubmit/{{sim_id}}">Rerun</a>
               {% else %}
                 <a class="ui blue button disabled" href="/resubmit/{{sim_id}}">Rerun</a>

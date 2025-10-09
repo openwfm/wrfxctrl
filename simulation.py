@@ -27,7 +27,7 @@ import json
 import os
 import os.path as osp
 import stat
-from subprocess import Popen, call, check_output
+import subprocess
 import glob
 import logging
 import pprint
@@ -63,7 +63,7 @@ def cancel_simulation(sim_info,conf):
     job_id = sim_info['job_id']
     exe = [cmd, 'cancel', job_id]
     logging.debug('Calling ' + ' '.join(exe))
-    out = check_output(exe)
+    out = subprocess.check_output(exe)
     logging.info(out)
 
     paths = simulation_paths(sim_info['id'],conf)
@@ -71,6 +71,33 @@ def cancel_simulation(sim_info,conf):
     with open(log_path, 'wb') as f:
         f.write(out)
         f.write(b'Cancelled')
+
+def cleanup_free_nodes(conf):
+    qinfo_cmd = conf.get('qinfo_cmd', 'sinfo')
+    try:
+        ret = subprocess.check_output(
+            [qinfo_cmd, "-h", "-N", "-o", "%N %T"],
+            stderr=subprocess.STDOUT,
+            text=True,          # returns str; no .decode() needed
+        )
+    except subprocess.CalledProcessError as e:
+        logging.error(e.output) 
+    seen = set()
+    count = 0
+    for line in ret.splitlines():
+        if not line.strip():
+            continue
+        # line like: "<nodeName> <State>"
+        parts = line.split()
+        name = parts[0]
+        state = parts[1].lower()
+        if name in seen:
+            continue          # dedupe across partitions
+        seen.add(name)
+        if state.startswith("idle"):
+            count += 1
+    logging.info(f'{count} available nodes in the cluster')
+    return count
 
 def cleanup_sim_output(sim_info,conf):
     """    Cleanup simulation output.
@@ -102,7 +129,7 @@ def delete_simulation(sim_info,conf):
     """
     cmd = osp.abspath(osp.join(conf['wrfxpy_path'],'cleanup.sh'))
     job_id = sim_info['job_id']
-    exe = [cmd, 'delete', job_id]
+    exe = [cmd, 'all', job_id]
     logging.debug('Calling ' + ' '.join(exe))
     os.system(' '.join(exe))
     delete_simulation_files(sim_info['id'],conf)
@@ -311,7 +338,7 @@ def create_simulation(info, conf, cluster):
 
     # execute the fire forecast and reroute into the log file provided
     print('Running %s' % run_script)
-    proc = Popen(run_script, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
+    proc = subprocess.Popen(run_script, shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
     print('Ready')
     
 

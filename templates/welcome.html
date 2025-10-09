@@ -5,6 +5,7 @@
   
 <div class="ui one column stackable center aligned page grid">
    <div class="column twelve wide">
+
      <h1>Fire forecasting control system</h1>
      
      <p style="text-align:left">Welcome to the WRFx controller website, an experimental system built to initiate
@@ -23,7 +24,7 @@
               <td>
                 <div class="ui label">Cluster</div>
               </td>
-              <td> {{ cluster.hostname }} </td>
+              <td> {{ cluster.qsys }} </td>
             </tr>
             <tr>
               <td><div class="ui label">Nodes</div></td>
@@ -35,7 +36,7 @@
             </tr>
             <tr>
               <td><div class="ui label">Free nodes</div></td>
-              <td> {{ cluster.free_nodes }} </td>
+              <td><span id="free-nodes-count"> {{ cluster.free_nodes }} </span></td>
             </tr>
           </tbody>
          </table>

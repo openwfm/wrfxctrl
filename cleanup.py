@@ -1,6 +1,10 @@
 from __future__ import absolute_import
 from __future__ import print_function
-from simulation import cancel_simulation, delete_simulation, delete_simulation_files, load_simulations, cleanup_sim_output, cleanup_sim_workspace
+from simulation import (
+    cancel_simulation, delete_simulation, delete_simulation_files, 
+    load_simulations, cleanup_sim_output, cleanup_sim_workspace,
+    cleanup_free_nodes
+)
 import json
 import sys
 import logging
@@ -45,7 +49,12 @@ def cleanup_workspace(sim_id):
         cleanup_sim_workspace(sim_info,conf)
     except KeyError:
         logging.error('Simulation %s not found.' % sim_id)
-
+        
+def cleanup_free():
+    logging.info('Checking available nodes in the cluster')
+    free = cleanup_free_nodes(conf)
+    return free
+        
 def cleanup_list():
     simulations = load_simulations(sims_path)
     print('%-30s desc' % 'id') 
@@ -56,7 +65,7 @@ def cleanup_list():
 if __name__ == '__main__':
 
     if len(sys.argv) < 2:
-        print('usage: %s [list|delete <name>' % sys.argv[0])
+        print('usage: %s [list|delete|cancel|output|workspace|free] <name>' % sys.argv[0])
         sys.exit(1)
 
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -75,6 +84,8 @@ if __name__ == '__main__':
         cleanup_workspace(sim_id)
     elif sys.argv[1] == 'list':
         cleanup_list()
+    elif sys.argv[1] == 'free':
+        cleanup_free()
     else:
         logging.error('command line not understood %s' % sys.argv)
 

@@ -37,7 +37,7 @@ import string
 import os.path as osp
 from functools import wraps, update_wrapper
 import sys
-from cleanup import cleanup_delete, cleanup_cancel
+from cleanup import cleanup_delete, cleanup_cancel, cleanup_free
 
 # global objects tracking state
 cluster = None
@@ -88,6 +88,7 @@ def nocache(view):
 @app.route(urls["welcome"])
 @nocache
 def welcome():
+    cluster.free_nodes = cleanup_free()
     return render_template("welcome.html", cluster=cluster, urls=urls)
 
 

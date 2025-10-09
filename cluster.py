@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from cleanup import cleanup_free
 import socket
 
 class Cluster(object):
@@ -10,6 +11,6 @@ class Cluster(object):
         self.hostname = socket.gethostname()
         self.nodes = cfg['nodes']
         self.ppn = cfg['ppn']
-        # self.qsys = cfg['qsys']
-        # FIXME
-        self.free_nodes = self.nodes
+        self.qsys = cfg['qsys']
+        self.free_nodes = cleanup_free()
+        

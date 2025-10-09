@@ -26,6 +26,7 @@ from simulation import (
     get_simulation_state,
     cancel_simulation,
     delete_simulation,
+    rerun_simulation,
     load_simulations,
 )
 from utils import Dict, to_esmf, to_utc, load_profiles, load_sys_cfg, parse_kml
@@ -59,6 +60,7 @@ host = conf["host"]
 debug = conf["debug"] in ["T", "True", "t", "true"]
 port = conf["port"]
 urls = {
+    "resubmit": osp.join(root, "resubmit"),
     "submit": osp.join(root, "submit"),
     "welcome": osp.join(root, "start"),
     "overview": osp.join(root, "overview"),
@@ -129,6 +131,14 @@ def getSatData():
 @nocache
 def monitor(sim_id=None):
     print("monitor {}".format(sim_id))
+    return render_template("monitor.html", sim=simulations.get(sim_id, None), urls=urls)
+
+
+@app.route("/resubmit/<sim_id>")
+@nocache
+def resubmit(sim_id):
+    print("monitor {}".format(sim_id))
+    rerun_simulation(sim_id, conf)
     return render_template("monitor.html", sim=simulations.get(sim_id, None), urls=urls)
 
 

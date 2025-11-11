@@ -229,6 +229,12 @@ def cancel_sim(sim_id=None):
         cancel_simulation(simulations(sim_id, conf))
 
 
+@app.route("/profiles")
+def get_profiles():
+    profs = json.load(open("etc/profiles.json"))
+    return {"profiles": [Dict(p) for _, p in profs.items()]}, 200
+
+
 @app.route("/all_sims")
 def get_all_sims():
     print(json.dumps(simulations, indent=4, separators=(",", ": ")))

@@ -26,9 +26,6 @@ export const errorState = (function makeErrorState() {
     }
 
     buildJson() {
-      //let formData = {
-      //  profile: $("#profile").val(),
-      //};
       let formData = {};
       for (let component of this.subscribers) {
         let componentFormData = component.jsonProps();
@@ -50,16 +47,6 @@ export const errorState = (function makeErrorState() {
         }
       }
 
-      // if (!ignitionPointsAdded) {
-      //     let errorMessage = "At least one point of Ignition must be created in either Ignition Line, or Multiple Ignitions";
-      //     let ignitionError = {header: "Ignitions", messages: [errorMessage]};
-      //     this.validationErrors.push(ignitionError);
-      // }
-
-      //let profileError = this.isProfileValid();
-      //if (profileError.messages.length > 0) {
-      //  this.validationErrors.push(profileError);
-      //}
       let componentsValid = this.validationErrors.length == 0;
       if (!componentsValid) {
         this.errorUIComponent.showErrors(this.validationErrors);

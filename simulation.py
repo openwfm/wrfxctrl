@@ -216,6 +216,7 @@ def create_simulation(info, conf, cluster):
         "profile": info["profile"],
         "log_file": log_path,
         "state": make_initial_state(),
+        "iofields": info["iofields"],
     }
 
     # build a new job template

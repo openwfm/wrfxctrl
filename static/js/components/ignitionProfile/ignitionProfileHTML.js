@@ -1,16 +1,19 @@
 export const ignitionProfileHTML = `
 <div>
   <h2>Step 3: Simulation profile</h2>
-
-  <div id="domain-selector" class="field">
-      <label>Domain</label>
-      <select name="domain" id="domain-dropdown">
-      </select>
+  <div id="optimize-disk-space-option" class="field">
+      <label for="optimize-disk-space">Optimize Disk Space</label>
+      <input type="checkbox" name="optimize-disk-space" id="optimize-disk-space"/>
   </div>
 
   <div class="ui two column grid">
 
     <div class="column">
+      <div id="domain-selector" class="field">
+          <label>Domain</label>
+          <select name="domain" id="domain-dropdown">
+          </select>
+      </div>
       <div class="field">
         <span id="profile-warning" class="not-valid-warning">Please select a job profile.</span>
         <div id="profile-menu" class="ui fluid vertical pointing menu">

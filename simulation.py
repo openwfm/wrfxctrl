@@ -217,6 +217,7 @@ def create_simulation(info, conf, cluster):
         "log_file": log_path,
         "state": make_initial_state(),
         "iofields": info["iofields"],
+        "use_realtime": info["use_realtime"],
     }
 
     # build a new job template

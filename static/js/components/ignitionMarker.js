@@ -110,6 +110,11 @@ export class IgnitionMarker extends HTMLElement {
     }
   }
 
+  readdMarkerToMap() {
+    let [lat, lon] = this.latLon();
+    this.addMarkerToMap(lat, lon);
+  }
+
   updateMarkerInput(lat, lon) {
     this.querySelector("#ign-lat").value = lat;
     this.querySelector("#ign-lon").value = lon;

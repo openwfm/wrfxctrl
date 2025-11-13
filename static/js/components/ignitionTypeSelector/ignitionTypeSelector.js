@@ -1,25 +1,25 @@
-import { appState } from '../../appState.js';
-import { ignitionTypeSelectorHTML } from './ignitionTypeSelectorHTML.js';
+import { appState } from "../../appState.js";
+import { ignitionTypeSelectorHTML } from "./ignitionTypeSelectorHTML.js";
 
 export class IgnitionTypeSelector extends HTMLElement {
-    constructor() {
-        super();
-        this.innerHTML = ignitionTypeSelectorHTML;
-        this.uiElements = {
-            ignitionTypeDropdown: this.querySelector('#ignition-type-dropdown')
-        };
-    }
+  constructor() {
+    super();
+    this.innerHTML = ignitionTypeSelectorHTML;
+    this.uiElements = {
+      ignitionTypeDropdown: this.querySelector("#ignition-type-dropdown"),
+    };
+  }
 
-    connectedCallback() {
-        this.connectIgnitionTypeSelector();
-    }
+  connectedCallback() {
+    this.connectIgnitionTypeSelector();
+  }
 
-    connectIgnitionTypeSelector() {
-        let { ignitionTypeDropdown } = this.uiElements;
-        ignitionTypeDropdown.onchange = () => {
-            appState.changeIgnitionType(ignitionTypeDropdown.value)
-        }
-    }
+  connectIgnitionTypeSelector() {
+    let { ignitionTypeDropdown } = this.uiElements;
+    ignitionTypeDropdown.onchange = () => {
+      appState.changeIgnitionType(ignitionTypeDropdown.value);
+    };
+  }
 }
 
-window.customElements.define('ignition-type-selector', IgnitionTypeSelector);
+window.customElements.define("ignition-type-selector", IgnitionTypeSelector);

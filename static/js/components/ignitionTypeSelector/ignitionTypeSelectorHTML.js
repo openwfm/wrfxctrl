@@ -7,6 +7,7 @@ export const ignitionTypeSelectorHTML = `
                 <option value="1">Multiple Ignitions</option>
                 <option value="2">Ignition Line</option>
                 <option value="3">Burn Plot Boundary</option>
+                <option value="4">RealTime</option>
             </select>
         </div>
         <!-- <div class="field" style="display: inline-block;">

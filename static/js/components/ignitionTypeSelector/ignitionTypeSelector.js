@@ -1,7 +1,8 @@
 import { appState } from "../../appState.js";
 import { ignitionTypeSelectorHTML } from "./ignitionTypeSelectorHTML.js";
+import { AppStateSubscriber } from "../appStateSubscriber.js";
 
-export class IgnitionTypeSelector extends HTMLElement {
+export class IgnitionTypeSelector extends AppStateSubscriber {
   constructor() {
     super();
     this.innerHTML = ignitionTypeSelectorHTML;
@@ -19,6 +20,12 @@ export class IgnitionTypeSelector extends HTMLElement {
     ignitionTypeDropdown.onchange = () => {
       appState.changeIgnitionType(ignitionTypeDropdown.value);
     };
+  }
+
+  jsonProps() {
+    const { ignitionTypeDropdown } = this.uiElements;
+    let use_realtime = ignitionTypeDropdown.value == "4";
+    return { use_realtime: use_realtime };
   }
 }
 

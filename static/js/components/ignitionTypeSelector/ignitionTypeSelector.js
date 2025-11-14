@@ -44,8 +44,8 @@ export class IgnitionTypeSelector extends AppStateSubscriber {
   }
 
   jsonProps() {
-    const { ignitionTypeDropdown } = this.uiElements;
-    let use_realtime = ignitionTypeDropdown.value == "4";
+    const { useRealTimeOption } = this.uiElements;
+    let use_realtime = useRealTimeOption.checked;
     return { use_realtime: use_realtime };
   }
 }

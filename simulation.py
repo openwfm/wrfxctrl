@@ -219,6 +219,10 @@ def create_simulation(info, conf, cluster):
         "iofields": info["iofields"],
         "use_realtime": info["use_realtime"],
     }
+    if "fmda_geogrid_path" in info:
+        geogrid_path = osp.join(conf["geogrid_root"], info["fmda_geogrid_path"])
+        if osp.exists(geogrid_path):
+            sim_info["fmda_geogrid_path"] = geogrid_path
 
     # build a new job template
     template = osp.abspath(profile["template"])
@@ -237,15 +241,18 @@ def create_simulation(info, conf, cluster):
     )
     sim_end = to_esmf(datetime.strptime(info["end_utc"], "%b %d, %Y %I:%M %p"))
     end_utc = to_utc(to_esmf(datetime.strptime(info["end_utc"], "%b %d, %Y %I:%M %p")))
-    cycle_start = to_esmf(
-        datetime.strptime(info["cycle_start_utc"], "%b %d, %Y %I:%M %p")
-    )
+
     sim_info["start_utc"] = sim_start
     cfg["start_utc"] = sim_start
     sim_info["end_utc"] = sim_end
     cfg["end_utc"] = sim_end
-    sim_info["cycle_start_utc"] = cycle_start
-    cfg["cycle_start_utc"] = cycle_start
+
+    if "cycle_start_utc" in info:
+        cycle_start = to_esmf(
+            datetime.strptime(info["cycle_start_utc"], "%b %d, %Y %I:%M %p")
+        )
+        sim_info["cycle_start_utc"] = cycle_start
+        cfg["cycle_start_utc"] = cycle_start
 
     if "grib_source" not in cfg or cfg["grib_source"] == "auto":
         cfg["grib_source"] = select_grib_source(start_utc)

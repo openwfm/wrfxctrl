@@ -1,13 +1,7 @@
 export const ignitionProfileHTML = `
 <div>
   <h2>Step 3: Simulation profile</h2>
-  <div id="optimize-disk-space-option" class="field">
-      <label for="optimize-disk-space">Optimize Disk Space</label>
-      <input type="checkbox" name="optimize-disk-space" id="optimize-disk-space"/>
-  </div>
-
   <div class="ui two column grid">
-
     <div class="column">
       <div id="domain-selector" class="field">
           <label>Domain</label>
@@ -28,6 +22,12 @@ export const ignitionProfileHTML = `
         Select a simulation profile from the dropdown box.  The simulation profile will specify parameters of your job not set in this form.
       </p>
     </div>
+  </div>
+  <br/>
+  <br/>
+  <div id="optimize-disk-space-option" class="field">
+      <label for="optimize-disk-space">Optimize Disk Space</label>
+      <input type="checkbox" name="optimize-disk-space" id="optimize-disk-space"/>
   </div>
 </div>
 `;

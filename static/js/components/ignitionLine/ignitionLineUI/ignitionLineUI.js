@@ -31,7 +31,7 @@ export class IgnitionLineUI extends AppStateSubscriber {
 
   setVisibilityFromAppState() {
     let { ignitionLineComponentUI } = this.uiElements;
-    if (appState.isLine()) {
+    if (appState.isLine() && !appState.isRealTime()) {
       this.showComponent(ignitionLineComponentUI);
     } else {
       this.hideComponent(ignitionLineComponentUI);

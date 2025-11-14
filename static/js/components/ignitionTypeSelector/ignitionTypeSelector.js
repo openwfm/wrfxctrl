@@ -8,11 +8,32 @@ export class IgnitionTypeSelector extends AppStateSubscriber {
     this.innerHTML = ignitionTypeSelectorHTML;
     this.uiElements = {
       ignitionTypeDropdown: this.querySelector("#ignition-type-dropdown"),
+      useRealTimeOption: this.querySelector("#use-realtime-option"),
+      lineOption: this.querySelector("#ignition-line"),
+      multipleIgnitionsOption: this.querySelector("#multiple-ignitions"),
     };
   }
 
   connectedCallback() {
+    const {
+      useRealTimeOption,
+      lineOption,
+      multipleIgnitionsOption,
+      ignitionTypeDropdown,
+    } = this.uiElements;
     this.connectIgnitionTypeSelector();
+    useRealTimeOption.onchange = () => {
+      appState.changeRealTime(useRealTimeOption.checked);
+      if (useRealTimeOption.checked) {
+        ignitionTypeDropdown.value = "0";
+        lineOption.disabled = true;
+        multipleIgnitionsOption.disabled = true;
+        appState.changeIgnitionType("0");
+      } else {
+        lineOption.disabled = false;
+        multipleIgnitionsOption.disabled = false;
+      }
+    };
   }
 
   connectIgnitionTypeSelector() {

@@ -48,11 +48,10 @@ export class IgnitionPoints extends IgnitionPointsUI {
     this.lastPointsMarker().addMarkerToMapAtLatLon(lat, lon);
   }
 
-  setVisibilityFromAppState() {
-    super.setVisibilityFromAppState();
+  realTimeChange() {
     if (appState.isRealTime()) {
       this.removePointsFromMap();
-    } else if (appState.previousRealTime()) {
+    } else {
       this.addPointsToMap();
     }
   }

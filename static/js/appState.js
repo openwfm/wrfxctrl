@@ -5,6 +5,7 @@ export const appState = (function makeAppState() {
       this.previousIgnitionType = this.domainCenter();
       this.subscribers = [];
       this.igniteSubscribers = [];
+      this.useRealTime = false;
 
       this.simulationStartAndStartTimes = null;
       this.kmlPoints = {};
@@ -40,6 +41,13 @@ export const appState = (function makeAppState() {
       }
     }
 
+    changeRealTime(realTime) {
+      this.useRealTime = realTime;
+      for (let subscriber of this.subscribers) {
+        subscriber.realTimeChange();
+      }
+    }
+
     processKml(kmlPoints) {
       this.kmlPoints = kmlPoints;
       for (let subscriber of this.subscribers) {
@@ -68,10 +76,6 @@ export const appState = (function makeAppState() {
       return "3";
     }
 
-    realTime() {
-      return "4";
-    }
-
     isDomain() {
       return this.ignitionType == this.domainCenter();
     }
@@ -89,11 +93,7 @@ export const appState = (function makeAppState() {
     }
 
     isRealTime() {
-      return this.ignitionType == this.realTime();
-    }
-
-    previousRealTime() {
-      return this.previousIgnitionType == this.realTime();
+      return this.useRealTime;
     }
   }
   return new appState();

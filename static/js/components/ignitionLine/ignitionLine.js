@@ -92,11 +92,11 @@ export class IgnitionLine extends IgnitionLineUI {
     }
   }
 
-  setVisibilityFromAppState() {
+  realTimeChange() {
     super.setVisibilityFromAppState();
     if (appState.isRealTime()) {
       this.removePointsAndLine();
-    } else if (appState.previousRealTime()) {
+    } else {
       this.addPointsAndLine();
     }
   }

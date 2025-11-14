@@ -235,10 +235,10 @@ div .fixed-height-grid {
   overflow-y: auto;
 }*/
 
-#ignition-type-field {
-  display: inline-block;
-  width: 200px;
-}
+/*#ignition-type-field {*/
+/*  display: inline-block;*/
+/*  width: 200px;*/
+/*}*/
 
 #buffer-type-field {
   display: inline-block;

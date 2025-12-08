@@ -20,6 +20,7 @@ export class CycleStartUI extends AppStateSubscriber {
     cycleStartOption.onchange = () => {
       if (cycleStartOption.checked) {
         cycleStartField.classList.remove("hidden");
+        this.setUpCycleStartDatePicker();
       } else {
         cycleStartField.classList.add("hidden");
       }
@@ -27,14 +28,24 @@ export class CycleStartUI extends AppStateSubscriber {
   }
 
   setUpCycleStartDatePicker() {
-    let now = moment();
+    let startTime = appState.simulationStartTimeMoment();
 
     $(this.cycleStartId).datetimepicker({
-      value: now.utc(),
+      value: startTime,
       formatTime: "h:mm a",
       formatDate: "m.d.Y",
       step: 15,
     });
+  }
+
+  validateForIgnition() {
+    if (appState.simulationStartTimeMoment() > this.cycleStartTimeMoment()) {
+      return {
+        header: "Cycle Start Time",
+        messages: ["Cycle Start Time must be after Simulation Start Time"],
+      };
+    }
+    return { header: "", messages: [] };
   }
 
   cycleStartTimeMoment() {

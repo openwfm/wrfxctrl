@@ -219,10 +219,6 @@ def create_simulation(info, conf, cluster):
         "iofields": info["iofields"],
         "use_realtime": info["use_realtime"],
     }
-    if "fmda_geogrid_path" in info:
-        geogrid_path = osp.join(conf["geogrid_root"], info["fmda_geogrid_path"])
-        if osp.exists(geogrid_path):
-            sim_info["fmda_geogrid_path"] = geogrid_path
 
     # build a new job template
     template = osp.abspath(profile["template"])
@@ -230,6 +226,14 @@ def create_simulation(info, conf, cluster):
     print("Job template %s:" % template)
     print(json.dumps(cfg, indent=4, separators=(",", ": ")))
 
+    if "fmda_geogrid_path" in info:
+        geogrid_path = osp.join(conf["geogrid_root"], info["fmda_geogrid_path"])
+        if osp.exists(geogrid_path):
+            sim_info["fmda_geogrid_path"] = geogrid_path
+            cfg["fmda_geogrid_path"] = geogrid_path
+
+    cfg["iofields"] = info["iofields"]
+    cfg["use_realtime"] = info["use_realtime"]
     cfg["template"] = template
     cfg["profile"] = profile
     cfg["grid_code"] = sim_id

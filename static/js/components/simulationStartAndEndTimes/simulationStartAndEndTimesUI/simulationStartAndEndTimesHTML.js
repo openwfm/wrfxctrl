@@ -1,9 +1,5 @@
 export const simulationStartAndEndTimesHTML = `
         <div>
-            <div id="use-fmda-container" class="field">
-                <label for="use-fmda-option">Use FMDA</label>
-                <input type="checkbox" name="use-fmda-option" id="use-fmda-option"/>
-            </div>
             <h3>Simulation Start and End Times</h3>
             <div id="start-end-dates" class="two fields">
                 <div id="start-dates" class="field" style="margin-bottom: 15px">

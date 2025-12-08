@@ -9,7 +9,6 @@ export class SimulationStartAndEndTimesUI extends AppStateSubscriber {
     this.uiElements = {
       ignitionStartUI: this.querySelector("#start-time-input"),
       ignitionEndUI: this.querySelector("#end-time-input"),
-      useFMDAOption: this.querySelector("#use-fmda-option"),
     };
     this.startTimeId = "#start-time-input";
     this.endTimeId = "#end-time-input";
@@ -58,13 +57,6 @@ export class SimulationStartAndEndTimesUI extends AppStateSubscriber {
     return ignitionEndUI.value;
   }
 
-  geogridPath() {
-    let startTime = this.startTimeMoment();
-    let monthYear = startTime.format("YYYYMM");
-    let fileEnd = startTime.format("YYYMMdd-HH");
-    return `${monthYear}/fmda-CONUS-${fileEnd}.geo`;
-  }
-
   validateForIgnition() {
     if (this.startTimeMoment() > this.endTimeMoment()) {
       return {
@@ -76,14 +68,6 @@ export class SimulationStartAndEndTimesUI extends AppStateSubscriber {
   }
 
   jsonProps() {
-    const { useFMDAOption } = this.uiElements;
-    if (useFMDAOption.checked) {
-      return {
-        start_utc: this.startTime(),
-        end_utc: this.endTime(),
-        fmda_geogrid_path: this.geogridPath(),
-      };
-    }
     return {
       start_utc: this.startTime(),
       end_utc: this.endTime(),

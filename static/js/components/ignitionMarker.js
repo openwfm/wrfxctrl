@@ -127,6 +127,8 @@ export class IgnitionMarker extends HTMLElement {
     if (lat == undefined || lon == undefined) {
       return;
     }
+    this.lat = lat;
+    this.lng = lon;
     const mapMarker = this.newMapMarker(lat, lon);
     this.ignitionMapMarker = new IgnitionMapMarker(
       lat,

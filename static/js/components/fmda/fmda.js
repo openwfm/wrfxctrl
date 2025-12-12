@@ -14,8 +14,8 @@ export class Fmda extends AppStateSubscriber {
   geogridPath() {
     let startTime = appState.simulationStartTimeMoment();
     let monthYear = startTime.format("YYYYMM");
-    let fileEnd = startTime.format("YYYMMdd-HH");
-    return `${monthYear}/fmda-CONUS-${fileEnd}.geo`;
+    let fileEnd = startTime.format("YYYYMMDD-HH");
+    return `${monthYear}/fmda-CONUS-${fileEnd}/fmda-CONUS-${fileEnd}.geo`;
   }
 
   jsonProps() {

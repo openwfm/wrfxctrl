@@ -487,7 +487,7 @@ def make_initial_state():
         "metgrid": "waiting",
         "real": "waiting",
         "wrf": "waiting",
-        "output": "waiting",
+        "output": "waiting"
     }
 
 
@@ -510,8 +510,6 @@ def get_simulation_state(path):
                 parse_error(state, line)
             if "subprocess.CalledProcessError" in line:
                 parse_error(state, line)
-            if "WRF completion detected" in line:
-                state["wrf"] = "complete"
             if "running GEOGRID" in line:
                 state["geogrid"] = "running"
             elif "GEOGRID complete" in line:
@@ -540,6 +538,11 @@ def get_simulation_state(path):
                 state["output"] = "available"
             if "Cancelled" in line:
                 state["wrf"] = "cancelled"
+            if "WRF completion detected" in line:
+                state["wrf"] = "complete"
+            if "forecast.py done" in line:
+                if state["wrf"] != "complete":
+                    parse_error(state, line)
         f.close()
         if state["geogrid"] == "failed" or state["ungrib"] == "failed":
             state["metgrid"] = "failed"

@@ -1,34 +1,32 @@
-import { appState } from '../appState.js';
-import { buildMap } from '../buildMap.js';
-import { errorState } from '../errorState.js';
+import { appState } from "../appState.js";
+import { buildMap } from "../buildMap.js";
+import { errorState } from "../errorState.js";
 
 export class AppStateSubscriber extends HTMLElement {
-    constructor() {
-        super();
-        appState.subscribeComponent(this);
-        buildMap.subscribeComponent(this);
-        errorState.subscribeComponent(this);
-    }
+  constructor() {
+    super();
+    appState.subscribeComponent(this);
+    buildMap.subscribeComponent(this);
+    errorState.subscribeComponent(this);
+  }
 
-    connectedCallback() {
-    }
+  connectedCallback() { }
 
-    ignitionTypeChange() {
-    }
+  ignitionTypeChange() { }
 
-    validateForIgnition() {
-        return {header: "", messages: []};
-    }
+  realTimeChange() { }
 
-    ignitionPointsAdded() {
-        return false;
-    }
+  validateForIgnition() {
+    return { header: "", messages: [] };
+  }
 
-    jsonProps() {
-        return {};
-    }
+  ignitionPointsAdded() {
+    return false;
+  }
 
-    writeKml() {
+  jsonProps() {
+    return {};
+  }
 
-    }
+  writeKml() { }
 }

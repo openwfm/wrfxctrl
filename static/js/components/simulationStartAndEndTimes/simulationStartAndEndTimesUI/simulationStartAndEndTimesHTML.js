@@ -1,5 +1,4 @@
-export const simulationStartAndEndTimesHTML = 
-        `
+export const simulationStartAndEndTimesHTML = `
         <div>
             <h3>Simulation Start and End Times</h3>
             <div id="start-end-dates" class="two fields">
@@ -21,4 +20,4 @@ export const simulationStartAndEndTimesHTML =
                 </div>
             </div>
         </div>
-        `
+        `;

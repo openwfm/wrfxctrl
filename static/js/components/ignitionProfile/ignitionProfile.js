@@ -9,6 +9,7 @@ export class IgnitionProfile extends AppStateSubscriber {
       domainDropdown: this.querySelector("#domain-dropdown"),
       profileMenu: this.querySelector("#profile-menu"),
       profileInput: this.querySelector("#profile"),
+      ioFieldsCheckbox: this.querySelector("#optimize-disk-space"),
     };
     this.profiles = [];
     this.domains = new Set();
@@ -41,9 +42,10 @@ export class IgnitionProfile extends AppStateSubscriber {
   }
 
   jsonProps() {
-    const { profileInput } = this.uiElements;
+    const { profileInput, ioFieldsCheckbox } = this.uiElements;
     let profile = profileInput.value;
-    return { profile: profile };
+    let iofields = ioFieldsCheckbox.checked;
+    return { profile: profile, iofields: iofields };
   }
 
   async loadProfiles() {

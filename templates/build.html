@@ -66,6 +66,9 @@
 
           <h2 class="ui header">Step 2: Ignition location and time</h2>
 
+          <simulation-start-and-end-times></simulation-start-and-end-times>
+          <cycle-start></cycle-start>
+
           <p>
             Select fire location by <b>clicking on the map</b> or filling out
             the boxes below
@@ -74,7 +77,6 @@
           <div id="map"></div>
 
           <ignition-type-selector></ignition-type-selector>
-          <simulation-start-and-end-times></simulation-start-and-end-times>
 
           <!-- <h3>Ignition Markers</h3>
       <div id="markers"></div> -->
@@ -87,6 +89,8 @@
           <domain-center></domain-center>
           <validation-errors></validation-errors>
           <upload-kml></upload-kml>
+          <br />
+          <use-fmda></use-fmda>
 
           <br />
           <ignition-profile></ignition-profile>
@@ -143,6 +147,11 @@
     type="module"
   ></script>
   <script
+    src="../static/js/components/cycleStart/cycleStartUI/cycleStartUI.js"
+    type="module"
+  ></script>
+
+  <script
     src="../static/js/components/ignitionLine/ignitionLine.js"
     type="module"
   ></script>
@@ -150,6 +159,7 @@
     src="../static/js/components/ignitionPoints/ignitionPoints.js"
     type="module"
   ></script>
+  <script src="../static/js/components/fmda/fmda.js" type="module"></script>
   <script
     src="../static/js/components/domainCenter/domainCenter.js"
     type="module"

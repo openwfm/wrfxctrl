@@ -546,6 +546,13 @@ def get_simulation_state(path):
             state["real"] = "failed"
             state["wrf"] = "failed"
             state["output"] = "failed"
+        if state["metgrid"] == "failed":
+            state["real"] = "failed"
+            state["wrf"] = "failed"
+            state["output"] = "failed"
+        if state["real"] == "failed":
+            state["wrf"] = "failed"
+            state["output"] = "failed" 
     except:
         print("Cannot open file %s" % path)
     return state

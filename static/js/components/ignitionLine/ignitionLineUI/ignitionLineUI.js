@@ -17,7 +17,7 @@ export class IgnitionLineUI extends AppStateSubscriber {
     this.startTimeId = "#start-ignition-input";
     this.endTimeId = "#end-ignition-input";
   }
-
+  
   connectedCallback() {
     this.setVisibilityFromAppState();
     this.setUpStartEndCheckbox();
@@ -59,22 +59,25 @@ export class IgnitionLineUI extends AppStateSubscriber {
   }
 
   setUpStartEndDatePickers() {
+    let ignStart = appState.simulationStartTimeMoment();
+    let ignEnd = ignStart.clone().add(1, "h");
+
     let now = moment();
     let oneHourFromNow = moment().add(1, "h");
 
     $(this.startTimeId).datetimepicker({
-      value: now.utc(),
+      value: ignStart,
       formatTime: "h:mm a",
       formatDate: "m.d.Y",
       step: 15,
-      maxDate: oneHourFromNow.utc(),
+      maxDate: ignEnd,
     });
     $(this.endTimeId).datetimepicker({
-      value: oneHourFromNow.utc(),
+      value: ignEnd,
       formatTime: "h:mm a",
       formatDate: "m.d.Y",
       step: 15,
-      minDate: now.utc(),
+      minDate: ignStart,
     });
 
     $(this.startTimeId).change(() => {

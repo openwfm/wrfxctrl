@@ -137,3 +137,6 @@ def parse_kml(kml_data, kml_object):
             ]
             # TODO: add inner boundaries (JS only allows one boundary for now)
     return results
+
+def str_to_bool(s: str) -> bool:
+    return s.strip().lower() == "true"

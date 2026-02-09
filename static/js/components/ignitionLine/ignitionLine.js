@@ -23,10 +23,23 @@ export class IgnitionLine extends IgnitionLineUI {
     super.connectedCallback();
     this.createLineMarker();
     document.addEventListener("keydown", (event) => {
-      if (appState.isLine() && event.key == "Backspace") {
-        let index = this.lineMarkers.indexOf(this.currentMarker);
-        this.removeMarker(index);
-      }
+      if (!appState.isLine()) return;
+      if (event.key !== "Backspace" && event.key !== "Delete") return;
+      
+      const t = event.target;
+
+      // If the user is typing, do not treat Backspace as "delete marker"
+      const isEditable =
+        t &&
+        (t.tagName === "INPUT" ||
+          t.tagName === "TEXTAREA" ||
+          t.isContentEditable);
+
+      if (isEditable) return;
+
+      event.preventDefault(); // optional, prevents browser history/back navigation
+      const index = this.lineMarkers.indexOf(this.currentMarker);
+      if (index >= 0) this.removeMarker(index);
     });
   }
 

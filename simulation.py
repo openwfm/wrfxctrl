@@ -19,7 +19,7 @@
 
 from __future__ import absolute_import
 from __future__ import print_function
-from utils import to_esmf, to_utc, rm
+from utils import to_esmf, to_utc, rm, str_to_bool
 from datetime import datetime, timedelta
 import numpy as np
 import pytz
@@ -30,7 +30,6 @@ import stat
 import subprocess
 import glob
 import logging
-import pprint
 import simplekml
 
 
@@ -242,8 +241,9 @@ def create_simulation(info, conf, cluster):
         "profile": info["profile"],
         "log_file": log_path,
         "state": make_initial_state(),
-        "iofields": info["iofields"],
-        "use_realtime": info["use_realtime"],
+        "iofields": str_to_bool(info["iofields"]),
+        "use_realtime": str_to_bool(info["use_realtime"]),
+        "use_tign_ignition": False
     }
 
     # build a new job template
@@ -258,8 +258,9 @@ def create_simulation(info, conf, cluster):
             sim_info["fmda_geogrid_path"] = geogrid_path
             cfg["fmda_geogrid_path"] = geogrid_path
 
-    cfg["iofields"] = info["iofields"]
-    cfg["use_realtime"] = info["use_realtime"]
+    cfg["iofields"] = str_to_bool(info["iofields"])
+    cfg["use_realtime"] = str_to_bool(info["use_realtime"])
+    cfg["use_tign_ignition"] = sim_info["use_tign_ignition"]
     cfg["template"] = template
     cfg["profile"] = profile
     cfg["grid_code"] = sim_id
@@ -320,6 +321,9 @@ def create_simulation(info, conf, cluster):
             perimeter = [ign_line_lat, ign_line_lon]
             burn_plot_boundary.append(perimeter)
     cfg["burn_plot_boundary"] = burn_plot_boundary
+    if len(burn_plot_boundary):
+        sim_info["use_tign_ignition"] = True
+        cfg["use_tign_ignition"] = True
 
     ignitions = []
     # setting the ignitions
@@ -392,6 +396,10 @@ def create_simulation(info, conf, cluster):
         cfg["ignitions"][domain] = ignitions
     else:
         cfg["ignitions"] = {}
+        
+    if len(ignitions) > 1:
+        sim_info["use_tign_ignition"] = True
+        cfg["use_tign_ignition"] = True 
 
     # switch on sending results to visualization server
     cfg["postproc"]["shuttle"] = "incremental"
@@ -419,7 +427,7 @@ def create_simulation(info, conf, cluster):
         f.write("export PYTHONPATH=src\n")
         f.write("cd " + conf["wrfxpy_path"] + "\n")
         f.write("LOG=" + osp.abspath(log_path) + "\n")
-        f.write("./forecast.sh " + osp.abspath(json_path) + " &> $LOG \n")
+        f.write("nohup ./forecast.sh " + osp.abspath(json_path) + " &> $LOG \n")
 
     # make it executable
     st = os.stat(run_script)
@@ -506,6 +514,8 @@ def get_simulation_state(path):
     try:
         f = open(path)
         for line in f:
+            if "Error" in line:
+                parse_error(state, line)
             if "ERROR" in line:
                 parse_error(state, line)
             if "subprocess.CalledProcessError" in line:

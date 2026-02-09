@@ -29,19 +29,27 @@ export class UploadKml extends AppStateSubscriber {
     async uploadKML() {
       const { fileInput } = this.uiElements;
       const file = fileInput.files[0];
+      if (!file) return;
+
       document.body.classList.add('wait');
-      // Create a FormData object to store the file.
-      const formData = new FormData();
-      formData.append('file', file);
-      let kmlPoints = [];
-      if ( appState.isPerimeter() ) {
-        kmlPoints = await fetchPerimeterKML(formData);
-      } else if ( appState.isLine() ) {
-        kmlPoints = await fetchLineKML(formData);
+
+      try {
+        // Create a FormData object to store the file.
+        const formData = new FormData();
+        formData.append('file', file);
+        let kmlPoints = [];
+        if ( appState.isPerimeter() ) {
+          kmlPoints = await fetchPerimeterKML(formData);
+        } else if ( appState.isLine() ) {
+          kmlPoints = await fetchLineKML(formData);
+        }
+        appState.processKml(kmlPoints);
+
+        fileInput.value = "";
+        // console.log("kmlPoints: ", kmlBoundaryPoints);
+      } finally {
+        document.body.classList.remove('wait');
       }
-      appState.processKml(kmlPoints);
-      // console.log("kmlPoints: ", kmlBoundaryPoints);
-      document.body.classList.remove('wait');
     }
 }
 

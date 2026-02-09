@@ -6,6 +6,7 @@ h2 {
 }
 
 body {
+  padding-top: 24px;
   font-size: 1.2em;
   text-align: left;
 }
